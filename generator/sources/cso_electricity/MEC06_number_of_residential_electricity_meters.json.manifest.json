@@ -1,0 +1,19 @@
+{
+  "bytes": 3528,
+  "encoding": "utf-8",
+  "http_status": 200,
+  "intended_use": "reference",
+  "key": "cso.electricity.mec06_residential_meters",
+  "licence": "CC-BY 4.0 (CSO Open Data; https://www.cso.ie/en/aboutus/termsandconditions/)",
+  "model_development_exposure": "none",
+  "note": "Raw input, read-only after download. Excluded from git; this manifest is committed in its place.",
+  "publisher": "Central Statistics Office (Ireland), from ESB Networks",
+  "relpath": "cso_electricity/MEC06_number_of_residential_electricity_meters.json",
+  "retrieved_at": "2026-10-08",
+  "retrieved_at_utc": "2026-10-08T22:48:05Z",
+  "sha256": "660f479db3bf070abd6da25140cc1b417e16902294fdde48e370cf06b3d563a8",
+  "substitute_flag": null,
+  "title": "Number of Residential Electricity Meters by county and year (MEC06)",
+  "url": "https://ws.cso.ie/public/api.restful/PxStat.Data.Cube_API.ReadDataset/MEC06/JSON-stat/2.0/en",
+  "used_for": "The denominator for MEC03. A consumption total means nothing without the meter count that produced it, and deriving kWh per meter from two tables is the only way to get a per-dwelling figure for Co. Cork."
+}

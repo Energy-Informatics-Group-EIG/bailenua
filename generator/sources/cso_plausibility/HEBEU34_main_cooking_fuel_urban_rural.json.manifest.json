@@ -1,0 +1,19 @@
+{
+  "bytes": 2758,
+  "encoding": "utf-8",
+  "http_status": 200,
+  "intended_use": "calibration",
+  "key": "cso.cooking.hebeu34_cooking_fuel_urban_rural",
+  "licence": "CC-BY 4.0 (CSO Open Data; https://www.cso.ie/en/aboutus/termsandconditions/)",
+  "model_development_exposure": "tuning",
+  "note": "Raw input, read-only after download. Excluded from git; this manifest is committed in its place.",
+  "publisher": "Central Statistics Office (Ireland)",
+  "relpath": "cso_plausibility/HEBEU34_main_cooking_fuel_urban_rural.json",
+  "retrieved_at": "2026-10-10",
+  "retrieved_at_utc": "2026-10-10T22:10:05Z",
+  "sha256": "d0a2064ee4f33c103a10d2c1bcd6612c37ee4d5890769bc40f6ca22ce04b9e37",
+  "substitute_flag": "Published share is UNCONDITIONAL on having a gas connection; the model needs it conditional, so it is derived with one stated assumption rather than used directly",
+  "title": "HEBEU34: main fuel used for cooking in households, by urban/rural location and type of fuel (2024)",
+  "url": "https://ws.cso.ie/public/api.restful/PxStat.Data.Cube_API.ReadDataset/HEBEU34/JSON-stat/2.0/en",
+  "used_for": "U25: the share of gas-connected dwellings that cook with gas, which was a declared assumption at 0.45 until this table was found. Replaces part of sweep flag A-33. TUNING-EXPOSED: the cooking-fuel split is derived from this table, so it cannot afterwards validate that split."
+}

@@ -1,0 +1,70 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "baile-nua"
+version = "0.1.0a1+e1"
+description = "Baile Nua / HRSD_Occupants — synthetic Irish town generator (E1 engineering candidate)"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "Proprietary — internal research use" }
+authors = [{ name = "Brian O'Regan" }]
+dependencies = [
+  "numpy>=1.26,<2.4",
+  # pandas<3 is NOT a preference; it is pandapower's constraint, and it is
+  # pinned here rather than left to the resolver because installing pandapower
+  # silently downgraded pandas from 3.0.6 to 2.3.3 mid-session. Each WP5 year
+  # runs in a fresh process, so an unrecorded downgrade partway through a
+  # ten-year build would have produced a dataset whose early years and late
+  # years were written by different major versions of pandas - which the
+  # reproducibility contract would have reported as reproducible, because
+  # nothing was comparing them. The upper bound makes the constraint visible
+  # and the ten-year run was restarted from zero rather than continued.
+  "pandas>=2.2,<3",
+  "pyarrow>=16",
+  "duckdb>=1.0",
+  "numba>=0.60",
+  "pyyaml>=6",
+  "scipy>=1.13",
+  "requests>=2.32",
+  "pvlib>=0.11",
+  "jsonschema>=4",
+  # DEAP Appendix S is the published Irish fabric reference and the manual is a
+  # PDF. Reading it rather than transcribing it is what retires the [A] flag on
+  # data/fabric_u_values.yaml, and a test re-extracts the tables and compares,
+  # so this is a runtime dependency rather than a one-off extraction tool.
+  "pypdf>=4",
+  # S11 network, design 9.3: "design 9.3 moves C2, the co-simulation timing
+  # contract and pandapower to weeks 2 and 3". A runtime dependency rather
+  # than a tool, because the week-3 acceptance criterion is "feeder loading
+  # within physical limits" and that is a claim about a solved power flow -
+  # NETWORK_CLAIM has said since E1 that no such claim may be made without
+  # one. BSD-3-Clause, and it reads no data: the network is built from the
+  # town's own topology.
+  "pandapower>=2.14,<4",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "hypothesis>=6", "pytest-timeout>=2"]
+
+[project.scripts]
+baile-nua = "baile_nua.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["baile_nua*"]
+
+[tool.setuptools.package-data]
+baile_nua = ["schema/*.yaml", "config/*.yaml", "data/*.yaml", "data/*.csv"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+  "invariants: V0 hard invariant suite (design 7.2)",
+  "leakage: GT/OBS separation suite (design 5.1, 6.5, 7.7)",
+  "determinism: reproducibility contract suite (design 8.2)",
+  "negative_control: deliberately broken input that a named test must reject",
+  "slow: excluded from the fast CI loop",
+  "mimic: requires the local MIMIC instance",
+]
+filterwarnings = ["ignore::DeprecationWarning:jsonschema.*"]

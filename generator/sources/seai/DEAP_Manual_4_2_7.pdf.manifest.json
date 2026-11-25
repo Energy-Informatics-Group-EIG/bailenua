@@ -1,0 +1,19 @@
+{
+  "bytes": 5540335,
+  "encoding": "utf-8",
+  "http_status": 200,
+  "intended_use": "reference",
+  "key": "seai.deap.manual_4_2_7",
+  "licence": "SEAI open data; terms to be confirmed in WP1 (U05)",
+  "model_development_exposure": "design",
+  "note": "Raw input, read-only after download. Excluded from git; this manifest is committed in its place.",
+  "publisher": "Sustainable Energy Authority of Ireland",
+  "relpath": "seai/DEAP_Manual_4_2_7.pdf",
+  "retrieved_at": "2026-10-11",
+  "retrieved_at_utc": "2026-10-11T00:20:34Z",
+  "sha256": "e2aee5b2939903a86f028b05a5ab58b7378677435a8326092990a7c21ec7e969",
+  "substitute_flag": "[A] PDF, not machine-readable: values are transcribed by hand into data/deap_hot_water.yaml with their table and section, per the brief's rule for a reference that is not machine-readable",
+  "title": "Dwelling Energy Assessment Procedure (DEAP) Manual version 4.2.7: Section 4 domestic hot water, Table 2 cylinder loss factors, Table 3 primary circuit losses, Table 3a combi boiler losses",
+  "url": "https://www.seai.ie/sites/default/files/publications/DEAP_Manual.pdf",
+  "used_for": "U25: domestic hot water demand, cylinder and primary-circuit losses, combi boiler losses, and the instantaneous-versus-stored distinction. Also the document I-019's BER band boundaries and DEAP primary-energy scope are to be read back from (sweep flag A-16). Week 3 step 1 additionally reads APPENDIX S from it for the fabric: Table S3's filled-cavity wall and Table S4's roof set what a retrofit achieves, and Tables S1/S2/S5 were used to check the era U-value table.\n\nEXPOSURE IS SECTION-LEVEL AND THE FIELD CANNOT SAY SO (I-061). The fabric retrofit U-values are DERIVED from Appendix S, which is a tuning use. PL-DHW-01 scores hot-water volume against Section 4's 125 L/person/day, and that is NOT circular: D-043 built the demand from draw events tied to simulated activities rather than from DEAP's floor-area route, precisely so the model could disagree with it. The two uses read disjoint parts of a 213-page document. Exposure stays 'design' and the suite reports a design-exposed pass in its own category, neither fully independent nor a calibration input."
+}

@@ -1,0 +1,19 @@
+{
+  "bytes": 5238,
+  "encoding": "utf-8",
+  "http_status": 200,
+  "intended_use": "calibration",
+  "key": "cso.migration.ep006_net_migration_per_1000",
+  "licence": "CC-BY 4.0 (CSO Open Data; https://www.cso.ie/en/aboutus/termsandconditions/)",
+  "model_development_exposure": "none",
+  "note": "Raw input, read-only after download. Excluded from git; this manifest is committed in its place.",
+  "publisher": "Central Statistics Office (Ireland)",
+  "relpath": "cso_lifecourse/EP006_net_migration_per_1000_by_county.json",
+  "retrieved_at": "2026-10-10",
+  "retrieved_at_utc": "2026-10-10T12:13:39Z",
+  "sha256": "f722628d7c632cc3a6981815048caeab0cbe7f216c3a4c5774ba1f5451abfe5a",
+  "substitute_flag": null,
+  "title": "EP006: annual estimated net migration 1951-2016 per 1,000 of average population, by province, county or city",
+  "url": "https://ws.cso.ie/public/api.restful/PxStat.Data.Cube_API.ReadDataset/EP006/JSON-stat/2.0/en",
+  "used_for": "WP5 move-in / move-out. This is a NET rate, so it constrains the DIFFERENCE between the two gross flows and not either one; the gross turnover rate is the [A] part (hazards.py A-25b)."
+}

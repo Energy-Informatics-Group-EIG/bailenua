@@ -1,0 +1,19 @@
+{
+  "bytes": 38007974,
+  "encoding": "utf-8",
+  "http_status": 200,
+  "intended_use": "calibration",
+  "key": "cso.babynames.boys",
+  "licence": "CC-BY 4.0 (CSO Open Data; https://www.cso.ie/en/aboutus/termsandconditions/)",
+  "model_development_exposure": "none",
+  "note": "Raw input, read-only after download. Excluded from git; this manifest is committed in its place.",
+  "publisher": "Central Statistics Office (Ireland)",
+  "relpath": "cso/VSA50_boys_names.csv",
+  "retrieved_at": "2026-10-08",
+  "retrieved_at_utc": "2026-10-08T20:03:43Z",
+  "sha256": "5e8a40708dea10aafab17cf9bc483279bc442cf71c0ef9443567bd6b5d2bdb19",
+  "substitute_flag": null,
+  "title": "Boys' names in Ireland with 3 or more occurrences, by year (VSA50)",
+  "url": "https://ws.cso.ie/public/api.restful/PxStat.Data.Cube_API.ReadDataset/VSA50/CSV/1.0/en",
+  "used_for": "D05.given_name for males. Design 5.2 step 6: 'Draw first names by birth year and origin from CSO baby-name tables'. Covers registration years 1964 to 2025, so a person born in those years gets a name drawn from the frequencies that actually applied in their birth year."
+}

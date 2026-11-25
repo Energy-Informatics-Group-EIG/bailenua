@@ -1,0 +1,19 @@
+{
+  "bytes": 58853,
+  "encoding": "utf-8",
+  "http_status": 200,
+  "intended_use": "validation",
+  "key": "cso.census.cna25_economic_status_by_age_1981_2016",
+  "licence": "CC-BY 4.0 (CSO Open Data; https://www.cso.ie/en/aboutus/termsandconditions/)",
+  "model_development_exposure": "none",
+  "note": "Raw input, read-only after download. Excluded from git; this manifest is committed in its place.",
+  "publisher": "Central Statistics Office (Ireland)",
+  "relpath": "cso_population/CNA25_economic_status_by_age_group_1981_2016.json",
+  "retrieved_at": "2026-10-11",
+  "retrieved_at_utc": "2026-10-11T12:03:58Z",
+  "sha256": "15ba6302037b3bc02fb7c35a65b3cee74a2499e18ac625699d772ad1acf1b987",
+  "substitute_flag": null,
+  "title": "CNA25: population aged 15 years and over by age group, principal economic status, sex and marital status, 1981 to 2016",
+  "url": "https://ws.cso.ie/public/api.restful/PxStat.Data.Cube_API.ReadDataset/CNA25/JSON-stat/2.0/en",
+  "used_for": "Design 5.2. The nearest available INDEPENDENT check on the age x economic-status joint after F1054 was reclassified. A DIFFERENT ENUMERATION - Census 2016 - so it cannot share counts with the Census 2022 table the population is fitted to. It shares the INSTRUMENT (self-assessed principal economic status), and the six-year gap means it checks the STRUCTURE of the joint and not its LEVEL: a 2016-to-2022 difference confounds real change with model error. Exposure `none` and nothing is fitted to it."
+}

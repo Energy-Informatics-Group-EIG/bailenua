@@ -1,0 +1,84 @@
+# =============================================================================
+# Acceptance thresholds.
+#
+# E0-4 / U11: "Section 7 margins are PROVISIONAL", reviewed at E1 and S1.
+# Every value here carries `provisional: true` and the design reference it came
+# from.  The gate discipline rule applies: a threshold is never widened to
+# manufacture a pass.  If a test cannot meet its threshold, the E1 report
+# records it as a FAIL with the reason.
+# =============================================================================
+provisional: true
+design_reference: "revision 3, sections 7.2 / 7.3 / 7.5 / 8.2"
+
+v0_invariants:
+  # Design 7.2, zero tolerance.
+  presence_double_occupancy_violations: 0
+  presence_before_birth_or_after_death_violations: 0
+  child_under_12_alone_violations: 0
+  venue_capacity_violations: 0
+  energy_closure_daily_relative: 0.001        # "within 0.1% of daily energy"
+  soc_bounds: [0.0, 1.0]
+  co2_min_is_outdoor: true
+  rh_bounds: [0.0, 100.0]
+  referential_integrity_violations: 0
+  determinism_hash_mismatches: 0
+
+population:
+  # Design 12, R04: "Every SAPS marginal within the sampling-error band".
+  #
+  # The band is SIMULTANEOUS, not per-test. Specified as a method rather than a
+  # number because the critical value depends on how many categories are
+  # compared, and writing a number down would fix it to one particular test:
+  #
+  #     z_crit = Phi^-1( 1 - alpha / (2 * n_categories_total) )
+  #
+  # Day 1 provisionally wrote `saps_marginal_z_abs_max: 2.0`. That was
+  # mis-specified: it applies a per-test critical value to a MAXIMUM over 90
+  # categories, where a perfect synthesis would show an expected max |z| of
+  # about 2.75 and would exceed 2.0 in four or five categories by chance. The
+  # correction controls the family-wise error rate, which is what "every
+  # marginal within the band" means. Both verdicts are reported (I-016).
+  saps_marginal_band: simultaneous_bonferroni
+  saps_marginal_alpha: 0.05
+  saps_marginal_z_abs_max_per_test: 1.96      # reported for transparency, not the criterion
+  plausibility_violations: 0                  # parent age, sibling spacing (5.2 step 3)
+  name_duplicate_full_names: 0                # 5.2 step 6
+  public_figure_name_matches: 0               # R27 / K12
+  parent_age_at_birth_mother: [16, 50]
+  parent_age_at_birth_father: [16, 65]
+  sibling_min_spacing_days: 274               # 9 months, unless twins
+
+physics:
+  # Design 5.7 / 7.2 numerical verification. Cross-model agreement with F3 is
+  # not attempted at E1 and no physical-validity claim is made.
+  energy_balance_residual_relative: 0.001
+  temperature_physically_reachable_c: [-15.0, 45.0]
+  co2_ppm_bounds: [380.0, 5000.0]
+
+devices:
+  # Design 5.6: "With no action taken, live and rendered modes must agree on
+  # energy within 0.1%."
+  live_vs_rendered_energy_relative: 0.001
+
+determinism:
+  # Design 8.2 CI tests.
+  worker_counts: [1, 8, 12]                   # "1, 8 and maximum workers"; 12 logical cores here
+  replay_home_days_per_run: 100
+
+mimic:
+  # Design 5.14 pass criteria. T1/T9/T10 are the E1 gate requirement.
+  t1_integrity_errors: 0
+  t1_forbidden_field_rejections_required: true
+  t9_aggregate_match: exact
+  t9_small_cell_suppression_n: 15
+  t10_position_bias_detect_when_planted: true
+  t10_position_bias_false_positive_when_absent: false
+  unique_participants_min: 10000
+
+benchmarks:
+  # Design 8.4: Day 6 replaces the indicative estimates with measurements,
+  # projected to the full town with a x1.5 margin.
+  full_town_projection_margin: 1.5
+  full_town_homes: 1100
+  full_town_people: 3000
+  full_town_years: 10

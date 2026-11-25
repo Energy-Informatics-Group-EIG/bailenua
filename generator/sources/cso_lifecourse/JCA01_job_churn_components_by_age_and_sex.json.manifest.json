@@ -1,0 +1,19 @@
+{
+  "bytes": 16379998,
+  "encoding": "utf-8",
+  "http_status": 200,
+  "intended_use": "calibration",
+  "key": "cso.labour.jca01_job_churn_by_age_sex",
+  "licence": "CC-BY 4.0 (CSO Open Data; https://www.cso.ie/en/aboutus/termsandconditions/)",
+  "model_development_exposure": "none",
+  "note": "Raw input, read-only after download. Excluded from git; this manifest is committed in its place.",
+  "publisher": "Central Statistics Office (Ireland)",
+  "relpath": "cso_lifecourse/JCA01_job_churn_components_by_age_and_sex.json",
+  "retrieved_at": "2026-10-10",
+  "retrieved_at_utc": "2026-10-10T12:13:42Z",
+  "sha256": "0d2cfedc88b272dc40b3868e1c8c6c8622380959892d25e01cca63fc1aa582f4",
+  "substitute_flag": null,
+  "title": "JCA01: job churn components for employees by year, sex, age and employee status",
+  "url": "https://ws.cso.ie/public/api.restful/PxStat.Data.Cube_API.ReadDataset/JCA01/JSON-stat/2.0/en",
+  "used_for": "WP5 employment change. Job churn is published as a rate by AGE and SEX, which is what the life course needs; the census labour-force tables are stocks and give no transition rate at all."
+}

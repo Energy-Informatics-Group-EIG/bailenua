@@ -1,0 +1,19 @@
+{
+  "bytes": 2669,
+  "encoding": "utf-8",
+  "http_status": 200,
+  "intended_use": "reference",
+  "key": "cso.electricity.hebeu88_tariff_type_by_urban_rural",
+  "licence": "CC-BY 4.0 (CSO Open Data; https://www.cso.ie/en/aboutus/termsandconditions/)",
+  "model_development_exposure": "none",
+  "note": "Raw input, read-only after download. Excluded from git; this manifest is committed in its place.",
+  "publisher": "Central Statistics Office (Ireland)",
+  "relpath": "cso_electricity/HEBEU88_electricity_tariff_type_by_urban_rural.json",
+  "retrieved_at": "2026-10-12",
+  "retrieved_at_utc": "2026-10-12T19:53:36Z",
+  "sha256": "1ce1d554a4d47151e1955db0576d51aaba30ed5b7093b18953fd200f994b6cf2",
+  "substitute_flag": null,
+  "title": "HEBEU88: electricity tariff used by households for billing, by urban or rural location and type of electricity tariff (2024)",
+  "url": "https://ws.cso.ie/public/api.restful/PxStat.Data.Cube_API.ReadDataset/HEBEU88/JSON-stat/2.0/en",
+  "used_for": "D27's PLAN MIX. The published categories are 'Standard tariff', 'Day/Night tariff or Day/Night/Weekend tariff', 'Smart tariff', 'Other tariff NEC' and 'Tariff type unknown', which map onto the three tariff_kind values datasets.yaml declares (flat, day-night, ToU). Cobh is urban, so the URBAN row is the one used, and the shares are renormalised over the three known categories with the suppressed and unknown shares reported rather than reassigned. Closes the assumption that the mix was an equal three-way split: this is the HAS02 lesson (I-040) again - the search over the declared PxStat catalogue found a published table where a comment had recorded a conclusion. Exposure `none`."
+}

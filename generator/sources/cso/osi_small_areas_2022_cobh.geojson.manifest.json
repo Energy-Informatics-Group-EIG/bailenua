@@ -1,0 +1,19 @@
+{
+  "bytes": 376949,
+  "encoding": "utf-8",
+  "http_status": 200,
+  "intended_use": "calibration",
+  "key": "osi.small_areas_2022.cobh",
+  "licence": "CC-BY 4.0 (Ordnance Survey Ireland / Tailte \u00c9ireann open data)",
+  "model_development_exposure": "none",
+  "note": "Raw input, read-only after download. Excluded from git; this manifest is committed in its place.",
+  "publisher": "Ordnance Survey Ireland / Tailte \u00c9ireann (via OSi Open Data)",
+  "relpath": "cso/osi_small_areas_2022_cobh.geojson",
+  "retrieved_at": "2026-10-08",
+  "retrieved_at_utc": "2026-10-08T19:42:50Z",
+  "sha256": "2c84ed0b512006ba85a035f6d0713d77df0981f340429bf483a0793399da1890",
+  "substitute_flag": null,
+  "title": "CSO Small Areas, National Statistical Boundaries 2022, ungeneralised - Cobh built-up area",
+  "url": "https://services-eu1.arcgis.com/BuS9rtTsYEV5C0xh/arcgis/rest/services/Small_Area_National_Statistical_Boundaries_2022_Ungeneralised_view/FeatureServer/0/query?where=SA_URBAN_AREA_NAME%3D%27Cobh%27&outFields=SA_GEOGID_2022,SA_PUB2022,SA_URBAN_AREA_NAME,SA_URBAN_AREA_FLAG,ED_ENGLISH,ED_ID_STR,COUNTY_ENGLISH,SA_NUTS3,SA_NUTS3_NAME,CSO_LEA,Shape__Area&returnGeometry=true&outSR=4326&f=geojson",
+  "used_for": "The small-area-to-town correspondence (SA_URBAN_AREA_NAME = 'Cobh'), which the SAPS small-area file does not carry, plus the geometry needed for the U03 spatial comparison (design 5.2 step 2: spatial segregation indices) and for the real NUTS3 code used in the MIMIC crosswalk."
+}

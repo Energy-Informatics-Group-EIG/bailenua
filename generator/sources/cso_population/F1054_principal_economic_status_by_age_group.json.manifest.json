@@ -1,0 +1,19 @@
+{
+  "bytes": 10781,
+  "encoding": "utf-8",
+  "http_status": 200,
+  "intended_use": "validation",
+  "key": "cso.census.f1054_economic_status_by_age_group",
+  "licence": "CC-BY 4.0 (CSO Open Data; https://www.cso.ie/en/aboutus/termsandconditions/)",
+  "model_development_exposure": "design",
+  "note": "Raw input, read-only after download. Excluded from git; this manifest is committed in its place.",
+  "publisher": "Central Statistics Office (Ireland)",
+  "relpath": "cso_population/F1054_principal_economic_status_by_age_group.json",
+  "retrieved_at": "2026-10-11",
+  "retrieved_at_utc": "2026-10-11T12:03:58Z",
+  "sha256": "29981f29a949154c08e6fca3353d74fa998612ace211ecae01772cbab631d22d",
+  "substitute_flag": null,
+  "title": "F1054: population aged 15 years and over, by principal economic status and age group",
+  "url": "https://ws.cso.ie/public/api.restful/PxStat.Data.Cube_API.ReadDataset/F1054/JSON-stat/2.0/en",
+  "used_for": "Design 5.2 joint population validation. The person-level joint of age and principal economic status, compared cell by cell against the synthesised town. It found I-069: the population matched every marginal and had the joint wrong by a third.\n\nNOT INDEPENDENT since I-069's fix. It shares underlying Census 2022 counts with FY047B, which the population is now fitted to - proven by the identical 4,136,852 national 15+ total and by each table partitioning the State. A pass against it is a CONSISTENCY CHECK and belongs in the calibration-exposed table, not the independent one."
+}

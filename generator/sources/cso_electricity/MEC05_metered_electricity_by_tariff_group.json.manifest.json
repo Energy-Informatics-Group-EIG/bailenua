@@ -1,0 +1,19 @@
+{
+  "bytes": 2985,
+  "encoding": "utf-8",
+  "http_status": 200,
+  "intended_use": "reference",
+  "key": "cso.electricity.mec05_by_tariff_group",
+  "licence": "CC-BY 4.0 (CSO Open Data; https://www.cso.ie/en/aboutus/termsandconditions/)",
+  "model_development_exposure": "none",
+  "note": "Raw input, read-only after download. Excluded from git; this manifest is committed in its place.",
+  "publisher": "Central Statistics Office (Ireland), from ESB Networks",
+  "relpath": "cso_electricity/MEC05_metered_electricity_by_tariff_group.json",
+  "retrieved_at": "2026-10-10",
+  "retrieved_at_utc": "2026-10-10T22:06:19Z",
+  "sha256": "d91a0397387ea9f978464ea7afc747c3a6b837d99637458d69d5765ccdb35ad6",
+  "substitute_flag": null,
+  "title": "Metered Electricity Consumption by tariff group and year (MEC05)",
+  "url": "https://ws.cso.ie/public/api.restful/PxStat.Data.Cube_API.ReadDataset/MEC05/JSON-stat/2.0/en",
+  "used_for": "The aggregate cross-check, and the one that matches Cobh's own tariff group: 'Urban Residential' rather than a national all-dwellings mean. Cobh is a town, and urban residential consumption differs from rural (no oil-fired rural pattern, smaller dwellings). Reference and not calibration, because it cannot be made per-dwelling: the CSO publishes no meter COUNT by tariff group, so the 5,668 GWh has no denominator. It fixes the urban-to-rural RATIO (5,668 to 3,095 GWh) and nothing more."
+}

@@ -1,0 +1,19 @@
+{
+  "bytes": 215763007,
+  "encoding": "utf-8",
+  "http_status": 200,
+  "intended_use": "calibration",
+  "key": "seai.ber.research_tool",
+  "licence": "CC-BY 4.0 (data.gov.ie; publisher Sustainable Energy Authority of Ireland)",
+  "model_development_exposure": "tuning",
+  "note": "Raw input, read-only after download. Excluded from git; this manifest is committed in its place.",
+  "publisher": "Sustainable Energy Authority of Ireland",
+  "relpath": "seai/BERPublicSearch.zip",
+  "retrieved_at": "2026-10-10",
+  "retrieved_at_utc": "2026-10-10T22:06:21Z",
+  "sha256": "1cf9b515c8b25708df548d7ba2641496bb7531c1d5912466f2280bc7422053d4",
+  "substitute_flag": null,
+  "title": "National BER Research Tool: anonymised domestic BER dataset, with assessed element U-values, year of construction and BER band",
+  "url": "https://ndber.seai.ie/BERResearchTool/ber/search.aspx",
+  "used_for": "Week 3 step 1 / I-048: DERIVING the era-and-band-to-U-value mapping that data/fabric_u_values.yaml declared [A] and never read back. Gives the assessed U-value distribution conditional on year of construction and BER band, which is what the retrofit hypothesis is about - so no retrofit penetration RATE has to be assumed. TUNING-EXPOSED FOR FABRIC: not available to validate fabric. The independent fabric validation is gas (DBERNG01 tuned, DBERNG02 held out)."
+}

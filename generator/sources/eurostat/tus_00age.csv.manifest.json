@@ -1,0 +1,19 @@
+{
+  "bytes": 7806767,
+  "encoding": "utf-8",
+  "http_status": 200,
+  "intended_use": "calibration",
+  "key": "eurostat.hetus.tus_00age",
+  "licence": "CC-BY 4.0 (Eurostat re-use policy)",
+  "model_development_exposure": "none",
+  "note": "Raw input, read-only after download. Excluded from git; this manifest is committed in its place.",
+  "publisher": "Eurostat",
+  "relpath": "eurostat/tus_00age.csv",
+  "retrieved_at": "2026-10-10",
+  "retrieved_at_utc": "2026-10-10T22:06:18Z",
+  "sha256": "45a58ae865e0b06ac527987f1dc5ecf15ba62d75a6d116743a8d1ad8c47af737",
+  "substitute_flag": "[A] UK donor; HETUS has no Irish data at all (I-008, U04, K02)",
+  "title": "HETUS 2000/2010: time spent, participation time and participation rate in the main activity by sex and age group (tus_00age)",
+  "url": "https://ec.europa.eu/eurostat/api/dissemination/sdmx/2.1/data/tus_00age/?format=SDMX-CSV&compressed=false",
+  "used_for": "Age- and sex-conditioned activity durations, the base layer of the semi-Markov duration distributions (design 5.3)."
+}

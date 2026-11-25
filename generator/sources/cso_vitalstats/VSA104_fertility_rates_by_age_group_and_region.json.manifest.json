@@ -1,0 +1,19 @@
+{
+  "bytes": 44602,
+  "encoding": "utf-8",
+  "http_status": 200,
+  "intended_use": "calibration",
+  "key": "cso.vitalstats.vsa104_fertility_rates_by_age",
+  "licence": "CC-BY 4.0 (CSO Open Data; https://www.cso.ie/en/aboutus/termsandconditions/)",
+  "model_development_exposure": "none",
+  "note": "Raw input, read-only after download. Excluded from git; this manifest is committed in its place.",
+  "publisher": "Central Statistics Office (Ireland)",
+  "relpath": "cso_vitalstats/VSA104_fertility_rates_by_age_group_and_region.json",
+  "retrieved_at": "2026-10-10",
+  "retrieved_at_utc": "2026-10-10T12:16:14Z",
+  "sha256": "e79fc5add0940a06e65fe566a77e77b0ca5ddbc1ade6136c6bbee65f80922eda",
+  "substitute_flag": null,
+  "title": "VSA104: fertility rates by age group and NUTS 3 region",
+  "url": "https://ws.cso.ie/public/api.restful/PxStat.Data.Cube_API.ReadDataset/VSA104/JSON-stat/2.0/en",
+  "used_for": "WP5 / week 2 step 5: the age-specific fertility hazard (design 5.9 birth row, R08). Published as a RATE by age group and region, so the South-West figure needs no denominator from another table."
+}

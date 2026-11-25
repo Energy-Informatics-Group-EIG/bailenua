@@ -1,0 +1,19 @@
+{
+  "bytes": 3097,
+  "encoding": "utf-8",
+  "http_status": 200,
+  "intended_use": "validation",
+  "key": "cso.appliances.hs219_hbs_appliances_by_household_size",
+  "licence": "CC-BY 4.0 (CSO Open Data; https://www.cso.ie/en/aboutus/termsandconditions/)",
+  "model_development_exposure": "none",
+  "note": "Raw input, read-only after download. Excluded from git; this manifest is committed in its place.",
+  "publisher": "Central Statistics Office (Ireland)",
+  "relpath": "cso_plausibility/HS219_hbs_household_appliances_by_household_size.json",
+  "retrieved_at": "2026-10-09",
+  "retrieved_at_utc": "2026-10-09T10:51:45Z",
+  "sha256": "fe48ac1242ce76658478bd7b99f35dd82cee343cb2cc62fe2e3f43251b99d4c2",
+  "substitute_flag": null,
+  "title": "Household Budget Survey 2015 HS219: households possessing each of thirteen household appliances, by household size (1 to 6+ persons)",
+  "url": "https://ws.cso.ie/public/api.restful/PxStat.Data.Cube_API.ReadDataset/HS219/JSON-stat/2.0/en",
+  "used_for": "PL-APPLSIZE-01: scores the `per_person` ownership slopes, which were declared assumptions with the comment that 'the sub-linearity is not in doubt, only its slope'. This publishes the slope. U30."
+}

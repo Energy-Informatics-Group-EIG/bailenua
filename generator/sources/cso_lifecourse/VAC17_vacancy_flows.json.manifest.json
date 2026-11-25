@@ -1,0 +1,19 @@
+{
+  "bytes": 3552,
+  "encoding": "utf-8",
+  "http_status": 200,
+  "intended_use": "calibration",
+  "key": "cso.housing.vac17_vacancy_flows",
+  "licence": "CC-BY 4.0 (CSO Open Data; https://www.cso.ie/en/aboutus/termsandconditions/)",
+  "model_development_exposure": "none",
+  "note": "Raw input, read-only after download. Excluded from git; this manifest is committed in its place.",
+  "publisher": "Central Statistics Office (Ireland)",
+  "relpath": "cso_lifecourse/VAC17_vacancy_flows.json",
+  "retrieved_at": "2026-10-10",
+  "retrieved_at_utc": "2026-10-10T12:14:44Z",
+  "sha256": "addd23677d7fb84717605f958dd692dd6241fa5beeaec2d99eca0b7147d326dd",
+  "substitute_flag": null,
+  "title": "VAC17: vacancy flows, quarterly (dwellings entering and leaving vacancy)",
+  "url": "https://ws.cso.ie/public/api.restful/PxStat.Data.Cube_API.ReadDataset/VAC17/JSON-stat/2.0/en",
+  "used_for": "WP5 vacancy chain. This is the one table that publishes vacancy as a FLOW rather than a stock, so it constrains the rate at which homes enter and leave vacancy - which is what a move-out/move-in chain actually generates."
+}

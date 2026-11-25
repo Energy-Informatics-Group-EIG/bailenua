@@ -1,0 +1,19 @@
+{
+  "bytes": 2710,
+  "encoding": "utf-8",
+  "http_status": 200,
+  "intended_use": "calibration",
+  "key": "cso.energy.hebeu37_efficiency_installations",
+  "licence": "CC-BY 4.0 (CSO Open Data; https://www.cso.ie/en/aboutus/termsandconditions/)",
+  "model_development_exposure": "none",
+  "note": "Raw input, read-only after download. Excluded from git; this manifest is committed in its place.",
+  "publisher": "Central Statistics Office (Ireland)",
+  "relpath": "cso_lifecourse/HEBEU37_energy_efficiency_installations_in_the_home.json",
+  "retrieved_at": "2026-10-10",
+  "retrieved_at_utc": "2026-10-10T12:13:43Z",
+  "sha256": "6dd7abc202b8806873388e1c49d151423a58c2d9ae6fa19ec362083faad40dbe",
+  "substitute_flag": null,
+  "title": "HEBEU37: energy efficiency installations in place in the home, by type",
+  "url": "https://ws.cso.ie/public/api.restful/PxStat.Data.Cube_API.ReadDataset/HEBEU37/JSON-stat/2.0/en",
+  "used_for": "WP5 retrofit. This is a PREVALENCE of installations in place, not an adoption rate, so it bounds the ten-year cumulative total rather than the annual hazard (hazards.py A-25f). PxStat has no retrofit rate: zero hits for 'retrofit'."
+}

@@ -1,0 +1,30 @@
+{
+  "label": "smoke_resume",
+  "master_seed": 20251010,
+  "slice_kind": "e1_estate",
+  "solve_network": false,
+  "with_venues": false,
+  "omit_datasets": [
+    "D18"
+  ],
+  "out_root": "work/smoke_resume",
+  "rss_gate_mb": 18432,
+  "segments": [
+    {
+      "name": "warmup_2014",
+      "year": 2014,
+      "start": "2014-12-18",
+      "end": "2014-12-31",
+      "sim_day_offset": 0,
+      "discard_output": true
+    },
+    {
+      "name": "2015",
+      "year": 2015,
+      "start": "2015-01-01",
+      "end": "2015-01-07",
+      "sim_day_offset": 14,
+      "discard_output": false
+    }
+  ]
+}

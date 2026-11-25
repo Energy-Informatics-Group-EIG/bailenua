@@ -1,0 +1,19 @@
+{
+  "bytes": 13372,
+  "encoding": "utf-8",
+  "http_status": 200,
+  "intended_use": "reference",
+  "key": "cso.electricity.mec03_by_county_sector",
+  "licence": "CC-BY 4.0 (CSO Open Data; https://www.cso.ie/en/aboutus/termsandconditions/)",
+  "model_development_exposure": "none",
+  "note": "Raw input, read-only after download. Excluded from git; this manifest is committed in its place.",
+  "publisher": "Central Statistics Office (Ireland), from ESB Networks",
+  "relpath": "cso_electricity/MEC03_metered_electricity_by_county_and_sector.json",
+  "retrieved_at": "2026-10-08",
+  "retrieved_at_utc": "2026-10-08T22:48:05Z",
+  "sha256": "858c6f76b9183abd6cc185321e493bc6f2cb1aaff719bfcd1f291e6f83fda93e",
+  "substitute_flag": null,
+  "title": "Metered Electricity Consumption by county, sector and year (MEC03)",
+  "url": "https://ws.cso.ie/public/api.restful/PxStat.Data.Cube_API.ReadDataset/MEC03/JSON-stat/2.0/en",
+  "used_for": "Co. Cork residential metered consumption, for the county-level sanity check. Reference rather than calibration: it is a county total, and Cobh's own small areas are a thin slice of it, so it can only show that the simulated estate is not wrong by a factor."
+}

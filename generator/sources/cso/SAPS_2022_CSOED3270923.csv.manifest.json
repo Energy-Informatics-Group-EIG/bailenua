@@ -1,0 +1,19 @@
+{
+  "bytes": 8298348,
+  "encoding": "cp1252",
+  "http_status": 200,
+  "intended_use": "reference",
+  "key": "cso.saps2022.ed",
+  "licence": "CC-BY 4.0 (CSO Open Data; https://www.cso.ie/en/aboutus/termsandconditions/)",
+  "model_development_exposure": "none",
+  "note": "Raw input, read-only after download. Excluded from git; this manifest is committed in its place.",
+  "publisher": "Central Statistics Office (Ireland)",
+  "relpath": "cso/SAPS_2022_CSOED3270923.csv",
+  "retrieved_at": "2026-10-08",
+  "retrieved_at_utc": "2026-10-08T19:42:49Z",
+  "sha256": "09cbacb35a4c27f338246fd77b08fa07c6cd0b82f4855ab183cda5012c45d078",
+  "substitute_flag": null,
+  "title": "Census 2022 SAPS by CSO Electoral Division",
+  "url": "https://www.cso.ie/en/media/csoie/census/census2022/SAPS_2022_CSOED3270923.csv",
+  "used_for": "Confirming that Cobh Urban and Cobh Rural are the two EDs covering the Cobh built-up area, as the OSi small-area attributes report."
+}

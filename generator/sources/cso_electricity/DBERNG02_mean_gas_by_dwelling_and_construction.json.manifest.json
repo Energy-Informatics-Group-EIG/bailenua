@@ -1,0 +1,19 @@
+{
+  "bytes": 4641,
+  "encoding": "utf-8",
+  "http_status": 200,
+  "intended_use": "calibration",
+  "key": "cso.gas.dberng02_by_dwelling_construction",
+  "licence": "CC-BY 4.0 (CSO Open Data; https://www.cso.ie/en/aboutus/termsandconditions/)",
+  "model_development_exposure": "none",
+  "note": "Raw input, read-only after download. Excluded from git; this manifest is committed in its place.",
+  "publisher": "Central Statistics Office (Ireland), from matched BER and Gas Networks Ireland meter data",
+  "relpath": "cso_electricity/DBERNG02_mean_gas_by_dwelling_and_construction.json",
+  "retrieved_at": "2026-10-09",
+  "retrieved_at_utc": "2026-10-09T00:54:45Z",
+  "sha256": "39dd29fe62df0717c830bfbc255ec7fde8b2f10f2245d1995d528f1220304bb9",
+  "substitute_flag": null,
+  "title": "Mean Gas Consumption by type of dwelling, period of construction and year (DBERNG02)",
+  "url": "https://ws.cso.ie/public/api.restful/PxStat.Data.Cube_API.ReadDataset/DBERNG02/JSON-stat/2.0/en",
+  "used_for": "The held-out half of the heating check, mirroring DBEREL02 exactly: dwelling type crossed with period of construction, an axis no fix was fitted to, and one D02 already carries as year_built_band. Keeping the same tuned/held-out split on both the gas and the electricity side is what lets the E1 report say whether the device and physics layers generalise rather than only that they were fitted. Exposure stays 'none' and must stay 'none'."
+}

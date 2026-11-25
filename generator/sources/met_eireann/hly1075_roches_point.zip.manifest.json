@@ -1,0 +1,19 @@
+{
+  "bytes": 8112456,
+  "encoding": "utf-8",
+  "http_status": 200,
+  "intended_use": "calibration",
+  "key": "met.roches_point.hourly",
+  "licence": "CC-BY 4.0 (Met \u00c9ireann open data)",
+  "model_development_exposure": "none",
+  "note": "Raw input, read-only after download. Excluded from git; this manifest is committed in its place.",
+  "publisher": "Met \u00c9ireann",
+  "relpath": "met_eireann/hly1075_roches_point.zip",
+  "retrieved_at": "2026-10-08",
+  "retrieved_at_utc": "2026-10-08T20:40:06Z",
+  "sha256": "b1988d68f1d62e1f760690755e2ff9f9a815a3ef4f34a04c9e10a699518b276e",
+  "substitute_flag": null,
+  "title": "Hourly climate data, Roches Point (station 1075, 51.793N 8.244W, 40 m)",
+  "url": "https://clidata.met.ie/cli/climate_data/webdata/hly1075.zip",
+  "used_for": "The 2022 weather realisation. Roches Point is the coastal station at the mouth of Cork Harbour, closest to Cobh's exposure, so it drives the true site series D15 after downscaling."
+}

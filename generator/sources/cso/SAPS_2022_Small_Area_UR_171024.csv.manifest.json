@@ -1,0 +1,19 @@
+{
+  "bytes": 39568437,
+  "encoding": "utf-8",
+  "http_status": 200,
+  "intended_use": "calibration",
+  "key": "cso.saps2022.small_area",
+  "licence": "CC-BY 4.0 (CSO Open Data; https://www.cso.ie/en/aboutus/termsandconditions/)",
+  "model_development_exposure": "none",
+  "note": "Raw input, read-only after download. Excluded from git; this manifest is committed in its place.",
+  "publisher": "Central Statistics Office (Ireland)",
+  "relpath": "cso/SAPS_2022_Small_Area_UR_171024.csv",
+  "retrieved_at": "2026-10-08",
+  "retrieved_at_utc": "2026-10-08T19:42:48Z",
+  "sha256": "15f30f13a7ec638c02877b3909fba9256d218bd47b63c764312bf9ccd113e935",
+  "substitute_flag": null,
+  "title": "Census 2022 Small Area Population Statistics (all small areas, urban/rural)",
+  "url": "https://www.cso.ie/en/media/csoie/census/census2022/SAPS_2022_Small_Area_UR_171024.csv",
+  "used_for": "R04 / design 5.2 step 1: every SAPS marginal for Cobh's small areas - age by sex, household composition and size, nationality, ethnicity, language, education, principal economic status, socio-economic group, industry, occupation, tenure, dwelling type and year built, central heating fuel, car availability, travel to work. Also U03 scale-down."
+}

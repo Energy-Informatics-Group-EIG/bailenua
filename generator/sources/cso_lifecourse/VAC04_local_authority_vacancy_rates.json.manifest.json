@@ -1,0 +1,19 @@
+{
+  "bytes": 9067,
+  "encoding": "utf-8",
+  "http_status": 200,
+  "intended_use": "calibration",
+  "key": "cso.housing.vac04_local_authority_vacancy_rates",
+  "licence": "CC-BY 4.0 (CSO Open Data; https://www.cso.ie/en/aboutus/termsandconditions/)",
+  "model_development_exposure": "none",
+  "note": "Raw input, read-only after download. Excluded from git; this manifest is committed in its place.",
+  "publisher": "Central Statistics Office (Ireland)",
+  "relpath": "cso_lifecourse/VAC04_local_authority_vacancy_rates.json",
+  "retrieved_at": "2026-10-10",
+  "retrieved_at_utc": "2026-10-10T12:14:45Z",
+  "sha256": "128c46b52fe7f4252b6eedd33edea5bca19625ba185cc6c3ebce1e0596946c40",
+  "substitute_flag": null,
+  "title": "VAC04: local authority vacancy rates, quarterly",
+  "url": "https://ws.cso.ie/public/api.restful/PxStat.Data.Cube_API.ReadDataset/VAC04/JSON-stat/2.0/en",
+  "used_for": "WP5 vacancy chain: the Cork County equilibrium vacancy rate the ten-year run has to hold. Preferred over C0674, which is the 2006 census vintage."
+}

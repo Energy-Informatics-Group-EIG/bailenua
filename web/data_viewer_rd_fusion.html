@@ -1,0 +1,658 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RD-Fusion Data Viewer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,500;7..72,700&family=Atkinson+Hyperlegible:wght@400;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root {
+  --bg: #eef3f4; --ink: #15242c; --muted: #56666e; --panel: #fbfaf6; --panel-2: #f2f0e9; --line: rgba(21,36,44,.13);
+  --accent: #1d6a86; --accent-ink: #fff; --para: #0f8a80; --edge: #6a4bc4; --fx: #a8700a; --bad: #b3261e; --good: #1f8a4c;
+  --pv: #2f6fd1; --pvcs: #8fb0e6; --load: #15242c; --net: #0f8a80; --hp: #e0662a; --ev: #1f9d6b; --batt: #6a4bc4; --soc: #6a4bc4; --tin: #d9752b; --tout: #56666e;
+  --c-CRK: #2f6fd1; --c-ARN: #0f8a80; --c-MID: #a8700a; --c-DUB: #6a4bc4; --c-NTH: #d9752b;
+  --f-display: "Literata", Georgia, serif; --f-body: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif; --f-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0c171c; --ink: #e6eef0; --muted: #9aabb2; --panel: #13222a; --panel-2: #182b34; --line: rgba(230,238,240,.14);
+  --accent: #5fb3d1; --accent-ink: #0c171c; --para: #4fd1c5; --edge: #b39af5; --fx: #e0b04a; --bad: #ff8a80; --good: #6fd39a;
+  --pv: #6f9ff0; --pvcs: #46628f; --load: #e6eef0; --net: #4fd1c5; --hp: #ff9a5c; --ev: #5fd49a; --batt: #b39af5; --soc: #b39af5; --tin: #ffb072; --tout: #9aabb2;
+  --c-CRK: #6f9ff0; --c-ARN: #4fd1c5; --c-MID: #e0b04a; --c-DUB: #b39af5; --c-NTH: #ffb072; color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #0c171c; --ink: #e6eef0; --muted: #9aabb2; --panel: #13222a; --panel-2: #182b34; --line: rgba(230,238,240,.14);
+  --accent: #5fb3d1; --accent-ink: #0c171c; --para: #4fd1c5; --edge: #b39af5; --fx: #e0b04a; --bad: #ff8a80; --good: #6fd39a;
+  --pv: #6f9ff0; --pvcs: #46628f; --load: #e6eef0; --net: #4fd1c5; --hp: #ff9a5c; --ev: #5fd49a; --batt: #b39af5; --soc: #b39af5; --tin: #ffb072; --tout: #9aabb2;
+  --c-CRK: #6f9ff0; --c-ARN: #4fd1c5; --c-MID: #e0b04a; --c-DUB: #b39af5; --c-NTH: #ffb072; color-scheme: dark; }
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--bg); color: var(--ink); font: 14px/1.45 var(--f-body); }
+button, input, select { font: inherit; color: inherit; }
+a { color: var(--accent); }
+.mono { font-family: var(--f-mono); font-variant-numeric: tabular-nums; }
+header.top { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; padding: 14px 20px; border-bottom: 1px solid var(--line); background: var(--panel); position: sticky; top: 0; z-index: 5; }
+header.top h1 { margin: 0; font: 700 22px/1.1 var(--f-display); }
+header.top h1 span { color: var(--para); }
+header.top .sub { color: var(--muted); font-size: 13px; }
+.spacer { flex: 1; }
+.pill { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--line); border-radius: 999px; padding: 3px 10px; font-size: 12.5px; font-weight: 700; }
+.pill i { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); }
+.pill.live { border-color: var(--good); color: var(--good); } .pill.live i { background: var(--good); }
+.pill.busy i { background: var(--fx); animation: pulse 1s infinite; } .pill.err { border-color: var(--bad); color: var(--bad); } .pill.err i { background: var(--bad); }
+@keyframes pulse { 50% { opacity: .3; } }
+@media (prefers-reduced-motion: reduce) { .pill.busy i { animation: none; } }
+.btn { border: 1px solid var(--line); background: var(--panel-2); border-radius: 8px; padding: 6px 12px; cursor: pointer; font-weight: 700; }
+.btn.primary { background: var(--accent); color: var(--accent-ink); border-color: transparent; }
+.btn:disabled { opacity: .5; cursor: default; }
+.btn:focus-visible, select:focus-visible, input:focus-visible, .tab:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+nav.tabs { display: flex; gap: 2px; padding: 0 20px; border-bottom: 1px solid var(--line); background: var(--panel); overflow-x: auto; }
+.tab { border: 0; background: none; padding: 10px 14px; cursor: pointer; color: var(--muted); border-bottom: 2px solid transparent; font-weight: 700; white-space: nowrap; }
+.tab[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--para); }
+main { padding: 18px 20px 40px; max-width: 1500px; margin: 0 auto; }
+.grid { display: grid; grid-template-columns: 300px minmax(0, 1fr); gap: 18px; align-items: start; }
+@media (max-width: 900px) { .grid { grid-template-columns: 1fr; } main { padding: 14px 16px 40px; } header.top { padding: 12px 16px; } nav.tabs { padding: 0 8px; } }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; }
+.card + .card { margin-top: 14px; }
+.grid > .card + .card { margin-top: 0; }
+a.btn { text-decoration: none; display: inline-block; }
+.card h2 { margin: 0 0 10px; font: 700 12px var(--f-body); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.card h3 { margin: 0 0 4px; font: 700 20px/1.2 var(--f-display); }
+label.f { display: block; font-size: 12.5px; color: var(--muted); margin: 10px 0 4px; }
+select, input[type=text], input[type=password], input[type=date], input[type=search] { width: 100%; border: 1px solid var(--line); background: var(--panel-2); border-radius: 8px; padding: 6px 8px; }
+.row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.chk { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 10px; font-size: 13px; }
+.chk label { display: flex; align-items: center; gap: 6px; cursor: pointer; }
+.chk i { width: 14px; height: 3px; border-radius: 2px; display: inline-block; }
+.kv { display: grid; grid-template-columns: auto 1fr; gap: 3px 12px; font-size: 13px; }
+.kv dt { color: var(--muted); } .kv dd { margin: 0; overflow-wrap: anywhere; }
+.chartbox { position: relative; height: 340px; }
+.chartbox.small { height: 200px; }
+.chartbox canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.chartbox .ov { cursor: crosshair; }
+.tip { position: absolute; pointer-events: none; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 6px 9px; font-size: 12px; box-shadow: 0 4px 14px rgba(0,0,0,.12); white-space: nowrap; z-index: 2; }
+.tip b { font-family: var(--f-mono); font-weight: 500; }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12.5px; color: var(--muted); margin-top: 8px; }
+.legend i { display: inline-block; width: 14px; height: 3px; border-radius: 2px; vertical-align: middle; margin-right: 5px; }
+.hint { font-size: 12.5px; color: var(--muted); }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; margin-bottom: 14px; }
+.stat { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; }
+.stat b { display: block; font: 500 18px var(--f-mono); font-variant-numeric: tabular-nums; }
+.stat span { font-size: 12px; color: var(--muted); }
+.tablewrap { overflow: auto; max-height: 520px; border: 1px solid var(--line); border-radius: 10px; }
+table { border-collapse: collapse; width: 100%; font-size: 13px; }
+th, td { padding: 5px 10px; text-align: left; border-bottom: 1px solid var(--line); white-space: nowrap; }
+th { position: sticky; top: 0; background: var(--panel-2); font-weight: 700; z-index: 1; }
+td.n, th.n { text-align: right; font-family: var(--f-mono); font-variant-numeric: tabular-nums; }
+th.sort { cursor: pointer; } th.sort:hover { color: var(--accent); }
+tbody tr:hover { background: var(--panel-2); }
+tr.click { cursor: pointer; }
+.crumbs { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; font-size: 13px; margin-bottom: 10px; }
+.crumbs button { border: 0; background: none; color: var(--accent); cursor: pointer; padding: 0 2px; font-weight: 700; }
+.files td:first-child { max-width: 420px; overflow: hidden; text-overflow: ellipsis; }
+.files .dir { font-weight: 700; }
+pre.preview { margin: 0; padding: 12px; max-height: 560px; overflow: auto; background: var(--panel-2); border-radius: 10px; font: 12.5px/1.5 var(--f-mono); white-space: pre-wrap; overflow-wrap: anywhere; }
+.msg { padding: 12px 14px; border-radius: 10px; background: var(--panel-2); border: 1px solid var(--line); font-size: 13.5px; }
+.msg.err { border-color: var(--bad); color: var(--bad); }
+dialog { border: 1px solid var(--line); border-radius: 14px; background: var(--panel); color: var(--ink); padding: 18px 20px; width: min(460px, calc(100vw - 32px)); }
+dialog::backdrop { background: rgba(0,0,0,.35); }
+dialog h2 { margin: 0 0 4px; font: 700 20px var(--f-display); }
+.empty { color: var(--muted); padding: 30px 0; text-align: center; }
+[hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<header class="top">
+  <div>
+    <h1>RD-<span>Fusion</span> data viewer</h1>
+    <div class="sub">HRSD-RD_FUSION v0.1 · read directly from Backblaze B2</div>
+  </div>
+  <div class="spacer"></div>
+  <span id="pill" class="pill"><i></i>Not connected</span>
+  <button class="btn primary" id="connectBtn" type="button">Connect Backblaze</button>
+</header>
+<nav class="tabs" role="tablist">
+  <button class="tab" role="tab" aria-selected="true" data-tab="bld" type="button">Building</button>
+  <button class="tab" role="tab" aria-selected="false" data-tab="fleet" type="button">Fleet day</button>
+  <button class="tab" role="tab" aria-selected="false" data-tab="files" type="button">Files</button>
+</nav>
+<main>
+  <div id="notConnected" class="msg">Connect to Backblaze to load the dataset. The viewer reads the compact twin export (<span class="mono">twin/</span>) for charts and lets you browse every file in the release.</div>
+
+  <!-- Building -->
+  <section id="tab-bld" hidden>
+    <div class="grid">
+      <aside>
+        <div class="card">
+          <h2>Building</h2>
+          <label class="f" for="fCluster">Cluster</label>
+          <select id="fCluster"></select>
+          <label class="f" for="fSearch">Search</label>
+          <input id="fSearch" type="search" placeholder="e.g. CRK-R012">
+          <label class="f" for="fBld">Building</label>
+          <select id="fBld" size="8"></select>
+          <label class="f" for="fMonth">Month</label>
+          <select id="fMonth"></select>
+          <label class="f" for="fFrom">Days</label>
+          <div class="row"><select id="fFrom" style="flex:1"></select><select id="fSpan" style="width:110px"><option value="1">1 day</option><option value="3">3 days</option><option value="7" selected>7 days</option><option value="31">Whole month</option></select></div>
+        </div>
+        <div class="card">
+          <h2>Channels</h2>
+          <div class="chk" id="chans"></div>
+        </div>
+        <div class="card">
+          <h2>Metadata</h2>
+          <dl class="kv" id="metaKV"></dl>
+        </div>
+      </aside>
+      <div>
+        <div class="stats" id="bStats"></div>
+        <div class="card">
+          <div class="row" style="justify-content:space-between"><h3 id="bTitle">Building</h3>
+            <div class="row"><button class="btn" id="bReset" type="button">Reset zoom</button><button class="btn" id="bCsv" type="button">Download CSV</button></div></div>
+          <p class="hint" id="bHint">1-min data, times in UTC. Drag across the chart to zoom, double-click to reset.</p>
+          <div class="chartbox" id="cPower"></div>
+          <div class="legend" id="lPower"></div>
+          <div id="stateWrap"><div class="chartbox small" id="cState" style="margin-top:14px"></div><div class="legend" id="lState"></div></div>
+        </div>
+        <div class="card">
+          <h2>Daily summary</h2>
+          <div class="tablewrap"><table id="bDaily"></table></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Fleet -->
+  <section id="tab-fleet" hidden>
+    <div class="grid">
+      <aside>
+        <div class="card">
+          <h2>Day</h2>
+          <label class="f" for="dDate">Date (UTC)</label>
+          <input id="dDate" type="date">
+          <div class="row" style="margin-top:8px"><button class="btn" id="dPrev" type="button">◀ Previous</button><button class="btn" id="dNext" type="button">Next ▶</button></div>
+          <label class="f" for="dChan">Channel</label>
+          <select id="dChan"><option value="net_kw">Net import</option><option value="pv_kw">Solar</option><option value="load_kw">Load</option><option value="pv_cs_kw">Clear-sky solar</option></select>
+          <label class="f" for="dGroup">Show</label>
+          <select id="dGroup"><option value="cluster">Cluster totals</option><option value="fleet">Fleet total</option></select>
+        </div>
+        <div class="card"><h2>About this view</h2><p class="hint" style="margin:0">5-min means for all buildings from <span class="mono">twin/day/</span>. Click a building in the table to open its 1-min data.</p></div>
+      </aside>
+      <div>
+        <div class="stats" id="dStats"></div>
+        <div class="card">
+          <h3 id="dTitle">Fleet</h3>
+          <div class="chartbox" id="cFleet"></div>
+          <div class="legend" id="lFleet"></div>
+        </div>
+        <div class="card">
+          <h2>Buildings this day</h2>
+          <input id="dFilter" type="search" placeholder="Filter by id or cluster" style="margin-bottom:8px">
+          <div class="tablewrap"><table id="dTable"></table></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Files -->
+  <section id="tab-files" hidden>
+    <div class="grid" style="grid-template-columns:minmax(0,1fr) minmax(0,1.2fr)">
+      <div class="card">
+        <h2>Bucket</h2>
+        <div class="crumbs" id="crumbs"></div>
+        <div class="tablewrap" style="max-height:640px"><table class="files" id="fileTable"></table></div>
+        <div class="row" style="margin-top:8px"><button class="btn" id="moreBtn" type="button" hidden>Load more</button><span class="hint" id="fileCount"></span></div>
+      </div>
+      <div class="card">
+        <div class="row" style="justify-content:space-between"><h3 id="pvTitle">Preview</h3><a class="btn" id="dlLink" href="#" hidden download>Download</a></div>
+        <p class="hint" id="pvInfo">Select a file. JSON, gzip JSON, CSV, text and Parquet files are previewed here.</p>
+        <div id="pvBody"></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<dialog id="dlg">
+  <form id="b2Form" method="dialog">
+    <h2>Connect Backblaze</h2>
+    <p class="hint" style="margin-top:0">Use a read-only application key. It is used only in this browser to sign requests, and is stored here only if you tick remember.</p>
+    <label class="f" for="b2Endpoint">S3 endpoint</label><input id="b2Endpoint" type="text" value="s3.eu-central-003.backblazeb2.com" autocomplete="off">
+    <label class="f" for="b2Bucket">Bucket</label><input id="b2Bucket" type="text" value="eig-hrsd-rdfusion" autocomplete="off">
+    <label class="f" for="b2Root">Release folder</label><input id="b2Root" type="text" value="hrsd-rd_fusion-v0.1/" autocomplete="off">
+    <label class="f" for="b2Key">Key ID</label><input id="b2Key" type="text" autocomplete="off">
+    <label class="f" for="b2Secret">Application key</label><input id="b2Secret" type="password" autocomplete="off">
+    <label style="display:flex;gap:6px;align-items:center;margin-top:10px;font-size:13px"><input id="b2Remember" type="checkbox"> Remember on this computer</label>
+    <div class="row" style="margin-top:14px;justify-content:flex-end"><button class="btn" value="cancel" type="button" id="dlgCancel">Cancel</button><button class="btn" type="button" id="b2Forget">Forget saved key</button><button class="btn primary" value="ok" type="submit">Connect</button></div>
+  </form>
+</dialog>
+
+<script type="module">
+/* ===================== Backblaze B2 S3 API: SigV4 presigned requests ===================== */
+const enc = new TextEncoder();
+const hex = buf => [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, '0')).join('');
+async function hmac(key, msg) { const k = await crypto.subtle.importKey('raw', typeof key === 'string' ? enc.encode(key) : key, { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']); return crypto.subtle.sign('HMAC', k, enc.encode(msg)); }
+async function sha256hex(s) { return hex(await crypto.subtle.digest('SHA-256', enc.encode(s))); }
+const uriEnc = s => encodeURIComponent(s).replace(/[!'()*]/g, c => '%' + c.charCodeAt(0).toString(16).toUpperCase());
+// key = object key ('' for a bucket-level request such as ListObjectsV2); extra = extra query parameters
+async function presign(cfg, key, extra = {}, expires = 900, now = new Date()) {
+  const host = cfg.endpoint.replace(/^https?:\/\//, '').replace(/\/+$/, '');
+  const region = (host.match(/^s3\.([^.]+)\./) || [, 'us-east-1'])[1];
+  const amzDate = now.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+  const date = amzDate.slice(0, 8), scope = `${date}/${region}/s3/aws4_request`;
+  const path = '/' + uriEnc(cfg.bucket) + (key ? '/' + key.split('/').map(uriEnc).join('/') : '');
+  const q = { ...extra, 'X-Amz-Algorithm': 'AWS4-HMAC-SHA256', 'X-Amz-Credential': `${cfg.keyId}/${scope}`, 'X-Amz-Date': amzDate, 'X-Amz-Expires': String(expires), 'X-Amz-SignedHeaders': 'host' };
+  const qs = Object.keys(q).sort().map(k => `${uriEnc(k)}=${uriEnc(q[k])}`).join('&');
+  const canonical = ['GET', path, qs, `host:${host}`, '', 'host', 'UNSIGNED-PAYLOAD'].join('\n');
+  const sts = ['AWS4-HMAC-SHA256', amzDate, scope, await sha256hex(canonical)].join('\n');
+  let k = await hmac('AWS4' + cfg.secret, date); k = await hmac(k, region); k = await hmac(k, 's3'); k = await hmac(k, 'aws4_request');
+  return `https://${host}${path}?${qs}&X-Amz-Signature=${hex(await hmac(k, sts))}`;
+}
+async function signerUrl(cfg, q) {
+  let r; try { r = await fetch(cfg.signer + '?' + new URLSearchParams(q)); } catch (e) { throw new Error(`Could not reach ${cfg.signer}. Open this page from the web server where b2_sign.php is installed.`); }
+  let j = {}; try { j = await r.json(); } catch (e) { throw new Error(`${cfg.signer} did not return JSON (is PHP enabled on the server?)`); }
+  if (!r.ok || !j.url) throw new Error(`${cfg.signer}: ${j.error || 'HTTP ' + r.status}`);
+  return j.url;
+}
+async function signed(key, query = {}) {
+  if (!CFG.signer) return presign(CFG, key, query);
+  if (key) return signerUrl(CFG, { op: 'get', key });
+  const q = { op: 'list', prefix: query.prefix || '' }; if (query['continuation-token']) q.token = query['continuation-token'];
+  return signerUrl(CFG, q);
+}
+async function get(key, opt = {}) {
+  const url = await signed(key, opt.query || {});
+  let res;
+  try { res = await fetch(url, opt.range ? { headers: { Range: opt.range } } : {}); }
+  catch (e) { throw new Error('Network or CORS error. The bucket needs a CORS rule that allows this page (Backblaze: Buckets › CORS Rules › share with every origin, S3 Compatible API).'); }
+  if (!res.ok && res.status !== 206) {
+    let detail = ''; try { const t = await res.text(); detail = (t.match(/<Message>([^<]*)/) || [])[1] || ''; } catch (e) {}
+    throw new Error(res.status === 403 ? `Access denied (403). Check the key ID and application key, and that the key can read this bucket. ${detail}` : res.status === 404 ? `Not found (404): ${key}` : `HTTP ${res.status} for ${key || 'bucket'} ${detail}`);
+  }
+  return res;
+}
+const getJSON = async (key, gz) => { const r = await get(key); return gz ? new Response(r.body.pipeThrough(new DecompressionStream('gzip'))).json() : r.json(); };
+window.__presign = presign;
+
+/* ===================== State, helpers ===================== */
+let CFG = null;
+const S = { manifest: null, meta: [], byId: new Map(), months: new Map(), days: new Map(), tab: 'bld' };
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const fmt = (v, d = 2) => v == null || !isFinite(v) ? '–' : v.toFixed(d);
+const fmtBytes = n => n == null ? '' : n < 1024 ? `${n} B` : n < 1048576 ? `${(n / 1024).toFixed(1)} KB` : n < 1073741824 ? `${(n / 1048576).toFixed(1)} MB` : `${(n / 1073741824).toFixed(2)} GB`;
+const pad = n => String(n).padStart(2, '0');
+const utc = ms => { const d = new Date(ms); return `${d.getUTCFullYear()}-${pad(d.getUTCMonth() + 1)}-${pad(d.getUTCDate())} ${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}`; };
+const CLUSTER_NAMES = { CRK: 'Cork', ARN: 'Aran Islands', MID: 'Midlands', DUB: 'Dublin', NTH: 'North' };
+const clusterOf = id => (S.byId.get(id)?.cluster) || id.slice(0, 3);
+function pill(kind, text) { $('pill').className = 'pill ' + kind; $('pill').innerHTML = `<i></i>${esc(text)}`; }
+
+// Channel catalogue for the 1-min building files (scale = integer divisor used by make_twin_export.py)
+const CH = [
+  ['pv_kw', 'Solar', '--pv', 1000, 'p'], ['pv_cs_kw', 'Clear-sky solar', '--pvcs', 1000, 'p', [4, 3]], ['load_kw', 'Load', '--load', 1000, 'p'], ['net_kw', 'Net import', '--net', 1000, 'p'],
+  ['hp_kw', 'Heat pump', '--hp', 1000, 'p'], ['ev_kw', 'EV', '--ev', 1000, 'p'], ['batt_kw', 'Battery (+ charge)', '--batt', 1000, 'p'],
+  ['plan_hp_kw', 'Heat pump plan', '--hp', 1000, 'p', [5, 4]], ['plan_ev_kw', 'EV plan', '--ev', 1000, 'p', [5, 4]], ['plan_batt_kw', 'Battery plan', '--batt', 1000, 'p', [5, 4]],
+  ['plan_dhw_kw', 'Hot water plan', '--tin', 1000, 'p', [5, 4]], ['plan_storage_kw', 'Storage plan', '--pvcs', 1000, 'p', [5, 4]],
+  ['soc_kwh', 'Battery SoC (kWh)', '--soc', 1000, 's'], ['temp_in_c', 'Indoor °C', '--tin', 10, 's'], ['temp_out_c', 'Outdoor °C', '--tout', 10, 's'],
+];
+const CHMAP = Object.fromEntries(CH.map(c => [c[0], c]));
+const DEFAULT_ON = new Set(['pv_kw', 'load_kw', 'net_kw', 'soc_kwh', 'temp_out_c']);
+
+/* ===================== Canvas line chart with hover and drag-zoom ===================== */
+function makeChart(box) {
+  box.innerHTML = '<canvas></canvas><canvas class="ov"></canvas><div class="tip" hidden></div>';
+  const [cv, ov] = box.querySelectorAll('canvas'), tip = box.querySelector('.tip');
+  const C = { box, cv, ov, tip, data: null, view: null, drag: null };
+  const ro = new ResizeObserver(() => draw(C)); ro.observe(box);
+  ov.addEventListener('mousemove', e => hover(C, e)); ov.addEventListener('mouseleave', () => { tip.hidden = true; clearOv(C); });
+  ov.addEventListener('mousedown', e => { if (!C.data) return; C.drag = { x0: e.offsetX }; });
+  addEventListener('mouseup', e => { if (!C.drag) return; const d = C.drag; C.drag = null; const x1 = e.clientX - ov.getBoundingClientRect().left; if (Math.abs(x1 - d.x0) > 8) { const a = C.inv(Math.min(d.x0, x1)), b = C.inv(Math.max(d.x0, x1)); C.view = [a, b]; draw(C); } clearOv(C); });
+  ov.addEventListener('dblclick', () => { C.view = null; draw(C); });
+  return C;
+}
+function clearOv(C) { const g = C.ov.getContext('2d'); g.clearRect(0, 0, C.ov.width, C.ov.height); }
+function setData(C, data) { C.data = data; C.view = null; draw(C); }
+function draw(C) {
+  const dpr = devicePixelRatio || 1, W = C.box.clientWidth, H = C.box.clientHeight;
+  for (const c of [C.cv, C.ov]) { c.width = W * dpr; c.height = H * dpr; }
+  const g = C.cv.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, W, H);
+  if (!C.data || !C.data.series.length) { g.fillStyle = css('--muted'); g.font = '13px ' + css('--f-body'); g.fillText(C.data ? 'No channels selected' : 'No data', 12, 24); return; }
+  const { x, series, unit } = C.data, n = x.length;
+  const [t0, t1] = C.view || [x[0], x[n - 1] + (x[1] - x[0] || 60000)];
+  const i0 = Math.max(0, lowerBound(x, t0) - 1), i1 = Math.min(n, lowerBound(x, t1) + 1);
+  let lo = Infinity, hi = -Infinity;
+  for (const s of series) for (let i = i0; i < i1; i++) { const v = s.y[i]; if (v === v) { if (v < lo) lo = v; if (v > hi) hi = v; } }
+  if (!isFinite(lo)) { lo = 0; hi = 1; } if (lo > 0 && unit !== '°C') lo = 0; if (hi === lo) hi = lo + 1;
+  const padY = (hi - lo) * 0.06; lo -= lo === 0 ? 0 : padY; hi += padY;
+  const L = 52, R = 12, T = 10, B = 26, pw = W - L - R, ph = H - T - B;
+  const X = t => L + (t - t0) / (t1 - t0) * pw, Y = v => T + (hi - v) / (hi - lo) * ph;
+  C.inv = px => t0 + (px - L) / pw * (t1 - t0); C.geom = { L, R, T, B, pw, ph, X, Y, t0, t1, i0, i1 };
+  // grid
+  g.strokeStyle = css('--line'); g.fillStyle = css('--muted'); g.font = '11px ' + css('--f-mono'); g.lineWidth = 1;
+  const yt = niceTicks(lo, hi, 5);
+  for (const v of yt) { const yy = Math.round(Y(v)) + .5; g.beginPath(); g.moveTo(L, yy); g.lineTo(W - R, yy); g.stroke(); g.textAlign = 'right'; g.fillText(fmtTick(v), L - 6, yy + 3.5); }
+  g.save(); g.translate(12, T + ph / 2); g.rotate(-Math.PI / 2); g.textAlign = 'center'; g.fillText(unit, 0, 0); g.restore();
+  if (lo < 0 && hi > 0) { g.strokeStyle = css('--muted'); g.globalAlpha = .5; g.beginPath(); g.moveTo(L, Y(0)); g.lineTo(W - R, Y(0)); g.stroke(); g.globalAlpha = 1; }
+  const span = t1 - t0, step = [3600e3, 3 * 3600e3, 6 * 3600e3, 12 * 3600e3, 864e5, 2 * 864e5, 7 * 864e5].find(s => span / s <= Math.max(3, pw / 90)) || 7 * 864e5;
+  g.textAlign = 'center'; g.strokeStyle = css('--line');
+  for (let t = Math.ceil(t0 / step) * step; t <= t1; t += step) { const xx = Math.round(X(t)) + .5; g.beginPath(); g.moveTo(xx, T); g.lineTo(xx, T + ph); g.stroke(); const d = new Date(t); g.fillText(step >= 864e5 || (d.getUTCHours() === 0 && span > 864e5) ? `${pad(d.getUTCDate())}/${pad(d.getUTCMonth() + 1)}` : `${pad(d.getUTCHours())}:00`, xx, H - 8); }
+  // series: min/max per pixel column when dense
+  g.save(); g.beginPath(); g.rect(L, T, pw, ph); g.clip();
+  for (const s of series) {
+    g.strokeStyle = css(s.color); g.lineWidth = s.width || 1.5; g.setLineDash(s.dash || []); g.beginPath();
+    let pen = false, colX = -1, cmin = 0, cmax = 0, last = 0;
+    const dense = (i1 - i0) > pw * 1.5;
+    for (let i = i0; i < i1; i++) {
+      const v = s.y[i]; if (v !== v) { if (dense && colX >= 0) { g.lineTo(colX, Y(cmin)); g.lineTo(colX, Y(cmax)); colX = -1; } pen = false; continue; }
+      const xx = X(x[i]);
+      if (!dense) { if (pen) g.lineTo(xx, Y(v)); else { g.moveTo(xx, Y(v)); pen = true; } continue; }
+      const px = Math.round(xx);
+      if (px !== colX) { if (colX >= 0) { g.lineTo(colX, Y(cmin)); g.lineTo(colX, Y(cmax)); g.lineTo(colX, Y(last)); } if (!pen) { g.moveTo(px, Y(v)); pen = true; } colX = px; cmin = cmax = v; }
+      else { if (v < cmin) cmin = v; if (v > cmax) cmax = v; }
+      last = v;
+    }
+    if (dense && colX >= 0) { g.lineTo(colX, Y(cmin)); g.lineTo(colX, Y(cmax)); }
+    g.stroke();
+  }
+  g.restore(); g.setLineDash([]);
+}
+function lowerBound(a, v) { let lo = 0, hi = a.length; while (lo < hi) { const m = (lo + hi) >> 1; if (a[m] < v) lo = m + 1; else hi = m; } return lo; }
+function niceTicks(lo, hi, n) { const raw = (hi - lo) / n, p = 10 ** Math.floor(Math.log10(raw)), st = [1, 2, 2.5, 5, 10].map(m => m * p).find(s => s >= raw) || raw; const out = []; for (let v = Math.ceil(lo / st) * st; v <= hi + 1e-9; v += st) out.push(+v.toFixed(10)); return out; }
+const fmtTick = v => Math.abs(v) >= 100 ? v.toFixed(0) : Math.abs(v) >= 10 ? v.toFixed(1).replace(/\.0$/, '') : v.toFixed(2).replace(/\.?0+$/, '');
+function hover(C, e) {
+  if (!C.data || !C.geom) return;
+  const { L, T, ph, pw, X, Y } = C.geom, g = C.ov.getContext('2d'), dpr = devicePixelRatio || 1;
+  g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, C.ov.width, C.ov.height);
+  if (C.drag) { g.fillStyle = css('--accent'); g.globalAlpha = .15; g.fillRect(Math.min(C.drag.x0, e.offsetX), T, Math.abs(e.offsetX - C.drag.x0), ph); g.globalAlpha = 1; }
+  if (e.offsetX < L || e.offsetX > L + pw) { C.tip.hidden = true; return; }
+  const t = C.inv(e.offsetX), x = C.data.x; let i = lowerBound(x, t); if (i > 0 && (i >= x.length || t - x[i - 1] < x[i] - t)) i--;
+  if (i < 0 || i >= x.length) return;
+  const xx = X(x[i]); g.strokeStyle = css('--muted'); g.lineWidth = 1; g.beginPath(); g.moveTo(xx, T); g.lineTo(xx, T + ph); g.stroke();
+  for (const s of C.data.series) { const v = s.y[i]; if (v === v) { g.fillStyle = css(s.color); g.beginPath(); g.arc(xx, Y(v), 3, 0, 7); g.fill(); } }
+  C.tip.innerHTML = `<div class="mono">${utc(x[i])} UTC</div>` + C.data.series.map(s => `<div><i style="display:inline-block;width:10px;height:3px;background:${css(s.color)};vertical-align:middle;margin-right:5px"></i>${esc(s.name)} <b>${fmt(s.y[i], s.dp ?? 2)}</b></div>`).join('');
+  C.tip.hidden = false; const bw = C.box.clientWidth, tw = C.tip.offsetWidth;
+  C.tip.style.left = (e.offsetX + 14 + tw > bw ? e.offsetX - tw - 14 : e.offsetX + 14) + 'px'; C.tip.style.top = Math.max(0, e.offsetY - 20) + 'px';
+}
+const legendHTML = series => series.map(s => `<span><i style="background:${css(s.color)}${s.dash ? ';opacity:.6' : ''}"></i>${esc(s.name)}</span>`).join('');
+
+/* ===================== Connect ===================== */
+const dlg = $('dlg');
+$('connectBtn').addEventListener('click', () => dlg.showModal());
+$('dlgCancel').addEventListener('click', () => dlg.close());
+$('b2Forget').addEventListener('click', () => { try { localStorage.removeItem('rdfViewerB2'); } catch (e) {} $('b2Key').value = ''; $('b2Secret').value = ''; $('b2Remember').checked = false; });
+$('b2Form').addEventListener('submit', e => {
+  e.preventDefault();
+  const cfg = { endpoint: $('b2Endpoint').value.trim(), bucket: $('b2Bucket').value.trim(), root: $('b2Root').value.trim().replace(/^\/+/, '').replace(/([^/])$/, '$1/'), keyId: $('b2Key').value.trim(), secret: $('b2Secret').value.trim() };
+  if (!cfg.endpoint || !cfg.bucket || !cfg.keyId || !cfg.secret) { alert('Endpoint, bucket, key ID and application key are all needed.'); return; }
+  try { if ($('b2Remember').checked) localStorage.setItem('rdfViewerB2', JSON.stringify(cfg)); else localStorage.removeItem('rdfViewerB2'); } catch (err) {}
+  dlg.close(); connect(cfg);
+});
+async function connect(cfg) {
+  CFG = cfg; pill('busy', 'Connecting…'); $('notConnected').className = 'msg'; $('notConnected').textContent = 'Reading twin/manifest.json and twin/meta.json …'; $('notConnected').hidden = false;
+  S.months.clear(); S.days.clear();
+  try {
+    S.manifest = await getJSON(cfg.root + 'twin/manifest.json');
+    S.meta = await getJSON(cfg.root + 'twin/meta.json');
+  } catch (e) {
+    S.manifest = null;
+    pill('err', 'Twin export missing');
+    $('notConnected').className = 'msg err';
+    $('notConnected').textContent = `${e.message} Charts need the twin export (make_twin_export.py). You can still browse the bucket in Files.`;
+    try { await listDir(cfg.root); pill('live', 'Connected (files only)'); } catch (e2) { pill('err', 'Connection failed'); $('notConnected').textContent = e2.message; return; }
+    showTab('files'); return;
+  }
+  S.byId = new Map(S.meta.map(r => [String(r.building_id), r]));
+  pill('live', `Live · ${S.manifest.buildings.length} buildings`);
+  $('notConnected').hidden = true;
+  initBuilding(); initFleet(); listDir(cfg.root).catch(() => {});
+  showTab(S.tab);
+}
+// Connect automatically through the server-side signer (b2_sign.php next to this page)
+const BUILTIN_B2 = { endpoint: 's3.eu-central-003.backblazeb2.com', bucket: 'eig-hrsd-rdfusion', root: 'hrsd-rd_fusion-v0.1/', signer: 'b2_sign.php' };  // key stays on the server in b2_sign.php
+try { localStorage.removeItem('rdfViewerB2'); } catch (e) {}
+connect(BUILTIN_B2);
+
+/* ===================== Tabs ===================== */
+document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => showTab(t.dataset.tab)));
+function showTab(name) {
+  S.tab = name;
+  document.querySelectorAll('.tab').forEach(t => t.setAttribute('aria-selected', t.dataset.tab === name));
+  for (const n of ['bld', 'fleet', 'files']) $('tab-' + n).hidden = !(n === name && (CFG && (S.manifest || n === 'files')));
+  if (name === 'fleet' && S.manifest) loadFleet();
+}
+
+/* ===================== Building tab ===================== */
+const cPower = makeChart($('cPower')), cState = makeChart($('cState'));
+let BREC = null;
+function initBuilding() {
+  const ids = S.manifest.buildings;
+  const clusters = [...new Set(ids.map(clusterOf))];
+  $('fCluster').innerHTML = '<option value="">All clusters</option>' + clusters.map(c => `<option value="${c}">${esc(CLUSTER_NAMES[c] || c)}</option>`).join('');
+  $('fMonth').innerHTML = S.manifest.months.map(m => `<option>${m}</option>`).join('');
+  const pref = S.manifest.months.find(m => m === '2025-07') || S.manifest.months[0]; $('fMonth').value = pref;
+  $('chans').innerHTML = CH.map(([k, n, col]) => `<label><input type="checkbox" value="${k}" ${DEFAULT_ON.has(k) ? 'checked' : ''}><i style="background:${css(col)}"></i>${esc(n)}</label>`).join('');
+  fillBuildings(); fillDays(); loadBuilding();
+}
+function fillBuildings() {
+  const c = $('fCluster').value, q = $('fSearch').value.trim().toUpperCase(), cur = $('fBld').value;
+  const ids = S.manifest.buildings.filter(id => (!c || clusterOf(id) === c) && (!q || id.toUpperCase().includes(q)));
+  $('fBld').innerHTML = ids.map(id => { const m = S.byId.get(id) || {}; return `<option value="${id}">${id}${m.assets ? ' · ' + esc(m.assets) : ''}</option>`; }).join('');
+  $('fBld').value = ids.includes(cur) ? cur : ids[0] || '';
+}
+function fillDays() {
+  const m = $('fMonth').value, days = S.manifest.days.filter(d => d.startsWith(m)), cur = $('fFrom').value;
+  $('fFrom').innerHTML = days.map(d => `<option>${d}</option>`).join('');
+  if (days.includes(cur)) $('fFrom').value = cur;
+}
+$('fCluster').addEventListener('change', () => { fillBuildings(); loadBuilding(); });
+$('fSearch').addEventListener('input', () => { fillBuildings(); });
+$('fSearch').addEventListener('change', () => loadBuilding());
+$('fBld').addEventListener('change', () => loadBuilding());
+$('fMonth').addEventListener('change', () => { fillDays(); loadBuilding(); });
+$('fFrom').addEventListener('change', renderBuilding); $('fSpan').addEventListener('change', renderBuilding);
+$('chans').addEventListener('change', renderBuilding);
+$('bReset').addEventListener('click', () => { cPower.view = cState.view = null; draw(cPower); draw(cState); });
+let bSeq = 0;
+async function loadBuilding() {
+  const id = $('fBld').value, month = $('fMonth').value; if (!id || !month) return;
+  const key = `${id}|${month}`, seq = ++bSeq;
+  $('bTitle').textContent = `${id} · ${month}`; $('bHint').textContent = 'Loading 1-min data …';
+  renderMeta(id);
+  try {
+    if (!S.months.has(key)) S.months.set(key, await getJSON(`${CFG.root}twin/b/${id}/${month}.json.gz`, true));
+    if (seq !== bSeq) return;
+    BREC = S.months.get(key); renderBuilding();
+  } catch (e) { if (seq !== bSeq) return; BREC = null; $('bHint').textContent = e.message; setData(cPower, null); setData(cState, null); $('bStats').innerHTML = ''; $('bDaily').innerHTML = ''; }
+}
+function renderMeta(id) {
+  const m = S.byId.get(id) || {};
+  $('metaKV').innerHTML = Object.entries(m).filter(([k, v]) => v != null && v !== '').map(([k, v]) => `<dt>${esc(k)}</dt><dd class="${typeof v === 'number' ? 'mono' : ''}">${esc(typeof v === 'number' ? +v.toFixed(5) : v)}</dd>`).join('') || '<dd>No metadata</dd>';
+}
+function sliceRec() {
+  const rec = BREC, t0 = Date.parse(rec.start), from = $('fFrom').value || rec.start.slice(0, 10), span = +$('fSpan').value;
+  let a = Math.max(0, Math.round((Date.parse(from + 'T00:00:00Z') - t0) / 60000)); if (span === 31) a = 0;
+  const b = span === 31 ? rec.n : Math.min(rec.n, a + span * 1440);
+  const x = new Float64Array(b - a); for (let i = 0; i < x.length; i++) x[i] = t0 + (a + i) * 60000;
+  const col = k => { const arr = rec.cols[k]; if (!arr) return null; const sc = CHMAP[k][3], o = new Float32Array(b - a); for (let i = 0; i < o.length; i++) { const v = arr[a + i]; o[i] = v == null ? NaN : v / sc; } return o; };
+  return { x, col };
+}
+function renderBuilding() {
+  if (!BREC) return;
+  const { x, col } = sliceRec(), on = new Set([...$('chans').querySelectorAll('input:checked')].map(i => i.value));
+  const avail = new Set(Object.keys(BREC.cols));
+  $('chans').querySelectorAll('label').forEach(l => { const k = l.querySelector('input').value; l.style.opacity = avail.has(k) ? 1 : .4; l.title = avail.has(k) ? '' : 'Not in this building’s data'; });
+  const mk = kind => CH.filter(c => c[4] === kind && on.has(c[0]) && avail.has(c[0])).map(([k, n, color, , , dash]) => ({ name: n, color, dash, y: col(k), dp: k.startsWith('temp') ? 1 : 2 }));
+  const P = mk('p'), St = mk('s');
+  setData(cPower, { x, series: P, unit: 'kW' }); $('lPower').innerHTML = legendHTML(P);
+  $('stateWrap').hidden = !St.length; if (St.length) { setData(cState, { x, series: St, unit: St.every(s => s.name.includes('°C')) ? '°C' : 'kWh / °C' }); $('lState').innerHTML = legendHTML(St); }
+  $('bHint').textContent = `1-min data, ${x.length.toLocaleString()} points, times in UTC (minute m covers [m, m+1)). Drag across the chart to zoom, double-click to reset.`;
+  // daily summary + headline stats
+  const pv = col('pv_kw'), load = col('load_kw'), net = col('net_kw'), rows = [];
+  const tot = { pv: 0, load: 0, imp: 0, exp: 0, peak: 0, ok: 0, n: 0 };
+  for (let d = 0; d < x.length; d += 1440) {
+    const r = { date: new Date(x[d]).toISOString().slice(0, 10), pv: 0, load: 0, imp: 0, exp: 0, peak: 0, ok: 0, n: Math.min(1440, x.length - d) };
+    for (let i = d; i < d + r.n; i++) {
+      if (pv && pv[i] === pv[i]) r.pv += pv[i] / 60; if (load && load[i] === load[i]) r.load += load[i] / 60;
+      if (net && net[i] === net[i]) { r.ok++; if (net[i] > 0) r.imp += net[i] / 60; else r.exp -= net[i] / 60; if (net[i] > r.peak) r.peak = net[i]; }
+    }
+    rows.push(r); for (const k of ['pv', 'load', 'imp', 'exp', 'ok', 'n']) tot[k] += r[k]; tot.peak = Math.max(tot.peak, r.peak);
+  }
+  const sc = r => r.pv > 0 ? Math.max(0, (r.pv - r.exp) / r.pv * 100) : NaN;
+  $('bStats').innerHTML = [[fmt(tot.pv, 1) + ' kWh', 'Solar'], [fmt(tot.load, 1) + ' kWh', 'Load'], [fmt(tot.imp, 1) + ' kWh', 'Imported'], [fmt(tot.exp, 1) + ' kWh', 'Exported'], [fmt(sc(tot), 0) + ' %', 'Solar used on site'], [fmt(tot.peak, 2) + ' kW', 'Peak import'], [fmt(tot.ok / Math.max(1, tot.n) * 100, 1) + ' %', 'Complete']]
+    .map(([v, l]) => `<div class="stat"><b>${v}</b><span>${l}</span></div>`).join('');
+  $('bDaily').innerHTML = '<thead><tr><th>Date</th><th class="n">Solar kWh</th><th class="n">Load kWh</th><th class="n">Import kWh</th><th class="n">Export kWh</th><th class="n">Solar used on site %</th><th class="n">Peak import kW</th><th class="n">Complete %</th></tr></thead><tbody>' +
+    rows.map(r => `<tr><td class="mono">${r.date}</td><td class="n">${fmt(r.pv, 2)}</td><td class="n">${fmt(r.load, 2)}</td><td class="n">${fmt(r.imp, 2)}</td><td class="n">${fmt(r.exp, 2)}</td><td class="n">${fmt(sc(r), 0)}</td><td class="n">${fmt(r.peak, 2)}</td><td class="n">${fmt(r.ok / r.n * 100, 1)}</td></tr>`).join('') + '</tbody>';
+}
+$('bCsv').addEventListener('click', () => {
+  if (!BREC) return;
+  const { x, col } = sliceRec(), keys = CH.map(c => c[0]).filter(k => BREC.cols[k]), cols = keys.map(col);
+  const lines = ['timestamp_utc,' + keys.join(',')];
+  for (let i = 0; i < x.length; i++) lines.push(new Date(x[i]).toISOString().slice(0, 16) + 'Z,' + cols.map(c => c[i] === c[i] ? +c[i].toFixed(4) : '').join(','));
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([lines.join('\n')], { type: 'text/csv' }));
+  a.download = `${BREC.id}_${x.length ? new Date(x[0]).toISOString().slice(0, 10) : BREC.month}_1min.csv`; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+});
+
+/* ===================== Fleet day tab ===================== */
+const cFleet = makeChart($('cFleet'));
+let fleetSort = { k: 'id', dir: 1 }, fleetRows = [];
+function initFleet() {
+  const d = S.manifest.days; $('dDate').min = d[0]; $('dDate').max = d.at(-1);
+  if (!$('dDate').value) $('dDate').value = d.includes('2025-07-14') ? '2025-07-14' : d[Math.floor(d.length / 2)];
+}
+$('dDate').addEventListener('change', loadFleet); $('dChan').addEventListener('change', renderFleet); $('dGroup').addEventListener('change', renderFleet);
+$('dPrev').addEventListener('click', () => stepDay(-1)); $('dNext').addEventListener('click', () => stepDay(1));
+$('dFilter').addEventListener('input', renderFleetTable);
+function stepDay(k) { const d = S.manifest.days, i = d.indexOf($('dDate').value); const j = i < 0 ? 0 : Math.min(d.length - 1, Math.max(0, i + k)); $('dDate').value = d[j]; loadFleet(); }
+let fSeq = 0;
+async function loadFleet() {
+  const date = $('dDate').value; if (!date || !S.manifest) return;
+  const seq = ++fSeq; $('dTitle').textContent = `Fleet · ${date}`;
+  if (!S.manifest.days.includes(date)) { $('dStats').innerHTML = `<div class="msg">No data for ${date}. The release covers ${S.manifest.days[0]} to ${S.manifest.days.at(-1)}.</div>`; setData(cFleet, null); $('dTable').innerHTML = ''; return; }
+  try { if (!S.days.has(date)) S.days.set(date, await getJSON(`${CFG.root}twin/day/${date}.json.gz`, true)); }
+  catch (e) { $('dStats').innerHTML = `<div class="msg err">${esc(e.message)}</div>`; return; }
+  if (seq === fSeq) renderFleet();
+}
+function renderFleet() {
+  const D = S.days.get($('dDate').value); if (!D) return;
+  const ch = $('dChan').value, arr = D.ch[ch] || [], n = 288, x = new Float64Array(n), t0 = Date.parse(D.date + 'T00:00:00Z');
+  for (let i = 0; i < n; i++) x[i] = t0 + i * 300000;
+  const groups = $('dGroup').value === 'fleet' ? { ALL: D.ids.map((_, i) => i) } : D.ids.reduce((g, id, i) => ((g[clusterOf(id)] ||= []).push(i), g), {});
+  const series = Object.entries(groups).map(([g, idx]) => { const y = new Float32Array(n); for (let t = 0; t < n; t++) { let s = 0, c = 0; for (const i of idx) { const v = arr[i]?.[t]; if (v != null) { s += v; c++; } } y[t] = c ? s / 1000 : NaN; } return { name: g === 'ALL' ? 'All buildings' : `${CLUSTER_NAMES[g] || g} (${idx.length})`, color: g === 'ALL' ? '--net' : `--c-${g}`, y, width: 1.8 }; });
+  setData(cFleet, { x, series, unit: 'kW' }); $('lFleet').innerHTML = legendHTML(series);
+  // per-building energy for the day (5-min means → kWh = W/1000/12)
+  const e = (k, i, f) => { const a = D.ch[k]?.[i]; if (!a) return NaN; let s = 0; for (const v of a) if (v != null) s += f(v); return s / 12000; };
+  fleetRows = D.ids.map((id, i) => ({ id, cl: clusterOf(id), type: S.byId.get(id)?.building_type || (/-C\d/.test(id) ? 'commercial' : 'residential'), assets: S.byId.get(id)?.assets || '',
+    pv: e('pv_kw', i, v => v), load: e('load_kw', i, v => v), imp: e('net_kw', i, v => Math.max(v, 0)), exp: e('net_kw', i, v => Math.max(-v, 0)), peak: Math.max(...(D.ch.net_kw?.[i] || [0]).map(v => v ?? -Infinity)) / 1000 }));
+  const sum = k => fleetRows.reduce((a, r) => a + (isFinite(r[k]) ? r[k] : 0), 0);
+  $('dStats').innerHTML = [[D.ids.length, 'Buildings'], [fmt(sum('pv') / 1000, 2) + ' MWh', 'Solar'], [fmt(sum('load') / 1000, 2) + ' MWh', 'Load'], [fmt(sum('imp') / 1000, 2) + ' MWh', 'Imported'], [fmt(sum('exp') / 1000, 2) + ' MWh', 'Exported']]
+    .map(([v, l]) => `<div class="stat"><b>${v}</b><span>${l}</span></div>`).join('');
+  renderFleetTable();
+}
+function renderFleetTable() {
+  const q = $('dFilter').value.trim().toUpperCase(), { k, dir } = fleetSort;
+  const rows = fleetRows.filter(r => !q || r.id.toUpperCase().includes(q) || r.cl.includes(q) || (CLUSTER_NAMES[r.cl] || '').toUpperCase().includes(q))
+    .sort((a, b) => (typeof a[k] === 'string' ? a[k].localeCompare(b[k]) : (isFinite(a[k]) ? a[k] : -1e9) - (isFinite(b[k]) ? b[k] : -1e9)) * dir);
+  const H = [['id', 'Building', ''], ['cl', 'Cluster', ''], ['assets', 'Assets', ''], ['pv', 'Solar kWh', 'n'], ['load', 'Load kWh', 'n'], ['imp', 'Import kWh', 'n'], ['exp', 'Export kWh', 'n'], ['peak', 'Peak import kW', 'n']];
+  $('dTable').innerHTML = '<thead><tr>' + H.map(([kk, t, c]) => `<th class="sort ${c}" data-k="${kk}">${t}${kk === k ? (dir > 0 ? ' ▲' : ' ▼') : ''}</th>`).join('') + '</tr></thead><tbody>' +
+    rows.map(r => `<tr class="click" data-id="${r.id}"><td class="mono">${r.id}</td><td>${esc(CLUSTER_NAMES[r.cl] || r.cl)}</td><td>${esc(r.assets)}</td><td class="n">${fmt(r.pv, 2)}</td><td class="n">${fmt(r.load, 2)}</td><td class="n">${fmt(r.imp, 2)}</td><td class="n">${fmt(r.exp, 2)}</td><td class="n">${fmt(r.peak, 2)}</td></tr>`).join('') + '</tbody>';
+}
+$('dTable').addEventListener('click', e => {
+  const th = e.target.closest('th[data-k]'); if (th) { const k = th.dataset.k; fleetSort = { k, dir: fleetSort.k === k ? -fleetSort.dir : (k === 'id' || k === 'cl' || k === 'assets' ? 1 : -1) }; renderFleetTable(); return; }
+  const tr = e.target.closest('tr[data-id]'); if (!tr) return;
+  const date = $('dDate').value; $('fCluster').value = ''; $('fSearch').value = ''; fillBuildings(); $('fBld').value = tr.dataset.id;
+  $('fMonth').value = date.slice(0, 7); fillDays(); $('fFrom').value = date; $('fSpan').value = '1'; showTab('bld'); loadBuilding();
+});
+
+/* ===================== Files tab: ListObjectsV2 + previews ===================== */
+let dirState = { prefix: '', token: null, items: [] };
+async function listDir(prefix, more) {
+  if (!more) dirState = { prefix, token: null, items: [] };
+  const q = { 'list-type': '2', prefix, delimiter: '/', 'max-keys': '500' }; if (more && dirState.token) q['continuation-token'] = dirState.token;
+  const xml = new DOMParser().parseFromString(await (await get('', { query: q })).text(), 'application/xml');
+  const t = (el, n) => el.getElementsByTagName(n)[0]?.textContent;
+  if (xml.getElementsByTagName('Error').length) throw new Error('Listing failed: ' + (t(xml, 'Message') || 'unknown error'));
+  for (const p of xml.getElementsByTagName('CommonPrefixes')) dirState.items.push({ dir: true, key: t(p, 'Prefix') });
+  for (const c of xml.getElementsByTagName('Contents')) { const key = t(c, 'Key'); if (key !== prefix) dirState.items.push({ key, size: +t(c, 'Size'), mod: t(c, 'LastModified') }); }
+  dirState.token = t(xml, 'IsTruncated') === 'true' ? t(xml, 'NextContinuationToken') : null;
+  renderDir();
+}
+function renderDir() {
+  const { prefix, items } = dirState, parts = prefix.split('/').filter(Boolean);
+  $('crumbs').innerHTML = `<button type="button" data-p="${CFG.signer ? esc(CFG.root) : ''}">${esc(CFG.bucket)}</button>` + parts.map((p, i) => ` / <button type="button" data-p="${esc(parts.slice(0, i + 1).join('/') + '/')}">${esc(p)}</button>`).join('');
+  const name = k => k.slice(prefix.length);
+  $('fileTable').innerHTML = '<thead><tr><th>Name</th><th class="n">Size</th><th>Modified (UTC)</th></tr></thead><tbody>' +
+    (prefix && !(CFG.signer && prefix === CFG.root) ? `<tr class="click" data-up="1"><td class="dir">..</td><td></td><td></td></tr>` : '') +
+    items.map((it, i) => `<tr class="click" data-i="${i}"><td class="${it.dir ? 'dir' : 'mono'}" title="${esc(it.key)}">${it.dir ? '📁 ' : ''}${esc(name(it.key))}</td><td class="n">${it.dir ? '' : fmtBytes(it.size)}</td><td class="mono">${it.mod ? it.mod.slice(0, 16).replace('T', ' ') : ''}</td></tr>`).join('') + '</tbody>';
+  $('moreBtn').hidden = !dirState.token; $('fileCount').textContent = `${items.length}${dirState.token ? '+' : ''} items`;
+}
+$('crumbs').addEventListener('click', e => { const b = e.target.closest('[data-p]'); if (b) listDir(b.dataset.p).catch(err => fileErr(err)); });
+$('moreBtn').addEventListener('click', () => listDir(dirState.prefix, true).catch(err => fileErr(err)));
+$('fileTable').addEventListener('click', e => {
+  const tr = e.target.closest('tr'); if (!tr) return;
+  if (tr.dataset.up) { const p = dirState.prefix.split('/').filter(Boolean); p.pop(); listDir(p.length ? p.join('/') + '/' : '').catch(err => fileErr(err)); return; }
+  const it = dirState.items[+tr.dataset.i]; if (!it) return;
+  if (it.dir) listDir(it.key).catch(err => fileErr(err)); else preview(it);
+});
+function fileErr(e) { $('pvBody').innerHTML = `<div class="msg err">${esc(e.message)}</div>`; }
+const TEXT_MAX = 200000;
+let pvSeq = 0;
+async function preview(it) {
+  const seq = ++pvSeq, key = it.key, lower = key.toLowerCase(), base = key.split('/').pop();
+  $('pvTitle').textContent = base; $('pvInfo').textContent = `${key} · ${fmtBytes(it.size)}`; $('pvBody').innerHTML = '<p class="hint">Loading …</p>';
+  const dl = $('dlLink'); dl.href = await signed(key); dl.setAttribute('download', base); dl.hidden = false;
+  try {
+    let html;
+    if (lower.endsWith('.parquet')) html = await previewParquet(it);
+    else if (lower.endsWith('.json.gz') || lower.endsWith('.gz')) { const r = await get(key); const txt = await new Response(r.body.pipeThrough(new DecompressionStream('gzip'))).text(); html = textBlock(prettyMaybe(txt)); }
+    else if (/\.(json|geojson|csv|tsv|txt|md|yaml|yml|cff|toml|py|ipynb|log|xml|html|sql|cfg|ini)$|(^|\/)(license|readme|notice|citation)[^/]*$/i.test(lower) || it.size < 20000) {
+      const r = await get(key, it.size > TEXT_MAX ? { range: `bytes=0-${TEXT_MAX - 1}` } : {}); let txt = await r.text(); if (txt.length > TEXT_MAX) txt = txt.slice(0, TEXT_MAX);
+      html = /\.(csv|tsv)$/i.test(lower) ? csvTable(txt, lower.endsWith('.tsv') ? '\t' : ',') : textBlock(lower.endsWith('.json') ? prettyMaybe(txt) : txt);
+      if (it.size > TEXT_MAX) html = `<p class="hint">Showing the first ${fmtBytes(TEXT_MAX)} of ${fmtBytes(it.size)}.</p>` + html;
+    } else html = `<div class="msg">No preview for this file type. Use Download.</div>`;
+    if (seq === pvSeq) $('pvBody').innerHTML = html;
+  } catch (e) { if (seq === pvSeq) fileErr(e); }
+}
+const prettyMaybe = t => { if (t.length > TEXT_MAX) return t.slice(0, TEXT_MAX) + '\n…'; try { return JSON.stringify(JSON.parse(t), null, 2).slice(0, TEXT_MAX); } catch (e) { return t; } };
+const textBlock = t => `<pre class="preview">${esc(t)}</pre>`;
+function csvTable(txt, sep) {
+  const lines = txt.split(/\r?\n/).filter(Boolean).slice(0, 301), rows = lines.map(l => l.split(sep));
+  return `<p class="hint">First ${rows.length - 1} rows.</p><div class="tablewrap"><table><thead><tr>${rows[0].map(h => `<th>${esc(h)}</th>`).join('')}</tr></thead><tbody>` +
+    rows.slice(1).map(r => `<tr>${r.map(c => `<td class="${isFinite(+c) && c !== '' ? 'n' : ''}">${esc(c)}</td>`).join('')}</tr>`).join('') + '</tbody></table></div>';
+}
+let HP = null;
+async function hyparquet() {
+  if (HP) return HP;
+  const mod = await import('https://cdn.jsdelivr.net/npm/hyparquet@1.31.1/src/index.js');
+  let compressors = {}; try { compressors = (await import('https://cdn.jsdelivr.net/npm/hyparquet-compressors@1.1.1/+esm')).compressors || {}; } catch (e) { console.warn('hyparquet-compressors unavailable; only snappy and uncompressed files can be read', e); }
+  return HP = { ...mod, compressors };
+}
+async function parquetBuffer(it) {
+  // Range reads when the bucket CORS allows them; otherwise fetch the whole file (up to 150 MB)
+  try {
+    const r = await get(it.key, { range: 'bytes=0-3' });
+    if (r.status === 206) return { byteLength: it.size, slice: async (s, e) => (await get(it.key, { range: `bytes=${s}-${(e ?? it.size) - 1}` })).arrayBuffer() };
+  } catch (e) { if (!/CORS|Network/.test(e.message)) throw e; }
+  if (it.size > 150e6) throw new Error('This file is large and the bucket does not allow range reads from the browser. Add "range" to the CORS allowed headers, or download it.');
+  const buf = await (await get(it.key)).arrayBuffer();
+  return { byteLength: buf.byteLength, slice: (s, e) => buf.slice(s, e) };
+}
+async function previewParquet(it) {
+  const P = await hyparquet(), file = await parquetBuffer(it);
+  const md = await P.parquetMetadataAsync(file), nrows = Number(md.num_rows);
+  const leaves = md.schema.filter(s => s.num_children == null && s.name !== md.schema[0].name);
+  const codec = md.row_groups[0]?.columns?.[0]?.meta_data?.codec || 'UNCOMPRESSED';
+  const rows = await P.parquetReadObjects({ file, metadata: md, compressors: P.compressors, rowStart: 0, rowEnd: Math.min(nrows, 200) });
+  const cols = rows.length ? Object.keys(rows[0]) : leaves.map(l => l.name);
+  const cell = v => v == null ? '' : v instanceof Date ? v.toISOString().replace('.000Z', 'Z') : typeof v === 'bigint' ? v.toString() : typeof v === 'number' ? (Number.isInteger(v) ? v : +v.toFixed(5)) : typeof v === 'object' ? JSON.stringify(v, (k, x) => typeof x === 'bigint' ? x.toString() : x) : v;
+  const schema = `<details style="margin-bottom:10px"><summary class="hint" style="cursor:pointer">${leaves.length} columns · ${nrows.toLocaleString()} rows · ${md.row_groups.length} row group(s) · ${esc(codec)}</summary><dl class="kv" style="margin-top:8px">` +
+    leaves.map(l => `<dt class="mono">${esc(l.name)}</dt><dd>${esc(l.logical_type?.type || l.converted_type || l.type)}</dd>`).join('') + '</dl></details>';
+  return schema + `<p class="hint">First ${rows.length} rows.</p><div class="tablewrap"><table><thead><tr>${cols.map(c => `<th>${esc(c)}</th>`).join('')}</tr></thead><tbody>` +
+    rows.map(r => `<tr>${cols.map(c => { const v = cell(r[c]); return `<td class="${typeof v === 'number' ? 'n' : ''}">${esc(v)}</td>`; }).join('')}</tr>`).join('') + '</tbody></table></div>';
+}
+
+window.__viewer = { S, connect, showTab, get CFG() { return CFG; } };
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { draw(cPower); draw(cState); draw(cFleet); });
+</script>
+</body>
+</html>

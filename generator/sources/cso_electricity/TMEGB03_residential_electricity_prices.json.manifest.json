@@ -1,0 +1,19 @@
+{
+  "bytes": 5219,
+  "encoding": "utf-8",
+  "http_status": 200,
+  "intended_use": "reference",
+  "key": "cso.electricity.tmegb03_residential_electricity_prices",
+  "licence": "CC-BY 4.0 (CSO Open Data; https://www.cso.ie/en/aboutus/termsandconditions/)",
+  "model_development_exposure": "none",
+  "note": "Raw input, read-only after download. Excluded from git; this manifest is committed in its place.",
+  "publisher": "Central Statistics Office (Ireland)",
+  "relpath": "cso_electricity/TMEGB03_residential_electricity_prices.json",
+  "retrieved_at": "2026-10-12",
+  "retrieved_at_utc": "2026-10-12T19:53:37Z",
+  "sha256": "33a5bda1bec210641b0217bf41748daade00f65c3982547209c14762f8dd661d",
+  "substitute_flag": null,
+  "title": "TMEGB03: residential electricity prices in euro per kWh, by year, semester, pricing basis and Eurostat household electricity consumption band (DA to DE)",
+  "url": "https://ws.cso.ie/public/api.restful/PxStat.Data.Cube_API.ReadDataset/TMEGB03/JSON-stat/2.0/en",
+  "used_for": "The INDEPENDENT level check on D27's unit rates. Band DC is 2,500 to 5,000 kWh a year, which is where an Irish domestic meter sits, and the series is published per semester, so the 2022 half-year prices bracket the supplier's own 1 May 2022 schedule. Published by the CSO and not by the supplier whose rates are on the card, which is what makes it a check rather than a restatement. Exposure `none`."
+}

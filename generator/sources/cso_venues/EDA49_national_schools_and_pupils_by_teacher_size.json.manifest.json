@@ -1,0 +1,19 @@
+{
+  "bytes": 11990,
+  "encoding": "utf-8",
+  "http_status": 200,
+  "intended_use": "calibration",
+  "key": "cso.education.eda49_schools_and_pupils_by_teacher_size",
+  "licence": "CC-BY 4.0 (CSO Open Data; https://www.cso.ie/en/aboutus/termsandconditions/)",
+  "model_development_exposure": "design",
+  "note": "Raw input, read-only after download. Excluded from git; this manifest is committed in its place.",
+  "publisher": "Central Statistics Office (Ireland)",
+  "relpath": "cso_venues/EDA49_national_schools_and_pupils_by_teacher_size.json",
+  "retrieved_at": "2026-10-11",
+  "retrieved_at_utc": "2026-10-11T09:32:53Z",
+  "sha256": "1a6d0f3663646c356160991c025b959dbdc4417b694bd63483b521bbd3186c56",
+  "substitute_flag": null,
+  "title": "EDA49: national schools and pupils in national schools, by teacher size of school",
+  "url": "https://ws.cso.ie/public/api.restful/PxStat.Data.Cube_API.ReadDataset/EDA49/JSON-stat/2.0/en",
+  "used_for": "WP7 venues. Mean pupils per national school, from the published pupil count over the published school count, which sizes the town's school venues. Exposure is `design` and not `none`: the venue capacities are DERIVED from it, so it can never afterwards be used to validate them (7.1, I-058). The number of schools in Cobh and their siting stay [A] (A-50)."
+}

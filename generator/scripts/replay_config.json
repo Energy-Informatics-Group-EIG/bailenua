@@ -1,0 +1,118 @@
+{
+  "label": "replay_2015_2026",
+  "master_seed": 20251010,
+  "slice_kind": "town",
+  "solve_network": true,
+  "with_venues": true,
+  "omit_datasets": [],
+  "out_root": "work/replay_2015_2026",
+  "rss_gate_mb": 18432,
+  "segments": [
+    {
+      "name": "warmup_2014",
+      "year": 2014,
+      "start": "2014-12-01",
+      "end": "2014-12-31",
+      "sim_day_offset": 0,
+      "discard_output": true
+    },
+    {
+      "name": "2015",
+      "year": 2015,
+      "start": "2015-01-01",
+      "end": "2015-12-31",
+      "sim_day_offset": 31,
+      "discard_output": false
+    },
+    {
+      "name": "2016",
+      "year": 2016,
+      "start": "2016-01-01",
+      "end": "2016-12-31",
+      "sim_day_offset": 396,
+      "discard_output": false
+    },
+    {
+      "name": "2017",
+      "year": 2017,
+      "start": "2017-01-01",
+      "end": "2017-12-31",
+      "sim_day_offset": 762,
+      "discard_output": false
+    },
+    {
+      "name": "2018",
+      "year": 2018,
+      "start": "2018-01-01",
+      "end": "2018-12-31",
+      "sim_day_offset": 1127,
+      "discard_output": false
+    },
+    {
+      "name": "2019",
+      "year": 2019,
+      "start": "2019-01-01",
+      "end": "2019-12-31",
+      "sim_day_offset": 1492,
+      "discard_output": false
+    },
+    {
+      "name": "2020",
+      "year": 2020,
+      "start": "2020-01-01",
+      "end": "2020-12-31",
+      "sim_day_offset": 1857,
+      "discard_output": false
+    },
+    {
+      "name": "2021",
+      "year": 2021,
+      "start": "2021-01-01",
+      "end": "2021-12-31",
+      "sim_day_offset": 2223,
+      "discard_output": false
+    },
+    {
+      "name": "2022",
+      "year": 2022,
+      "start": "2022-01-01",
+      "end": "2022-12-31",
+      "sim_day_offset": 2588,
+      "discard_output": false
+    },
+    {
+      "name": "2023",
+      "year": 2023,
+      "start": "2023-01-01",
+      "end": "2023-12-31",
+      "sim_day_offset": 2953,
+      "discard_output": false
+    },
+    {
+      "name": "2024",
+      "year": 2024,
+      "start": "2024-01-01",
+      "end": "2024-12-31",
+      "sim_day_offset": 3318,
+      "discard_output": false
+    },
+    {
+      "name": "2025",
+      "year": 2025,
+      "start": "2025-01-01",
+      "end": "2025-12-31",
+      "sim_day_offset": 3684,
+      "discard_output": false
+    },
+    {
+      "name": "2026",
+      "year": 2026,
+      "start": "2026-01-01",
+      "end": "2026-09-30",
+      "sim_day_offset": 4049,
+      "discard_output": false
+    }
+  ],
+  "rss_warn_mb": 8192,
+  "d18_era_gating": true
+}

@@ -1,0 +1,19 @@
+{
+  "bytes": 4863,
+  "encoding": "utf-8",
+  "http_status": 200,
+  "intended_use": "calibration",
+  "key": "cso.electricity.dbere101_by_dwelling_ber",
+  "licence": "CC-BY 4.0 (CSO Open Data; https://www.cso.ie/en/aboutus/termsandconditions/)",
+  "model_development_exposure": "tuning",
+  "note": "Raw input, read-only after download. Excluded from git; this manifest is committed in its place.",
+  "publisher": "Central Statistics Office (Ireland), from matched BER and ESB Networks meter data",
+  "relpath": "cso_electricity/DBEREL01_household_electricity_by_dwelling_and_ber.json",
+  "retrieved_at": "2026-10-10",
+  "retrieved_at_utc": "2026-10-10T22:10:05Z",
+  "sha256": "d0082edfdcfd08b94a15dc2edc5cc629443edc1a61f3ec0e7724d15a36874116",
+  "substitute_flag": null,
+  "title": "Household Electricity Consumption by type of dwelling, energy rating and year (DBEREL01)",
+  "url": "https://ws.cso.ie/public/api.restful/PxStat.Data.Cube_API.ReadDataset/DBEREL01/JSON-stat/2.0/en",
+  "used_for": "D24 calibration target for the device and DER layer (design 5.6, 7.2). The dimensions are exactly the archetype library's own - dwelling type crossed with BER band - so the target applies per dwelling rather than only to the town mean, which is what distinguishes 'the average home uses about the right amount' from 'each KIND of home does'. 2022 is t0, so the comparison year is the simulated year. Exposure is declared as 'tuning' because the appliance trigger rates WERE adjusted against it: 7.1 requires that to be visible, not buried. So PL-ELEC-01, which scores against this table, is a CONSISTENCY check against a calibration input and NOT an independent validation - the held-out electricity axis is DBEREL02 (dwelling type x period of construction), exposure 'none'. See I-058."
+}

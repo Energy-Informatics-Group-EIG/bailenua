@@ -1,0 +1,19 @@
+{
+  "bytes": 15266978,
+  "encoding": "utf-8",
+  "http_status": 200,
+  "intended_use": "calibration",
+  "key": "eurostat.hetus.tus_00hhstatus",
+  "licence": "CC-BY 4.0 (Eurostat re-use policy)",
+  "model_development_exposure": "none",
+  "note": "Raw input, read-only after download. Excluded from git; this manifest is committed in its place.",
+  "publisher": "Eurostat",
+  "relpath": "eurostat/tus_00hhstatus.csv",
+  "retrieved_at": "2026-10-08",
+  "retrieved_at_utc": "2026-10-08T19:50:02Z",
+  "sha256": "d637b6677c98372424acde917611cdc2803775bca5ee42975804c7c286c5bcb5",
+  "substitute_flag": "[A] UK donor; HETUS has no Irish data at all (I-008, U04, K02)",
+  "title": "HETUS 2000/2010: time spent in the main activity by sex and household composition (tus_00hhstatus)",
+  "url": "https://ec.europa.eu/eurostat/api/dissemination/sdmx/2.1/data/tus_00hhstatus/?format=SDMX-CSV&compressed=false",
+  "used_for": "Household-composition-conditioned shares, the only public evidence available for the household coupling in design 5.3 (risk K08: little quantitative evidence exists for negotiation and influence)."
+}

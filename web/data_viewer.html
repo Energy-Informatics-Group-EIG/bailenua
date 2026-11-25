@@ -1,0 +1,2038 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Baile Nua data viewer</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<style>
+:root{
+  color-scheme:light;
+  --page:#f9f9f7; --surface:#fcfcfb; --surface-2:#f2f1ed;
+  --ink:#0b0b0b; --ink-2:#52514e; --muted:#898781;
+  --grid:#e1e0d9; --axis:#c3c2b7; --border:rgba(11,11,11,.10);
+  --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a; --s4:#eda100;
+  --good:#0ca30c; --warn:#fab219; --serious:#ec835a; --crit:#d03b3b;
+  --seq0:#f0efec; --seq1:#cde2fb; --seq2:#86b6ef; --seq3:#2a78d6; --seq4:#184f95; --seq5:#0d366b;
+  --accent:#2a78d6;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --page:#0d0d0d; --surface:#1a1a19; --surface-2:#232321;
+    --ink:#f0efec; --ink-2:#c3c2b7; --muted:#898781;
+    --grid:#2c2c2a; --axis:#383835; --border:rgba(255,255,255,.10);
+    --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500;
+    --seq0:#232321; --seq1:#104281; --seq2:#1c5cab; --seq3:#2a78d6; --seq4:#6da7ec; --seq5:#cde2fb;
+    --accent:#3987e5;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --page:#0d0d0d; --surface:#1a1a19; --surface-2:#232321;
+  --ink:#f0efec; --ink-2:#c3c2b7; --muted:#898781;
+  --grid:#2c2c2a; --axis:#383835; --border:rgba(255,255,255,.10);
+  --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500;
+  --seq0:#232321; --seq1:#104281; --seq2:#1c5cab; --seq3:#2a78d6; --seq4:#6da7ec; --seq5:#cde2fb;
+  --accent:#3987e5;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--page);color:var(--ink);font:14px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif}
+button,input,select{font:inherit;color:inherit}
+.app{display:grid;grid-template-columns:220px 1fr;min-height:100vh}
+aside{background:var(--surface);border-right:1px solid var(--border);padding:16px 12px;position:sticky;top:0;height:100vh;overflow:auto}
+.brand{font-weight:700;font-size:16px;margin:0 8px 2px}
+.brand-sub{color:var(--muted);font-size:12px;margin:0 8px 16px}
+nav button{display:flex;width:100%;align-items:center;gap:8px;border:0;background:none;color:var(--ink-2);text-align:left;padding:8px;border-radius:8px;cursor:pointer}
+nav button:hover{background:var(--surface-2)}
+nav button.on{background:var(--surface-2);color:var(--ink);font-weight:600}
+nav .count{margin-left:auto;color:var(--muted);font-size:12px;font-variant-numeric:tabular-nums}
+.side-foot{margin:20px 8px 0;font-size:12px;color:var(--muted);line-height:1.5}
+main{padding:20px 24px 48px;min-width:0}
+.topbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:16px}
+.topbar h1{font-size:20px;margin:0 auto 0 0}
+.btn,select,input[type=search]{color:var(--ink);background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:6px 10px}
+.btn{cursor:pointer;text-decoration:none;display:inline-flex;align-items:center}
+.btn:hover,select:hover,input[type=search]:hover{border-color:var(--axis)}
+input[type=search]{min-width:180px}
+.pill{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--border);border-radius:999px;padding:4px 10px;font-size:12px;color:var(--ink-2);background:var(--surface)}
+.pill i{width:8px;height:8px;border-radius:50%;background:var(--good);display:inline-block}
+.pill.wait i{background:var(--warn);animation:pulse 1.6s infinite}
+.pill.bad i{background:var(--crit);animation:none}
+@keyframes pulse{50%{opacity:.35}}
+.banner{background:var(--surface-2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-size:13px;margin-bottom:16px}
+.grid{display:grid;gap:16px;grid-template-columns:repeat(12,1fr)}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;min-width:0}
+.card h2{font-size:14px;margin:0 0 2px}
+.card .sub,p.sub{color:var(--muted);font-size:12px;margin:0 0 12px}
+.c3{grid-column:span 3}.c4{grid-column:span 4}.c6{grid-column:span 6}.c8{grid-column:span 8}.c12{grid-column:span 12}
+@media (max-width:1100px){.c3,.c4,.c6,.c8{grid-column:span 6}}
+@media (max-width:760px){
+  .app{grid-template-columns:1fr}
+  aside{position:static;height:auto}
+  .side-foot{display:none}
+  nav{display:flex;flex-wrap:wrap;gap:4px}
+  nav button{width:auto}
+  main{padding:16px}
+  .c3,.c4,.c6,.c8{grid-column:span 12}
+}
+.kpi .v{font-size:28px;font-weight:600;margin-top:4px;font-variant-numeric:tabular-nums}
+.kpi .l{color:var(--ink-2);font-size:12px}
+.kpi .d{color:var(--muted);font-size:12px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--grid);vertical-align:top}
+th{color:var(--ink-2);font-weight:600;position:sticky;top:0;background:var(--surface);cursor:pointer;user-select:none;white-space:nowrap}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+tbody tr:hover{background:var(--surface-2)}
+tr.on td{background:color-mix(in srgb, var(--accent) 12%, var(--surface))}
+.tbl-wrap{max-height:520px;overflow:auto}
+.name{word-break:break-word}
+.badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:2px 7px;border-radius:999px;border:1px solid var(--border);color:var(--ink-2);white-space:nowrap}
+.view{display:none}.view.on{display:block}
+.chart-box{width:100%;height:320px;overflow:hidden}
+.figures{margin-bottom:16px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:4px;font-size:11px;color:var(--ink-2)}
+.legend i{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:4px;vertical-align:baseline}
+.tip{position:fixed;pointer-events:none;background:var(--surface);color:var(--ink);border:1px solid var(--border);border-radius:8px;padding:8px 10px;font-size:12px;box-shadow:0 4px 16px rgba(0,0,0,.12);opacity:0;z-index:50;max-width:280px}
+svg text{fill:var(--muted);font-size:11px}
+.axis path,.axis line{stroke:var(--axis)}
+.gridl line{stroke:var(--grid)}.gridl path{display:none}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px}
+.pager{display:flex;gap:8px;align-items:center;justify-content:flex-end;margin-top:8px;color:var(--muted);font-size:12px}
+.crumbs{display:flex;flex-wrap:wrap;gap:4px;align-items:center;font-size:13px}
+.crumbs button{border:0;background:none;color:var(--accent);cursor:pointer;padding:0}
+.crumbs button:hover{text-decoration:underline}
+.empty{padding:8px 4px 12px;color:var(--ink-2);max-width:70ch}
+.empty h2{color:var(--ink);font-size:16px;margin:0 0 6px}
+.empty p{margin:0 0 10px}
+.checks{display:flex;flex-wrap:wrap;gap:8px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 12px}
+.chip{font-size:12px;background:var(--surface-2);border-radius:8px;padding:4px 8px;color:var(--ink-2)}
+.chip b{color:var(--ink);font-weight:600}
+.mix{display:flex;flex-direction:column;gap:8px}
+.mix .row{display:grid;grid-template-columns:72px 1fr auto;gap:8px;align-items:center;font-size:12px}
+.mix .bar{height:8px;border-radius:99px;background:var(--surface-2);overflow:hidden}
+.mix .bar span{display:block;height:100%;background:var(--s1);border-radius:99px}
+pre.raw{white-space:pre;word-break:normal;font:12px/1.45 ui-monospace,SFMono-Regular,Menlo,monospace;margin:0 0 12px;max-height:480px;overflow:auto}
+.md h1{font-size:18px;margin:0 0 8px}
+.md h2{font-size:16px;margin:0 0 8px}
+.md h3{font-size:14px;margin:16px 0 6px}
+.md p{margin:0 0 10px}
+.md ul{margin:0 0 12px;padding-left:18px}
+.md blockquote{margin:0 0 12px;padding:8px 12px;border-left:3px solid var(--s4);background:var(--surface-2);border-radius:0 8px 8px 0}
+.md details{margin:0 0 12px}
+.md summary{cursor:pointer;color:var(--ink-2);margin-bottom:8px}
+.md a,a[data-open-id],a[data-cat]{color:var(--accent);text-decoration:none}
+a[data-open-id]:hover,a[data-cat]:hover{text-decoration:underline}
+#ds-info,#catDetail{scroll-margin-top:12px}
+.md .tbl-wrap{max-height:none}
+.cat-on{outline:2px solid var(--accent);outline-offset:1px}
+.preview-img{max-width:100%;height:auto;border-radius:8px;background:var(--surface-2)}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+.stack{display:flex;flex-direction:column;gap:16px}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside>
+    <div class="brand">Baile Nua</div>
+    <div class="brand-sub" id="brandSub">Snapshot viewer</div>
+    <nav id="nav">
+      <button type="button" data-v="overview" class="on">Overview</button>
+      <button type="button" data-v="catalogue">Catalogue <span class="count" id="nCat"></span></button>
+      <button type="button" data-v="browse">Browse <span class="count" id="nFiles">–</span></button>
+      <button type="button" data-v="homes">Homes</button>
+      <button type="button" data-v="energy">Energy</button>
+      <button type="button" data-v="population">Population</button>
+      <button type="button" data-v="lifecourse">Life course</button>
+      <button type="button" data-v="validation">Validation</button>
+      <button type="button" data-v="datasets">Datasets</button>
+    </nav>
+    <div class="side-foot" id="sideMeta">Bucket: hrsd-occupants<br>Mode: snapshot</div>
+  </aside>
+  <main>
+    <div class="topbar">
+      <h1 id="title">Overview</h1>
+      <span class="pill" id="pill"><i></i><span id="pillText">Connecting…</span></span>
+      <button type="button" class="btn" id="refresh">Refresh</button>
+      <label class="btn" for="localFile">Open local file</label>
+      <input id="localFile" type="file" hidden>
+      <button type="button" class="btn" id="theme">Theme</button>
+    </div>
+    <div class="banner" id="banner" hidden></div>
+    <section class="view on" id="v-overview"></section>
+    <section class="view" id="v-catalogue"></section>
+    <section class="view" id="v-browse"></section>
+    <section class="view" id="v-homes"></section>
+    <section class="view" id="v-energy"></section>
+    <section class="view" id="v-population"></section>
+    <section class="view" id="v-lifecourse"></section>
+    <section class="view" id="v-validation"></section>
+    <section class="view" id="v-datasets"></section>
+  </main>
+</div>
+<div class="tip" id="tip"></div>
+<script>
+(function () {
+const PER = 40;
+const PER_FILES = 80;
+const PREVIEW_BYTES = 2_000_000;
+const PREVIEW_ROWS = 2000;
+const TITLES = {overview:"Overview", catalogue:"Catalogue", browse:"Browse", homes:"Homes", energy:"Energy", population:"Population", lifecourse:"Life course", validation:"Validation", datasets:"Datasets"};
+const PAGES = {
+  homes: {blurb:"Geography, fabric, passport events, assets, and who lives in each home.", ids:["D01","D02","D03","D04","D06","D30"], open:"D02"},
+  energy: {blurb:"Appliance cycles, indoor conditions, meter readings, exports, weather, tariffs, and the network.", ids:["D13","D15","D16","D17","D18","D19","D22","D27","D31"], open:"D18"},
+  population: {blurb:"People, relationships, slowly changing states, where each person is, and the trial questionnaires.", ids:["D05","D07","D08","D11","D25","D26","D28","D29"], open:"D11"},
+  lifecourse: {blurb:"Life events, activities, trips, shared calendar events, and change labels across 2022–2031.", ids:["D09","D10","D12","D14","D20","D21"], open:"D09"},
+  validation: {blurb:"Versions, empirical targets, conventions, and where the design and the files disagree.", ids:["D23","D24","Appendix C","Appendix D"], open:"Appendix D"},
+  browse: {blurb:"Layout of v1/ and the path recorded for every dataset.", ids:["Appendix A"], open:"Appendix A", table:"all"},
+  datasets: {blurb:"Every dataset declared for this package.", ids:[], open:"D18", table:"all"}
+};
+const LENSES = {
+  homes: {title:"Homes", hint:"homes, dwellings, or buildings", hints:[/home/i, /dwelling/i, /building/i]},
+  energy: {title:"Energy", hint:"energy, electricity, demand, load, kWh, or flexus", hints:[/energy/i, /electric/i, /demand/i, /load/i, /kwh/i, /flexus/i, /\bder\b/i, /solar/i]},
+  population: {title:"Population", hint:"population, residents, census, or occupants", hints:[/population/i, /resident/i, /census/i, /occupant/i]},
+  lifecourse: {title:"Life course", hint:"events, life course, or passports", hints:[/event/i, /life[-_ ]?course/i, /passport/i]},
+  validation: {title:"Validation", hint:"validation, gates, checks, or evidence", hints:[/valid/i, /gates?/i, /checks?/i, /evidence/i]}
+};
+const state = {
+  connected:false, bucket:"hrsd-occupants", error:"", files:[], bytes:0, loadedAt:null,
+  watching:false, timer:null, view:"overview", prefix:"", query:"", browsePage:0,
+  browseSort:{key:"name", dir:1}, selected:"", tableQuery:"", page:0, sort:{key:"", dir:1},
+  chart:{kind:"auto", x:"", y:""}, preview:null, manifest:null, lensFile:{},
+  datasetQuery:"", datasetClass:"", previewSeq:0,
+  cat:{query:"", cls:"", status:"", pkg:"", selected:"", doc:null, error:"", loading:false, promise:null},
+  pagePick:{}, figures:{}
+};
+
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c]));
+const fmt = (n) => Number(n || 0).toLocaleString("en-IE");
+function fmtNum(n) {
+  if (!Number.isFinite(n)) return "—";
+  const abs = Math.abs(n);
+  if (abs !== 0 && (abs >= 10000 || abs < 0.01)) return n.toExponential(2);
+  return n.toLocaleString("en-IE", {maximumFractionDigits: abs >= 100 ? 0 : 2});
+}
+function fmtBytes(n) {
+  if (n == null || !Number.isFinite(Number(n))) return "—";
+  const units = ["B", "KB", "MB", "GB", "TB"];
+  let v = Number(n), i = 0;
+  while (v >= 1024 && i < units.length - 1) { v /= 1024; i++; }
+  return (i === 0 ? String(v) : v.toFixed(v < 10 ? 1 : 0)) + " " + units[i];
+}
+function fmtTime(ms) {
+  if (!ms) return "—";
+  const d = new Date(Number(ms));
+  if (Number.isNaN(d.getTime())) return "—";
+  return d.toLocaleString("en-IE", {year:"numeric", month:"short", day:"2-digit", hour:"2-digit", minute:"2-digit"});
+}
+function extOf(name) {
+  const base = String(name).split("/").pop();
+  const i = base.lastIndexOf(".");
+  return i <= 0 ? "" : base.slice(i + 1).toLowerCase();
+}
+function isTabularName(name) { return /^(csv|tsv|json|jsonl|ndjson|parquet)$/.test(extOf(name)); }
+function isImage(name) { return /^(png|jpe?g|gif|webp|svg)$/.test(extOf(name)); }
+function isParquet(name) { return extOf(name) === "parquet"; }
+function cssVar(name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+function asNum(v) {
+  if (typeof v === "number") return Number.isFinite(v) ? v : null;
+  if (typeof v === "bigint") return Number(v);
+  if (v == null || v === "") return null;
+  const n = Number(String(v).replace(/,/g, "").trim());
+  return Number.isFinite(n) ? n : null;
+}
+function asDate(v) {
+  if (v instanceof Date && !Number.isNaN(v.getTime())) return v;
+  const s = String(v ?? "").trim();
+  if (!/^\d{4}-\d{2}-\d{2}/.test(s) && !/^\d{1,2}[/-]\d{1,2}[/-]\d{2,4}/.test(s)) return null;
+  const t = Date.parse(s);
+  return Number.isFinite(t) ? new Date(t) : null;
+}
+function cellStr(v) {
+  if (v == null) return "";
+  if (typeof v === "bigint") return v.toString();
+  if (v instanceof Date) return v.toISOString();
+  if (typeof v === "object") {
+    try { return JSON.stringify(v); } catch { return String(v); }
+  }
+  return String(v);
+}
+function fmtCell(value, type) {
+  if (value == null || value === "") return '<span style="color:var(--muted)">—</span>';
+  if (type === "number") {
+    const n = asNum(value);
+    return n == null ? esc(value) : esc(fmtNum(n));
+  }
+  return esc(value);
+}
+
+async function api(path) {
+  let res;
+  try { res = await fetch(path, {cache:"no-store"}); }
+  catch { throw new Error(offlineMessage()); }
+  const text = await res.text();
+  let body = {};
+  try { body = text ? JSON.parse(text) : {}; }
+  catch { body = {error: cleanError(text, res.status)}; }
+  if (!res.ok) throw new Error(body.error || cleanError(text, res.status));
+  return body;
+}
+function cleanError(text, status) {
+  const raw = String(text || "");
+  if (/<\s*html|<\s*body|404\s*-\s*not found/i.test(raw)) return "This host does not run the Backblaze proxy.";
+  const plain = raw.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+  return plain.slice(0, 180) || ("Request failed (" + status + ")");
+}
+function offlineMessage() {
+  return "This host serves the catalogue as a file. It does not run Python, so the live Backblaze listing stays on the local viewer.";
+}
+function updatePill() {
+  const pill = document.getElementById("pill");
+  const text = document.getElementById("pillText");
+  pill.classList.remove("wait", "bad");
+  if (!state.connected) { pill.classList.add("wait"); text.textContent = state.cat.doc ? "v1 candidate" : "Loading catalogue"; return; }
+  if (!state.files.length) {
+    pill.classList.add("wait");
+    text.textContent = state.watching ? "Waiting for snapshot" : "Bucket empty";
+    return;
+  }
+  text.textContent = fmt(state.files.length) + " files · " + fmtBytes(state.bytes);
+}
+function updateSide() {
+  const m = state.manifest || {};
+  const bits = ["Bucket: " + esc(state.bucket), "Mode: snapshot"];
+  if (m.release || m.version) bits.push("Release: " + esc(m.release || m.version));
+  if (m.schema) bits.push("Schema " + esc(m.schema));
+  document.getElementById("sideMeta").innerHTML = bits.join("<br>");
+  document.getElementById("brandSub").textContent = m.title ? String(m.title) : "Snapshot viewer";
+}
+function updateBanner() {
+  const el = document.getElementById("banner");
+  if (state.connected && state.error) { el.hidden = false; el.textContent = state.error; }
+  else el.hidden = true;
+}
+function updateCounts() {
+  document.getElementById("nFiles").textContent = state.connected ? fmt(state.files.length) : "–";
+}
+
+function manifestCandidates() {
+  return state.files.filter((f) => /(^|\/)(manifest|snapshot|catalog)\.json$/i.test(f.name))
+    .sort((a, b) => a.name.split("/").length - b.name.split("/").length || a.name.length - b.name.length);
+}
+async function loadManifest() {
+  const file = manifestCandidates()[0];
+  if (!file || file.size > 1_000_000) { state.manifest = null; return; }
+  try {
+    const got = await fetchPreviewText(file.name, Math.max(file.size, 1));
+    state.manifest = JSON.parse(got.text);
+  } catch { state.manifest = null; }
+}
+async function refreshFiles(force) {
+  const data = await api("/api/files" + (force ? "?refresh=1" : ""));
+  state.files = data.files || [];
+  state.bytes = data.bytes || 0;
+  state.bucket = data.bucket || state.bucket;
+  state.loadedAt = new Date();
+  state.error = "";
+  await loadManifest();
+  updateCounts();
+  updateSide();
+  updatePill();
+  updateBanner();
+  paintCurrent();
+}
+function watch() {
+  if (state.timer || state.files.length) { state.watching = false; updatePill(); return; }
+  state.watching = true;
+  updatePill();
+  state.timer = setInterval(async () => {
+    if (!state.connected || state.files.length) {
+      clearInterval(state.timer);
+      state.timer = null;
+      state.watching = false;
+      updatePill();
+      return;
+    }
+    try { await refreshFiles(true); } catch (err) { state.error = err.message; updateBanner(); }
+  }, 15000);
+}
+async function boot() {
+  updatePill();
+  const catalogueReady = loadCatalogue();
+  try {
+    const status = await api("/api/status");
+    state.connected = true;
+    state.bucket = status.bucket || state.bucket;
+    await refreshFiles(true);
+    watch();
+  } catch (err) {
+    state.connected = false;
+    state.staticHost = true;
+    state.error = "";
+    updateCounts();
+  }
+  await catalogueReady;
+  updatePill();
+  paintCurrent();
+}
+
+function showView(view) {
+  state.view = view;
+  document.querySelectorAll("#nav button").forEach((b) => b.classList.toggle("on", b.dataset.v === view));
+  document.querySelectorAll(".view").forEach((v) => v.classList.toggle("on", v.id === "v-" + view));
+  document.getElementById("title").textContent = TITLES[view] || view;
+  paintCurrent();
+}
+function paintCurrent() {
+  if (state.view === "overview") renderOverview();
+  else if (state.view === "catalogue") enterCatalogue();
+  else if (PAGES[state.view]) renderTopic(state.view);
+  else if (state.view === "browse") { ensureBrowse(); paintBrowseList(); paintPreview(); }
+  else if (state.view === "datasets") { ensureDatasets(); paintDatasetBody(); }
+  else if (LENSES[state.view]) enterLens(state.view);
+}
+function filesForLens(id) {
+  const spec = state.manifest && state.manifest.views && state.manifest.views[id];
+  if (typeof spec === "string") return state.files.filter((f) => f.name === spec);
+  return state.files.filter((f) => isTabularName(f.name) && LENSES[id].hints.some((re) => re.test(f.name)));
+}
+
+function headlineFigures(intro) {
+  const chunk = (String(intro || "").split("### Headline figures")[1] || "").split(/\n### /)[0];
+  const rows = [];
+  chunk.split("\n").forEach((line) => {
+    if (!/^\|/.test(line) || /^\|\s*\|/.test(line) || /\|\s*-{3,}/.test(line)) return;
+    const cells = splitMdRow(line);
+    if (cells[0]) rows.push({label:cells[0], value:cells[1] || "", from:(cells[2] || "").replace(/`/g, "")});
+  });
+  return rows;
+}
+function pageForDataset(id) {
+  const found = Object.keys(PAGES).find((view) => (PAGES[view].ids || []).includes(id));
+  return found || "datasets";
+}
+function parseCount(text) {
+  const m = String(text || "").replace(/,/g, "").match(/-?\d+(?:\.\d+)?/);
+  if (!m) return null;
+  const n = Number(m[0]);
+  return Number.isFinite(n) ? n : null;
+}
+function parseBytes(text) {
+  const m = String(text || "").replace(/,/g, "").match(/([\d.]+)\s*(kB|KB|MB|GB|TB|B)\b/);
+  if (!m) return null;
+  const n = Number(m[1]);
+  const mul = {b:1, kb:1024, mb:1024 ** 2, gb:1024 ** 3, tb:1024 ** 4};
+  return Number.isFinite(n) ? n * (mul[m[2].toLowerCase()] || 1) : null;
+}
+function sizeMB(section) {
+  const b = parseBytes(section && section.size);
+  return b == null ? null : b / (1024 * 1024);
+}
+function rowCount(section) { return parseCount(section && section.rows); }
+function fmtChart(n) {
+  if (n == null || !Number.isFinite(n)) return "—";
+  const abs = Math.abs(n);
+  if (abs >= 1e6) return (n / 1e6).toFixed(abs >= 1e7 ? 0 : 1).replace(/\.0$/, "") + "M";
+  if (abs >= 1e3) return (n / 1e3).toFixed(abs >= 1e4 ? 0 : 1).replace(/\.0$/, "") + "k";
+  if (abs >= 100) return String(Math.round(n));
+  return fmtNum(n);
+}
+function cellPlain(s) { return String(s || "").replace(/`/g, "").replace(/\*\*/g, "").trim(); }
+function asDateLoose(v) {
+  const m = String(v || "").match(/\d{4}-\d{2}-\d{2}(?:[ T]\d{2}:\d{2}(?::\d{2})?)?/);
+  return m ? asDate(m[0].replace("T", " ")) : null;
+}
+function cleanUnit(u) {
+  const s = String(u || "").replace(/`/g, "").replace(/\*\([^)]*\)\*/g, "").replace(/\*/g, "").trim();
+  if (!s || s === "—") return "";
+  return s.split(/\s+/)[0];
+}
+function isIdCol(name) { return /(^id$|_id$|seed|hash|premises|device)/i.test(name); }
+function statusColor(status) {
+  if (status === "present") return cssVar("--s3");
+  if (status === "partial") return cssVar("--s4");
+  return cssVar("--muted");
+}
+function hFor(n, row) { return Math.min(640, Math.max(180, n * (row || 26) + 36)); }
+function mdTables(body) {
+  const tables = [];
+  const lines = String(body || "").split("\n");
+  let i = 0;
+  while (i < lines.length) {
+    if (!lines[i].startsWith("|")) { i++; continue; }
+    const buf = [];
+    while (i < lines.length && lines[i].startsWith("|")) buf.push(lines[i++]);
+    const kept = buf.filter((line) => !/\|\s*:?-{3,}/.test(line));
+    if (kept.length < 2) continue;
+    tables.push({head: splitMdRow(kept[0]), rows: kept.slice(1).map(splitMdRow)});
+  }
+  return tables;
+}
+function schemaColumns(section) {
+  const table = mdTables(section.body).find((t) => cellPlain(t.head[0]) === "Column" && t.head.some((h) => /^min$/i.test(cellPlain(h))));
+  if (!table) return [];
+  const heads = table.head.map((h) => cellPlain(h).toLowerCase());
+  const at = (name) => heads.indexOf(name);
+  return table.rows.map((r) => {
+    const name = cellPlain(r[0]);
+    const type = at("type") >= 0 ? cellPlain(r[at("type")]) : "";
+    const min = at("min") >= 0 ? asNum(cellPlain(r[at("min")])) : null;
+    const max = at("max") >= 0 ? asNum(cellPlain(r[at("max")])) : null;
+    let nullPct = null;
+    if (at("nulls") >= 0) {
+      const cell = r[at("nulls")] || "";
+      if (/no nulls/i.test(cell)) nullPct = 0;
+      else {
+        const m = String(cell).match(/\(([\d.]+)\s*%\)/);
+        if (m) nullPct = Number(m[1]);
+      }
+    }
+    const numeric = min != null && max != null && /double|float|int|decimal/i.test(type) && !/seed/i.test(name) && Math.abs(min) < 1e15 && Math.abs(max) < 1e15;
+    return {name, type, unit: cleanUnit(at("unit") >= 0 ? r[at("unit")] : ""), min, max, numeric, nullPct};
+  }).filter((c) => c.name);
+}
+function dataTables(body) {
+  return mdTables(body).filter((t) => {
+    const h0 = cellPlain(t.head[0]);
+    if (!h0) return false;
+    if (/^(Column|Dataset|Invariant|Check|Artefact|Package)$/i.test(h0)) return false;
+    return t.rows.length >= 2;
+  });
+}
+function chartSvg(node, reserve) {
+  const width = node.clientWidth || 320;
+  const height = Math.max(80, (node.clientHeight || 240) - (reserve || 0));
+  node.innerHTML = "";
+  const svg = d3.select(node).append("svg").attr("width", width).attr("height", height).attr("role", "img");
+  return {svg, width, height};
+}
+function addLegend(node, items) {
+  const leg = document.createElement("div");
+  leg.className = "legend";
+  leg.innerHTML = items.map((it) => `<span><i style="background:${it.color}"></i>${esc(it.label)}</span>`).join("");
+  node.appendChild(leg);
+}
+function paintAxes(svg, xs, ys, width, height, m, xAxis) {
+  svg.append("g").attr("class", "gridl").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(ys).ticks(5).tickSize(-(width - m.l - m.r)).tickFormat(""));
+  svg.append("g").attr("class", "axis").attr("transform", `translate(0,${height - m.b})`).call(xAxis);
+  svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(ys).ticks(5).tickFormat((v) => fmtChart(v))).call((g) => g.select(".domain").remove());
+}
+function drawHBars(node, items, opts) {
+  opts = opts || {};
+  const legend = [...new Map(items.filter((d) => d.color).map((d) => [d.color, d.swatch || ""])).entries()];
+  const reserve = legend.length > 1 && legend.every((d) => d[1]) ? 24 : 0;
+  const {svg, width, height} = chartSvg(node, reserve);
+  const m = {t: 8, r: 56, b: 22, l: Math.min(168, Math.max(48, d3.max(items, (d) => d.label.length) * 6.4))};
+  const ys = d3.scaleBand().domain(items.map((d) => d.label)).range([m.t, height - m.b]).padding(0.28);
+  const max = opts.domain ? opts.domain[1] : (d3.max(items, (d) => d.value) || 1);
+  const xs = opts.symlog
+    ? d3.scaleSymlog().constant(1).domain([0, max]).range([m.l, width - m.r])
+    : d3.scaleLinear().domain(opts.domain || [0, max * 1.08 || 1]).nice().range([m.l, width - m.r]);
+  svg.append("g").attr("class", "gridl").attr("transform", `translate(0,${height - m.b})`).call(d3.axisBottom(xs).ticks(4).tickSize(-(height - m.t - m.b)).tickFormat(""));
+  svg.append("g").attr("class", "axis").attr("transform", `translate(0,${height - m.b})`).call(d3.axisBottom(xs).ticks(4).tickFormat((v) => (opts.suffix === "%" ? v : fmtChart(v))));
+  const g = svg.selectAll("g.hb").data(items).join("g").attr("class", "hb");
+  const fit = (label) => label.length > Math.floor((m.l - 8) / 6.2) ? label.slice(0, Math.max(4, Math.floor((m.l - 8) / 6.2) - 1)) + "…" : label;
+  g.append("text").attr("x", m.l - 8).attr("y", (d) => ys(d.label) + ys.bandwidth() / 2).attr("dy", "0.35em").attr("text-anchor", "end").text((d) => fit(d.label))
+    .style("fill", (d) => /^D\d{2}$/.test(d.label) ? cssVar("--accent") : null)
+    .style("text-decoration", (d) => /^D\d{2}$/.test(d.label) ? "underline" : null);
+  g.append("rect").attr("x", m.l).attr("y", (d) => ys(d.label)).attr("height", ys.bandwidth()).attr("width", (d) => Math.max(0, xs(d.value) - xs(0))).attr("rx", 3).attr("fill", (d) => d.color || cssVar("--s1"));
+  g.append("text").attr("y", (d) => ys(d.label) + ys.bandwidth() / 2).attr("dy", "0.35em")
+    .attr("x", (d) => xs(d.value) - m.l > 52 ? xs(d.value) - 6 : Math.min(width - 4, xs(d.value) + 4))
+    .attr("text-anchor", (d) => xs(d.value) - m.l > 52 ? "end" : "start")
+    .style("fill", (d) => xs(d.value) - m.l > 52 ? "#fff" : "var(--muted)")
+    .text((d) => fmtChart(d.value) + (opts.suffix || ""));
+  g.style("cursor", opts.onPick ? "pointer" : "default")
+    .on("mousemove", (event, d) => showTip(event, "<b>" + esc(d.tip || d.label) + "</b><br>" + esc(fmt(d.value)) + esc(opts.suffix || "")))
+    .on("mouseleave", hideTip)
+    .on("click", (_, d) => { if (d.id && opts.onPick) opts.onPick(d.id); });
+  if (reserve) addLegend(node, legend.map(([color, label]) => ({color, label})));
+}
+function drawDonut(node, items) {
+  const {svg, width, height} = chartSvg(node, 0);
+  const shown = items.filter((d) => d.value > 0);
+  const r = Math.max(36, Math.min(height, width * 0.55) / 2 - 12);
+  const cx = Math.min(width * 0.34, r + 16);
+  const cy = height / 2;
+  const arc = d3.arc().innerRadius(r * 0.62).outerRadius(r);
+  const g = svg.append("g").attr("transform", `translate(${cx},${cy})`);
+  g.selectAll("path").data(d3.pie().value((d) => d.value).sort(null)(shown)).join("path")
+    .attr("d", arc).attr("fill", (d) => d.data.color)
+    .on("mousemove", (event, d) => showTip(event, "<b>" + esc(d.data.label) + "</b><br>" + fmt(d.data.value)))
+    .on("mouseleave", hideTip);
+  g.append("text").attr("text-anchor", "middle").attr("dy", "0.35em").style("font-size", "18px").style("font-weight", "600").style("fill", "var(--ink)").text(fmt(d3.sum(shown, (d) => d.value)));
+  const leg = svg.append("g").attr("transform", `translate(${cx + r + 18},${Math.max(12, cy - shown.length * 11)})`);
+  shown.forEach((d, i) => {
+    leg.append("rect").attr("y", i * 22).attr("width", 10).attr("height", 10).attr("rx", 2).attr("fill", d.color);
+    leg.append("text").attr("x", 16).attr("y", i * 22 + 9).text(d.label + "  " + fmt(d.value));
+  });
+}
+function drawGrouped(node, categories, series) {
+  const {svg, width, height} = chartSvg(node, 26);
+  const m = {t: 18, r: 12, b: 32, l: 48};
+  const x0 = d3.scaleBand().domain(categories).range([m.l, width - m.r]).padding(0.28);
+  const x1 = d3.scaleBand().domain(series.map((s) => s.name)).range([0, x0.bandwidth()]).padding(0.16);
+  const vals = series.flatMap((s) => s.values).filter((v) => v > 0);
+  const max = d3.max(vals) || 1;
+  const min = d3.min(vals) || 1;
+  const ys = max > min * 8
+    ? d3.scaleSymlog().constant(1).domain([0, max]).range([height - m.b, m.t])
+    : d3.scaleLinear().domain([0, max * 1.08]).nice().range([height - m.b, m.t]);
+  paintAxes(svg, null, ys, width, height, m, d3.axisBottom(x0));
+  series.forEach((s) => {
+    const data = s.values.map((v, i) => ({v, k: categories[i], name: s.name, color: s.color}));
+    svg.selectAll("rect." + s.name).data(data).join("rect")
+      .attr("x", (d) => x0(d.k) + x1(d.name)).attr("width", x1.bandwidth()).attr("y", (d) => ys(d.v)).attr("height", (d) => Math.max(0, ys(0) - ys(d.v)))
+      .attr("fill", (d) => d.color).attr("rx", 3)
+      .on("mousemove", (event, d) => showTip(event, "<b>" + esc(d.name) + "</b> " + esc(d.k) + "<br>" + esc(fmt(d.v))))
+      .on("mouseleave", hideTip);
+    svg.selectAll("text.gl" + s.name.replace(/\W/g, "")).data(data).join("text").attr("class", "gl").attr("text-anchor", "middle")
+      .attr("x", (d) => x0(d.k) + x1(d.name) + x1.bandwidth() / 2).attr("y", (d) => Math.max(m.t, ys(d.v) - 4)).text((d) => fmtChart(d.v));
+  });
+  addLegend(node, series.map((s) => ({color: s.color, label: s.name})));
+}
+function drawRanges(node, items) {
+  const {svg, width, height} = chartSvg(node, 0);
+  const m = {t: 8, r: 12, b: 28, l: Math.min(188, Math.max(72, d3.max(items, (d) => d.label.length) * 6.2))};
+  const ys = d3.scaleBand().domain(items.map((d) => d.label)).range([m.t, height - m.b]).padding(0.38);
+  const lo = Math.min(0, d3.min(items, (d) => d.min));
+  const hi = d3.max(items, (d) => d.max);
+  const xs = d3.scaleLinear().domain([lo, hi === lo ? lo + 1 : hi]).nice().range([m.l, width - m.r]);
+  svg.append("g").attr("class", "gridl").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(ys).tickSize(-(width - m.l - m.r)).tickFormat(""));
+  svg.append("g").attr("class", "axis").attr("transform", `translate(0,${height - m.b})`).call(d3.axisBottom(xs).ticks(5).tickFormat((v) => fmtChart(v)));
+  const mid = (d) => ys(d.label) + ys.bandwidth() / 2;
+  const g = svg.selectAll("g.rng").data(items).join("g").attr("class", "rng");
+  g.append("text").attr("x", m.l - 8).attr("y", mid).attr("dy", "0.35em").attr("text-anchor", "end").text((d) => d.label.length > 26 ? d.label.slice(0, 25) + "…" : d.label);
+  g.append("line").attr("x1", (d) => xs(d.min)).attr("x2", (d) => xs(d.max)).attr("y1", mid).attr("y2", mid).attr("stroke", cssVar("--s1")).attr("stroke-width", 2);
+  g.append("circle").attr("cx", (d) => xs(d.min)).attr("cy", mid).attr("r", 3.5).attr("fill", cssVar("--s2"));
+  g.append("circle").attr("cx", (d) => xs(d.max)).attr("cy", mid).attr("r", 3.5).attr("fill", cssVar("--s1"));
+  g.on("mousemove", (event, d) => showTip(event, "<b>" + esc(d.label) + "</b><br>" + esc(fmtNum(d.min)) + " – " + esc(fmtNum(d.max)))).on("mouseleave", hideTip);
+}
+function drawMultiLine(node, series) {
+  const {svg, width, height} = chartSvg(node, 26);
+  const m = {t: 12, r: 12, b: 32, l: 48};
+  const all = series.flatMap((s) => s.points);
+  const dated = all.length && all.every((p) => p.x instanceof Date);
+  let xs = dated
+    ? d3.scaleTime().domain(d3.extent(all, (p) => p.x)).range([m.l, width - m.r])
+    : d3.scaleLinear().domain(d3.extent(all, (p) => +p.x)).nice().range([m.l, width - m.r]);
+  if (!dated && xs.domain()[0] === xs.domain()[1]) xs = d3.scaleLinear().domain([xs.domain()[0] - 1, xs.domain()[1] + 1]).range([m.l, width - m.r]);
+  const ys = d3.scaleLinear().domain([Math.min(0, d3.min(all, (p) => p.y)), (d3.max(all, (p) => p.y) || 1) * 1.08]).nice().range([height - m.b, m.t]);
+  paintAxes(svg, xs, ys, width, height, m, dated ? d3.axisBottom(xs).ticks(4) : d3.axisBottom(xs).ticks(5).tickFormat((v) => fmtChart(v)));
+  const colors = [cssVar("--s1"), cssVar("--s2"), cssVar("--s3"), cssVar("--s4")];
+  const line = d3.line().x((p) => xs(p.x)).y((p) => ys(p.y)).curve(d3.curveMonotoneX);
+  series.forEach((s, i) => {
+    const color = colors[i % colors.length];
+    svg.append("path").attr("d", line(s.points)).attr("fill", "none").attr("stroke", color).attr("stroke-width", 2);
+    svg.selectAll("circle.p" + i).data(s.points).join("circle").attr("cx", (p) => xs(p.x)).attr("cy", (p) => ys(p.y)).attr("r", 3.5).attr("fill", color)
+      .on("mousemove", (event, p) => showTip(event, "<b>" + esc(s.name) + "</b><br>" + esc(p.label || "") + "<br>" + esc(fmtNum(p.y))))
+      .on("mouseleave", hideTip);
+    s.color = color;
+  });
+  addLegend(node, series.map((s) => ({color: s.color, label: s.name})));
+}
+function drawWaffle(node, items, onPick) {
+  const {svg, width} = chartSvg(node, 24);
+  const cell = 26, gap = 6;
+  const cols = Math.max(1, Math.floor((width - 8) / (cell + gap)));
+  svg.selectAll("rect.w").data(items).join("rect").attr("class", "w").attr("rx", 4)
+    .attr("x", (_, i) => 4 + (i % cols) * (cell + gap)).attr("y", (_, i) => 4 + Math.floor(i / cols) * (cell + gap))
+    .attr("width", cell).attr("height", cell).attr("fill", (d) => statusColor(d.status))
+    .style("cursor", "pointer")
+    .on("mousemove", (event, d) => showTip(event, "<b>" + esc(d.id) + "</b> " + esc(d.status || "") + "<br>" + esc(d.title || "")))
+    .on("mouseleave", hideTip)
+    .on("click", (_, d) => onPick && onPick(d.id));
+  svg.selectAll("text.w").data(items).join("text").attr("class", "w").attr("text-anchor", "middle").attr("dy", "0.35em")
+    .style("font-size", "8px").style("fill", "#fff").style("pointer-events", "none")
+    .attr("x", (_, i) => 4 + (i % cols) * (cell + gap) + cell / 2)
+    .attr("y", (_, i) => 4 + Math.floor(i / cols) * (cell + gap) + cell / 2)
+    .text((d) => String(d.id || "").replace(/^D/, ""));
+  addLegend(node, [{color: statusColor("present"), label: "present"}, {color: statusColor("partial"), label: "partial"}, {color: statusColor("missing"), label: "missing"}]);
+}
+function figureHtml(specs) {
+  state.figures[state.view] = specs;
+  if (typeof d3 === "undefined") return '<div class="card"><p class="sub">Charts need D3, which did not load.</p></div>';
+  if (!specs.length) return "";
+  return `<div class="grid figures">${specs.map((s, i) => `<div class="card ${s.span || "c6"}"><h2>${linkDatasetIds(esc(s.title))}</h2>${s.note ? `<p class="sub">${linkDatasetIds(esc(s.note))}</p>` : ""}<div class="chart-box" data-fig="${i}" style="height:${s.h || 240}px"></div></div>`).join("")}</div>`;
+}
+function scheduleDraw(root, attempt) {
+  const view = state.view;
+  const host = root || document.getElementById("v-" + view);
+  requestAnimationFrame(() => {
+    if (state.view !== view || !host) return;
+    const specs = state.figures[view] || [];
+    let waiting = false;
+    host.querySelectorAll("[data-fig]").forEach((node) => {
+      if (node.querySelector("svg")) return;
+      if (node.clientWidth < 40) { waiting = true; return; }
+      const spec = specs[Number(node.dataset.fig)];
+      if (!spec) return;
+      try { spec.draw(node); }
+      catch (err) { node.innerHTML = '<p class="sub">This chart could not be drawn.</p>'; }
+    });
+    if (waiting && (attempt || 0) < 4) scheduleDraw(host, (attempt || 0) + 1);
+  });
+}
+function redrawFigures() {
+  const host = document.getElementById("v-" + state.view);
+  if (!host) return;
+  host.querySelectorAll("[data-fig]").forEach((node) => { node.innerHTML = ""; });
+  scheduleDraw(host, 0);
+}
+function reveal(id) {
+  requestAnimationFrame(() => {
+    const card = document.getElementById(id);
+    if (card) card.scrollIntoView({block: "start"});
+  });
+}
+function showDataset(id) {
+  if (!id || !state.cat.doc) return;
+  const section = state.cat.doc.sections.find((s) => s.id === id);
+  if (!section) return;
+  state.cat.selected = id;
+  const view = pageForDataset(id);
+  const topic = PAGES[view];
+  const shownOnTopic = topic && ((topic.ids || []).includes(id) || /^D\d{2}$/.test(id));
+  if (state.view === "catalogue" || !shownOnTopic) {
+    if (state.view !== "catalogue") showView("catalogue");
+    else selectCatalogue(id);
+    reveal("catDetail");
+    return;
+  }
+  state.pagePick[view] = id;
+  if (view !== state.view) showView(view);
+  else renderTopic(view);
+  reveal("ds-info");
+}
+function openDataset(id) { showDataset(id); }
+function selectCatalogue(id) {
+  state.cat.selected = id;
+  paintCatTable();
+  paintCatDetail();
+  paintCatFigures();
+  const detail = document.getElementById("catDetail");
+  if (detail) detail.scrollIntoView({block: "nearest"});
+}
+function barItems(sections, valueOf) {
+  return sections.map((s) => {
+    const value = valueOf(s);
+    return value ? {label: s.id, value, id: s.id, color: statusColor(s.status), swatch: s.status, tip: s.id + " " + s.title} : null;
+  }).filter(Boolean).sort((a, b) => b.value - a.value);
+}
+function comparisonFigures(sections, onPick) {
+  const specs = [];
+  const counts = ["present", "partial", "missing"].map((k) => ({label: k, value: sections.filter((s) => s.status === k).length, color: statusColor(k)})).filter((d) => d.value);
+  if (counts.length) specs.push({title: "Status", note: "How many datasets are on disk.", span: "c4", h: 220, draw: (n) => drawDonut(n, counts)});
+  const classes = ["GT", "OBS", "META"].map((k, i) => ({label: k, value: sections.filter((s) => s.cls === k).length, color: cssVar(["--s1", "--s2", "--s4"][i])})).filter((d) => d.value);
+  if (classes.length > 1) specs.push({title: "Class", note: "Ground truth, observable, and metadata.", span: "c4", h: 220, draw: (n) => drawDonut(n, classes)});
+  const pkgs = d3.rollups(sections, (v) => v.length, (d) => d.pkg || "Unspecified").filter((d) => d[0]);
+  if (pkgs.length) specs.push({title: "Package", note: "Which delivery package each dataset belongs to.", span: "c4", h: hFor(pkgs.length), draw: (n) => drawHBars(n, pkgs.map(([label, value], i) => ({label, value, color: cssVar(["--s1", "--s2", "--s3", "--s4"][i % 4])})), {})});
+  const rows = barItems(sections, rowCount);
+  if (rows.length) {
+    const spread = d3.max(rows, (d) => d.value) > d3.min(rows, (d) => d.value) * 20;
+    specs.push({title: "Rows", note: "Partial datasets count the rows held in an evidence file.", span: rows.length > 6 ? "c12" : "c6", h: hFor(rows.length), draw: (n) => drawHBars(n, rows, {symlog: spread, onPick})});
+  }
+  const sizes = barItems(sections, sizeMB);
+  if (sizes.length) specs.push({title: "Size, MB", note: "File size on disk.", span: "c6", h: hFor(sizes.length), draw: (n) => drawHBars(n, sizes, {onPick})});
+  if (sections.length > 1) specs.push({title: "Every dataset", note: "Click a cell to open it.", span: "c12", h: Math.max(150, Math.ceil(sections.length / 8) * 36 + 48), draw: (n) => drawWaffle(n, sections, onPick)});
+  return specs;
+}
+function clusterSeries(series) {
+  const ranked = series.map((s) => ({s, mag: Math.max(d3.max(s.points, (p) => Math.abs(p.y)) || 0, 1e-9)})).sort((a, b) => a.mag - b.mag);
+  const groups = [];
+  ranked.forEach((item) => {
+    const g = groups[groups.length - 1];
+    if (!g || item.mag > g.base * 12) groups.push({base: item.mag, series: [item.s]});
+    else g.series.push(item.s);
+  });
+  return groups.map((g) => g.series);
+}
+function sampleFigures(section) {
+  const specs = [];
+  const units = new Map(schemaColumns(section).map((c) => [c.name, c.unit]));
+  dataTables(section.body).forEach((table, ti) => {
+    if (ti > 2) return;
+    const heads = table.head.map(cellPlain);
+    const records = table.rows.map((r) => {
+      const o = {};
+      heads.forEach((h, i) => { o[h] = cellPlain(r[i] || ""); });
+      return o;
+    });
+    const numericHeads = heads.filter((h) => !/seed/i.test(h) && records.filter((rec) => asNum(rec[h]) != null).length >= 2);
+    const xHead = heads.find((h) => records.filter((rec) => asDateLoose(rec[h])).length >= 2)
+      || heads.find((h) => /day$/i.test(h) && records.filter((rec) => asNum(rec[h]) != null).length >= 2);
+    const prefix = section.id + " sample";
+    if (xHead) {
+      const yHeads = numericHeads.filter((h) => h !== xHead);
+      const series = yHeads.map((h) => ({
+        name: h,
+        unit: units.get(h) || "",
+        points: records.map((rec, i) => {
+          const y = asNum(rec[h]);
+          const when = asDateLoose(rec[xHead]);
+          return y == null ? null : {x: when || asNum(rec[xHead]) || i, y, label: rec[xHead] || String(i + 1)};
+        }).filter(Boolean)
+      })).filter((s) => s.points.length >= 2 && d3.max(s.points, (p) => p.y) !== d3.min(s.points, (p) => p.y));
+      const groups = new Map();
+      series.forEach((s) => {
+        const key = s.unit || "mix";
+        if (!groups.has(key)) groups.set(key, []);
+        groups.get(key).push(s);
+      });
+      if (groups.has("mix")) {
+        const mixed = groups.get("mix");
+        groups.delete("mix");
+        clusterSeries(mixed).forEach((group, gi) => groups.set("mix-" + gi, group));
+      }
+      groups.forEach((group, key) => {
+        for (let i = 0; i < group.length; i += 4) {
+          const chunk = group.slice(i, i + 4);
+          const unit = chunk[0].unit;
+          specs.push({title: prefix + (unit ? " · " + unit : ""), note: "The printed sample only, along " + xHead + ". Not the whole file.", span: "c6", h: 260, draw: (n) => drawMultiLine(n, chunk)});
+        }
+      });
+    } else if (numericHeads.length) {
+      const y = numericHeads[0];
+      const labelHead = heads.find((h) => h !== y && !isIdCol(h) && new Set(records.map((rec) => rec[h])).size > 1);
+      const items = records.map((rec, i) => ({label: labelHead ? cellPlain(rec[labelHead]).slice(0, 22) : String(i + 1), value: asNum(rec[y]), color: cssVar("--s1")})).filter((d) => d.value != null);
+      if (items.length >= 2 && new Set(items.map((d) => d.value)).size > 1) specs.push({title: prefix + " · " + y, note: "Values in the printed sample.", span: "c6", h: hFor(items.length), draw: (n) => drawHBars(n, items)});
+    }
+    let cats = 0;
+    heads.forEach((h) => {
+      if (cats >= 2 || h === xHead || isIdCol(h) || numericHeads.includes(h)) return;
+      if (records.some((rec) => asDateLoose(rec[h]))) return;
+      const vals = records.map((rec) => rec[h]).filter((v) => v && v !== "—");
+      const uniq = new Set(vals);
+      if (uniq.size < 2 || uniq.size > 8 || (uniq.size === vals.length && uniq.size > 3)) return;
+      const counts = d3.rollups(vals, (v) => v.length, (d) => d.length > 28 ? d.slice(0, 27) + "…" : d);
+      specs.push({title: prefix + " · " + h, note: "How often each value appears in the printed sample.", span: "c6", h: hFor(counts.length), draw: (n) => drawHBars(n, counts.map(([label, value], i) => ({label, value, color: cssVar(["--s1", "--s2", "--s3", "--s4"][i % 4])})), {})});
+      cats++;
+    });
+  });
+  return specs;
+}
+function sectionFigures(section) {
+  const specs = [];
+  const cols = schemaColumns(section);
+  const numeric = cols.filter((c) => c.numeric);
+  const groups = new Map();
+  numeric.forEach((c) => {
+    const key = c.unit || "value";
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(c);
+  });
+  groups.forEach((list, unit) => {
+    const varying = list.filter((c) => c.min !== c.max);
+    if (!varying.length) return;
+    specs.push({title: section.id + " range · " + unit, note: "Minimum and maximum over every row, from the file footer.", span: "c6", h: hFor(varying.length, 28), draw: (n) => drawRanges(n, varying.map((c) => ({label: c.name, min: c.min, max: c.max})))});
+  });
+  const nulls = cols.filter((c) => c.nullPct > 0);
+  if (nulls.length) specs.push({title: section.id + " null share", note: "Percent of rows that are null.", span: "c6", h: hFor(nulls.length), draw: (n) => drawHBars(n, nulls.map((c) => ({label: c.name.length > 28 ? c.name.slice(0, 27) + "…" : c.name, value: c.nullPct, tip: c.name, color: c.nullPct >= 50 ? cssVar("--s2") : cssVar("--s4")})), {domain: [0, 100], suffix: "%"})});
+  return specs.concat(sampleFigures(section));
+}
+function folderFigures() {
+  const section = (state.cat.doc.sections || []).find((s) => s.id === "Appendix A");
+  const fence = section && /```([\s\S]*?)```/.exec(section.body);
+  if (!fence) return [];
+  const top = [];
+  const files = [];
+  fence[1].split("\n").forEach((line) => {
+    const depth = (line.match(/[│├└]/g) || []).length;
+    const m = line.match(/([A-Za-z0-9_.*-]+)\/?\s+(?:(\d+)\s+file\(s\)\s+)?([\d.]+)\s*(kB|MB|GB|B)\b/);
+    if (!m) return;
+    const item = {label: m[1], value: (parseBytes(m[3] + " " + m[4]) || 0) / (1024 * 1024), color: cssVar("--s1")};
+    if (!item.value) return;
+    if (depth === 1) top.push(item);
+    else if (depth >= 2) files.push(item);
+  });
+  const specs = [];
+  if (top.length) specs.push({title: "v1/ folders", note: "Megabytes under each top-level folder.", span: "c6", h: hFor(top.length), draw: (n) => drawHBars(n, top.map((d, i) => Object.assign({}, d, {color: cssVar(["--s1", "--s2", "--s3", "--s4"][i % 4])})))});
+  const big = files.sort((a, b) => b.value - a.value).slice(0, 12);
+  if (big.length) specs.push({title: "Largest file groups", note: "Part files are collapsed to one name.", span: "c6", h: hFor(big.length), draw: (n) => drawHBars(n, big)});
+  return specs;
+}
+function gapFigures() {
+  const section = (state.cat.doc.sections || []).find((s) => s.id === "Appendix D");
+  if (!section) return [];
+  const specs = [];
+  mdTables(section.body).forEach((table) => {
+    const heads = table.head.map((h) => cellPlain(h).toLowerCase());
+    if (cellPlain(table.head[0]).toLowerCase() !== "dataset") return;
+    let title = "";
+    if (heads.includes("declared column")) title = "Declared columns absent from the rows";
+    else if (heads.includes("key on disk")) title = "Keys on disk the schema does not declare";
+    if (!title) return;
+    const counts = d3.rollups(table.rows, (v) => v.length, (r) => cellPlain(r[0])).filter((d) => d[0]);
+    specs.push({title, note: "Counted from Appendix D.", span: "c6", h: hFor(counts.length), draw: (n) => drawHBars(n, counts.map(([label, value]) => ({label, value, id: label, color: cssVar("--s2")})), {onPick: openDataset})});
+  });
+  return specs;
+}
+function overviewFigures() {
+  if (typeof d3 === "undefined" || !state.cat.doc) return [];
+  const all = catDatasets();
+  const specs = [];
+  const head = new Map(headlineFigures(state.cat.doc.intro).map((r) => [r.label, parseCount(r.value)]));
+  const townR = head.get("Town residents"), packR = head.get("Residents in this package");
+  const townH = head.get("Town homes"), packH = head.get("Homes in this package");
+  if ([townR, packR, townH, packH].every((n) => n != null)) {
+    specs.push({title: "Town and this package", note: "The package is the 50-home slice. The scale is compressed so both are visible.", span: "c8", h: 260, draw: (n) => drawGrouped(n, ["Residents", "Homes"], [{name: "Town", color: cssVar("--s1"), values: [townR, townH]}, {name: "Package", color: cssVar("--s2"), values: [packR, packH]}])});
+  }
+  return specs.concat(comparisonFigures(all, openDataset));
+}
+function topicFigures(view) {
+  if (typeof d3 === "undefined" || !state.cat.doc) return [];
+  const list = (view === "browse" || view === "datasets" ? topicRows(view) : topicSections(view)).filter((s) => /^D\d{2}$/.test(s.id));
+  let specs = comparisonFigures(list, openDataset);
+  if (view === "browse") specs = specs.concat(folderFigures());
+  if (view === "validation") specs = specs.concat(gapFigures());
+  const pick = state.pagePick[view];
+  const ordered = list.slice().sort((a, b) => (a.id === pick ? -1 : b.id === pick ? 1 : 0));
+  const deep = list.length <= 10;
+  ordered.forEach((section) => {
+    if (deep || section.id === pick) specs = specs.concat(sectionFigures(section));
+  });
+  return specs;
+}
+function catalogueFigures() {
+  if (typeof d3 === "undefined" || !state.cat.doc) return [];
+  const visible = catVisible();
+  const selected = (state.cat.doc.sections || []).find((s) => s.id === state.cat.selected);
+  let specs = comparisonFigures(visible, selectCatalogue);
+  if (selected && /^D\d{2}$/.test(selected.id)) specs = specs.concat(sectionFigures(selected));
+  return specs;
+}
+function paintCatFigures() {
+  const host = document.getElementById("catFigs");
+  if (!host || !state.cat.doc || state.view !== "catalogue") return;
+  host.innerHTML = figureHtml(catalogueFigures());
+  scheduleDraw(document.getElementById("v-catalogue"), 0);
+}
+function renderOverview() {
+  const root = document.getElementById("v-overview");
+  if (!state.cat.doc) {
+    root.innerHTML = `<div class="card"><p class="sub">${esc(state.cat.error || "Loading the dataset catalogue…")}</p></div>`;
+    return;
+  }
+  const figures = headlineFigures(state.cat.doc.intro);
+  const introRest = state.cat.doc.intro
+    .replace(/### Headline figures[\s\S]*?(?=\n### )/, "")
+    .trim();
+  const rows = catDatasets();
+  const tally = (status) => rows.filter((s) => s.status === status).length;
+  root.innerHTML = `
+    ${figureHtml(overviewFigures())}
+    <div class="grid">
+      ${figures.map((row) => `<div class="card kpi c3"><div class="l">${esc(row.label)}</div><div class="v">${esc(row.value)}</div><div class="d">${esc(row.from)}</div></div>`).join("")}
+      <div class="card c12 md">${renderMarkdown(introRest)}</div>
+      <div class="card c12">
+        <h2>Where each dataset sits</h2>
+        <p class="sub">${fmt(rows.length)} declared · ${tally("present")} present · ${tally("partial")} partial · ${tally("missing")} missing. Choose a row to open that page.</p>
+        <div class="tbl-wrap"><table><thead><tr><th>Dataset</th><th>Title</th><th>Page</th><th>Status</th><th class="num">Rows</th><th class="num">Size</th></tr></thead><tbody>${
+          rows.map((s) => {
+            const page = pageForDataset(s.id);
+            return `<tr data-go="${esc(page)}" data-pick="${esc(s.id)}" style="cursor:pointer"><td><a href="#${esc(s.id.toLowerCase())}" data-open-id="${esc(s.id)}"><b>${esc(s.id)}</b></a></td><td class="name">${esc(s.title)}</td><td>${esc(TITLES[page] || page)}</td><td>${statusBadge(s.status)}</td><td class="num">${esc(s.rows || "—")}</td><td class="num">${esc(s.size || "—")}</td></tr>`;
+          }).join("")
+        }</tbody></table></div>
+      </div>
+    </div>`;
+  scheduleDraw(root, 0);
+}
+function children(prefix) {
+  const folders = new Map();
+  const files = [];
+  state.files.forEach((f) => {
+    if (prefix && !f.name.startsWith(prefix)) return;
+    const rest = prefix ? f.name.slice(prefix.length) : f.name;
+    if (!rest) return;
+    const slash = rest.indexOf("/");
+    if (slash === -1) files.push(f);
+    else {
+      const label = rest.slice(0, slash);
+      const key = prefix + label + "/";
+      const g = folders.get(key) || {key, label, count:0, bytes:0};
+      g.count++; g.bytes += f.size || 0; folders.set(key, g);
+    }
+  });
+  return {folders:[...folders.values()].sort((a, b) => a.label.localeCompare(b.label)), files};
+}
+function sortFiles(files) {
+  const {key, dir} = state.browseSort;
+  const shown = (f) => state.query.trim() ? f.name : f.name.split("/").pop();
+  const val = (f) => key === "size" ? f.size : key === "uploaded" ? (f.uploaded || 0) : key === "type" ? extOf(f.name) : shown(f).toLowerCase();
+  return files.slice().sort((a, b) => {
+    const va = val(a), vb = val(b);
+    if (va > vb) return dir;
+    if (va < vb) return -dir;
+    return 0;
+  });
+}
+function ensureBrowse() {
+  const root = document.getElementById("v-browse");
+  if (root.dataset.ready) return;
+  root.dataset.ready = "1";
+  root.innerHTML = `
+    <div class="stack">
+      <div class="card">
+        <div class="toolbar">
+          <div class="crumbs" id="crumbs"></div>
+          <input type="search" id="bq" placeholder="Filter file names" aria-label="Filter file names" style="margin-left:auto">
+        </div>
+        <div class="tbl-wrap"><table id="browseTbl"></table></div>
+        <div class="pager" id="browsePager"></div>
+      </div>
+      <div class="preview-host"></div>
+    </div>`;
+  root.querySelector("#bq").addEventListener("input", (e) => {
+    state.query = e.target.value;
+    state.browsePage = 0;
+    paintBrowseList();
+  });
+}
+function paintBrowseList() {
+  const tbl = document.getElementById("browseTbl");
+  if (!tbl) return;
+  const q = state.query.trim().toLowerCase();
+  let folders = [], files = [], flat = false;
+  if (q) { files = sortFiles(state.files.filter((f) => f.name.toLowerCase().includes(q))); flat = true; }
+  else { const found = children(state.prefix); folders = found.folders; files = sortFiles(found.files); }
+  const pages = Math.max(1, Math.ceil(files.length / PER_FILES));
+  state.browsePage = Math.min(state.browsePage, pages - 1);
+  const slice = files.slice(state.browsePage * PER_FILES, (state.browsePage + 1) * PER_FILES);
+  const mark = (key) => state.browseSort.key === key ? (state.browseSort.dir > 0 ? " ▲" : " ▼") : "";
+  const parts = state.prefix.split("/").filter(Boolean);
+  let acc = "";
+  const crumbs = [`<button type="button" data-goto="">${esc(state.bucket)}</button>`];
+  parts.forEach((part) => { acc += part + "/"; crumbs.push(`<span>/</span><button type="button" data-goto="${esc(acc)}">${esc(part)}</button>`); });
+  document.getElementById("crumbs").innerHTML = q ? "Search" : crumbs.join("");
+  const folderRows = folders.map((g) => `<tr><td class="name"><button type="button" class="btn" data-goto="${esc(g.key)}">${esc(g.label)}</button></td><td><span class="badge">Folder</span></td><td class="num">${fmtBytes(g.bytes)}</td><td>${fmt(g.count)} files</td></tr>`).join("");
+  const fileRows = slice.map((f) => `<tr class="${f.name === state.selected ? "on" : ""}"><td class="name"><button type="button" class="btn" data-open="${esc(f.name)}">${esc(flat ? f.name : f.name.split("/").pop())}</button></td><td><span class="badge">${esc((extOf(f.name) || "file").toUpperCase())}</span></td><td class="num">${fmtBytes(f.size)}</td><td>${esc(fmtTime(f.uploaded))}</td></tr>`).join("");
+  tbl.innerHTML = `<thead><tr><th data-sort="name">Name${mark("name")}</th><th data-sort="type">Type${mark("type")}</th><th class="num" data-sort="size">Size${mark("size")}</th><th data-sort="uploaded">Uploaded${mark("uploaded")}</th></tr></thead><tbody>${folderRows}${fileRows || (folders.length ? "" : `<tr><td colspan="4" style="color:var(--muted)">${state.files.length ? "Nothing in this folder." : "The bucket has no objects yet."}</td></tr>`)}</tbody>`;
+  document.getElementById("browsePager").innerHTML = files.length
+    ? `${fmt(files.length)} files · page ${state.browsePage + 1} of ${pages} <button type="button" class="btn" data-page="prev" data-scope="browse">Prev</button><button type="button" class="btn" data-page="next" data-scope="browse">Next</button>`
+    : "";
+}
+
+function inferType(values) {
+  const vals = values.filter((v) => v != null && String(v).trim() !== "");
+  if (!vals.length) return "empty";
+  if (vals.map(asNum).filter((v) => v != null).length / vals.length >= 0.85) return "number";
+  if (vals.map(asDate).filter(Boolean).length / vals.length >= 0.85) return "date";
+  const uniq = new Set(vals.map((v) => String(v))).size;
+  if (uniq <= 30) return "category";
+  return "text";
+}
+function profile(names, rows) {
+  return names.map((name) => ({name, type:inferType(rows.map((r) => r[name]))}));
+}
+function uniqueHeaders(headers) {
+  const seen = new Map();
+  return headers.map((h) => {
+    const base = (h || "").trim() || "column";
+    const n = (seen.get(base) || 0) + 1;
+    seen.set(base, n);
+    return n === 1 ? base : base + "_" + n;
+  });
+}
+function parseDelim(text, delim) {
+  const rows = [];
+  let row = [], cur = "", q = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (q) {
+      if (c === '"') { if (text[i + 1] === '"') { cur += '"'; i++; } else q = false; }
+      else cur += c;
+    } else if (c === '"') q = true;
+    else if (c === delim) { row.push(cur); cur = ""; }
+    else if (c === "\n") { row.push(cur); rows.push(row); row = []; cur = ""; }
+    else if (c !== "\r") cur += c;
+  }
+  if (cur.length || row.length) { row.push(cur); rows.push(row); }
+  while (rows.length && rows[rows.length - 1].every((cell) => cell === "")) rows.pop();
+  if (!rows.length) return {columns:[], rows:[], note:"No rows."};
+  const columns = uniqueHeaders(rows[0]);
+  const out = [];
+  for (let i = 1; i < rows.length && out.length < PREVIEW_ROWS; i++) {
+    if (rows[i].every((cell) => cell === "")) continue;
+    const obj = {};
+    columns.forEach((name, idx) => { obj[name] = rows[i][idx] ?? ""; });
+    out.push(obj);
+  }
+  const note = rows.length - 1 > out.length ? "Showing the first " + fmt(out.length) + " rows." : "";
+  return {columns:profile(columns, out), rows:out, note};
+}
+function parseJsonl(text) {
+  const rows = [];
+  const keys = [];
+  const seen = new Set();
+  for (const line of text.split(/\n/)) {
+    const trimmed = line.trim();
+    if (!trimmed) continue;
+    let obj;
+    try { obj = JSON.parse(trimmed); } catch { continue; }
+    if (!obj || typeof obj !== "object" || Array.isArray(obj)) continue;
+    Object.keys(obj).forEach((k) => { if (!seen.has(k)) { seen.add(k); keys.push(k); } });
+    const flat = {};
+    keys.forEach((k) => { flat[k] = cellStr(obj[k]); });
+    rows.push(flat);
+    if (rows.length >= PREVIEW_ROWS) break;
+  }
+  return {columns:profile(keys, rows), rows, note: rows.length >= PREVIEW_ROWS ? "Showing the first " + fmt(PREVIEW_ROWS) + " rows." : ""};
+}
+function jsonToPreview(data) {
+  if (Array.isArray(data)) {
+    if (!data.length) return {kind:"table", columns:[], rows:[], note:"No rows."};
+    if (data.every((x) => x && typeof x === "object" && !Array.isArray(x))) {
+      const keys = [];
+      const seen = new Set();
+      data.slice(0, 50).forEach((row) => Object.keys(row).forEach((k) => { if (!seen.has(k)) { seen.add(k); keys.push(k); } }));
+      const rows = data.slice(0, PREVIEW_ROWS).map((row) => {
+        const obj = {};
+        keys.forEach((k) => { obj[k] = cellStr(row[k]); });
+        return obj;
+      });
+      const note = data.length > rows.length ? "Showing the first " + fmt(rows.length) + " rows." : "";
+      return {kind:"table", columns:profile(keys, rows), rows, note};
+    }
+    const rows = data.slice(0, PREVIEW_ROWS).map((v) => ({value:cellStr(Array.isArray(v) ? v.join(" | ") : v)}));
+    return {kind:"table", columns:profile(["value"], rows), rows, note:""};
+  }
+  if (data && typeof data === "object") {
+    let bestKey = "", best = [];
+    Object.keys(data).forEach((k) => {
+      const v = data[k];
+      if (Array.isArray(v) && v.length > best.length && v.every((x) => x && typeof x === "object" && !Array.isArray(x))) { best = v; bestKey = k; }
+    });
+    if (best.length) {
+      const table = jsonToPreview(best);
+      table.note = "Table from " + bestKey + (table.note ? ". " + table.note : ".");
+      return table;
+    }
+    return {kind:"text", text:JSON.stringify(data, null, 2).slice(0, 200000)};
+  }
+  return {kind:"text", text:String(data)};
+}
+function parsePayload(name, text) {
+  const ext = extOf(name);
+  const body = text.replace(/^\uFEFF/, "");
+  if (ext === "jsonl" || ext === "ndjson") return {kind:"table", ...parseJsonl(body)};
+  if (ext === "json" || (!ext && /^[\[{]/.test(body.trim()))) {
+    try { return jsonToPreview(JSON.parse(body)); }
+    catch {
+      const lines = body.split(/\n/).filter((l) => l.trim());
+      if (lines.length > 1 && lines[0].trim().startsWith("{")) return {kind:"table", ...parseJsonl(body)};
+      throw new Error("Could not parse JSON. A preview that stops mid-file needs JSONL or CSV.");
+    }
+  }
+  if (ext === "md" || ext === "markdown" || ext === "txt" && !body.includes(",") && !body.includes("\t")) {
+    return {kind:"text", text:body.slice(0, 200000)};
+  }
+  const first = body.split(/\n/)[0] || "";
+  const delim = ext === "tsv" || (ext !== "csv" && first.split("\t").length > first.split(",").length) ? "\t" : ",";
+  if (ext === "txt" && first.split(delim).length < 2) return {kind:"text", text:body.slice(0, 200000)};
+  return {kind:"table", ...parseDelim(body, delim)};
+}
+function dropPartial(text, truncated) {
+  if (!truncated) return text;
+  const i = text.lastIndexOf("\n");
+  return i === -1 ? text : text.slice(0, i);
+}
+async function fetchPreviewText(name, maxBytes) {
+  const res = await fetch("/api/file?name=" + encodeURIComponent(name) + "&maxBytes=" + maxBytes);
+  if (!res.ok) {
+    let message = "Could not download " + name;
+    try { message = (await res.json()).error || message; } catch { /* keep */ }
+    throw new Error(message);
+  }
+  const range = res.headers.get("Content-Range") || "";
+  const match = /bytes (\d+)-(\d+)\/(\d+|\*)/.exec(range);
+  const total = match && match[3] !== "*" ? Number(match[3]) : null;
+  const truncated = Boolean(match && total != null && Number(match[2]) + 1 < total);
+  return {text:await res.text(), truncated, total};
+}
+async function loadParquet(file) {
+  let hy;
+  try { hy = await import("https://cdn.jsdelivr.net/npm/hyparquet/src/hyparquet.min.js"); }
+  catch { throw new Error("Parquet preview needs the hyparquet library from the network. CSV and JSON still open."); }
+  const source = file.blob
+    ? {byteLength:file.blob.size, slice:(start, end) => file.blob.slice(start, end).arrayBuffer()}
+    : await hy.asyncBufferFromUrl({url:"/api/file?name=" + encodeURIComponent(file.name)});
+  const raw = await hy.parquetReadObjects({file:source, rowEnd:PREVIEW_ROWS});
+  const keys = [];
+  const seen = new Set();
+  raw.slice(0, 50).forEach((row) => Object.keys(row).forEach((k) => { if (!seen.has(k)) { seen.add(k); keys.push(k); } }));
+  const rows = raw.map((row) => {
+    const obj = {};
+    keys.forEach((k) => { obj[k] = cellStr(row[k]); });
+    return obj;
+  });
+  const note = raw.length >= PREVIEW_ROWS ? "Showing the first " + fmt(PREVIEW_ROWS) + " rows." : "";
+  return {kind:"table", columns:profile(keys, rows), rows, note};
+}
+async function buildPreview(file) {
+  const name = file.name;
+  if (isImage(name)) {
+    const url = file.blob ? URL.createObjectURL(file.blob) : "/api/file?name=" + encodeURIComponent(name);
+    return {status:"ready", kind:"image", name, url, file, local:!!file.local};
+  }
+  if (isParquet(name)) {
+    const table = await loadParquet(file);
+    return {status:"ready", name, file, local:!!file.local, truncated:false, ...table};
+  }
+  if (/^(xlsx|xls|zip|gz|pdf|feather|arrow|orc)$/.test(extOf(name))) {
+    return {status:"ready", kind:"binary", name, file, local:!!file.local, note:"This snapshot viewer previews CSV, JSON, JSONL, Parquet, text, and images."};
+  }
+  let text, truncated = false, total = file.size;
+  if (file.blob) {
+    truncated = file.blob.size > PREVIEW_BYTES;
+    text = await file.blob.slice(0, PREVIEW_BYTES).text();
+    total = file.blob.size;
+  } else {
+    const got = await fetchPreviewText(name, PREVIEW_BYTES);
+    text = got.text; truncated = got.truncated; total = got.total || file.size;
+  }
+  const parsed = parsePayload(name, dropPartial(text, truncated));
+  if (truncated) parsed.note = [parsed.note, "Preview is the first " + fmtBytes(PREVIEW_BYTES) + " of " + fmtBytes(total) + "."].filter(Boolean).join(" ");
+  return {status:"ready", name, file, local:!!file.local, truncated, total, ...parsed};
+}
+function suggestChart(preview) {
+  const cols = preview.columns || [];
+  const nums = cols.filter((c) => c.type === "number");
+  const dates = cols.filter((c) => c.type === "date");
+  const cats = cols.filter((c) => c.type === "category" || c.type === "text");
+  return {kind:"auto", x:(dates[0] || cats[0] || cols[0] || {}).name || "", y:(nums[0] || {}).name || ""};
+}
+async function selectFile(name) {
+  const seq = ++state.previewSeq;
+  const file = state.files.find((f) => f.name === name) || {name, size:0};
+  state.selected = name;
+  state.page = 0;
+  state.tableQuery = "";
+  state.sort = {key:"", dir:1};
+  state.preview = {status:"loading", name, file};
+  if (state.view === "browse") paintBrowseList();
+  paintPreview();
+  try {
+    const preview = await buildPreview(file);
+    if (seq !== state.previewSeq) return;
+    state.preview = preview;
+    state.chart = suggestChart(preview);
+    paintPreview();
+  } catch (err) {
+    if (seq !== state.previewSeq) return;
+    state.preview = {status:"error", name, file, error:err.message};
+    paintPreview();
+  }
+}
+async function openLocal(blob) {
+  showView("browse");
+  const seq = ++state.previewSeq;
+  state.selected = "local:" + blob.name;
+  state.page = 0;
+  state.tableQuery = "";
+  state.sort = {key:"", dir:1};
+  state.preview = {status:"loading", name:blob.name, local:true};
+  paintPreview();
+  try {
+    const preview = await buildPreview({name:blob.name, size:blob.size, blob, local:true});
+    if (seq !== state.previewSeq) return;
+    state.preview = preview;
+    state.chart = suggestChart(preview);
+    paintPreview();
+  } catch (err) {
+    if (seq !== state.previewSeq) return;
+    state.preview = {status:"error", name:blob.name, local:true, error:err.message};
+    paintPreview();
+  }
+}
+
+function visibleRows(preview) {
+  const q = state.tableQuery.trim().toLowerCase();
+  let rows = preview.rows || [];
+  if (q) rows = rows.filter((r) => (preview.columns || []).some((c) => String(r[c.name] ?? "").toLowerCase().includes(q)));
+  if (state.sort.key) {
+    const key = state.sort.key;
+    const type = (preview.columns.find((c) => c.name === key) || {}).type;
+    const dir = state.sort.dir;
+    rows = rows.slice().sort((a, b) => {
+      const va = type === "number" ? asNum(a[key]) : type === "date" ? (asDate(a[key]) || 0) : String(a[key] ?? "").toLowerCase();
+      const vb = type === "number" ? asNum(b[key]) : type === "date" ? (asDate(b[key]) || 0) : String(b[key] ?? "").toLowerCase();
+      if (va == null && vb == null) return 0;
+      if (va == null) return 1;
+      if (vb == null) return -1;
+      if (va > vb) return dir;
+      if (va < vb) return -dir;
+      return 0;
+    });
+  }
+  return rows;
+}
+function resolveChart(preview) {
+  const cols = preview.columns || [];
+  if (!cols.length) return null;
+  const byName = (name) => cols.some((c) => c.name === name);
+  const nums = cols.filter((c) => c.type === "number");
+  const dates = cols.filter((c) => c.type === "date");
+  const cats = cols.filter((c) => c.type !== "number" && c.type !== "empty");
+  const age = cols.find((c) => /age/i.test(c.name));
+  const male = cols.find((c) => /^(male|males|men)$/i.test(c.name));
+  const female = cols.find((c) => /^(female|females|women)$/i.test(c.name));
+  let kind = state.chart.kind || "auto";
+  let x = byName(state.chart.x) ? state.chart.x : "";
+  let y = byName(state.chart.y) ? state.chart.y : (nums[0] || {}).name;
+  if (kind === "auto") {
+    if (age && male && female) return {kind:"pyramid", age:age.name, male:male.name, female:female.name};
+    if (dates[0]) return {kind:"line", x:x || dates[0].name, y};
+    if (cats[0] && y) return {kind:"bar", x:x || cats[0].name, y};
+    if (y) return {kind:"hist", y};
+    return null;
+  }
+  if (kind === "pyramid" && age && male && female) return {kind, age:age.name, male:male.name, female:female.name};
+  if (kind === "hist") return y ? {kind, y} : null;
+  if (!y) return null;
+  if (!x) x = (dates[0] || cats[0] || cols[0]).name;
+  return {kind, x, y};
+}
+const tip = document.getElementById("tip");
+function showTip(event, html) {
+  tip.innerHTML = html;
+  tip.style.opacity = 1;
+  tip.style.left = Math.min(event.clientX + 14, innerWidth - 300) + "px";
+  tip.style.top = (event.clientY + 14) + "px";
+}
+function hideTip() { tip.style.opacity = 0; }
+function chartFrame(node) {
+  const width = node.clientWidth || 640;
+  const height = node.clientHeight || 320;
+  const svg = d3.select(node).append("svg").attr("width", width).attr("height", height);
+  return {svg, width, height};
+}
+function drawBars(node, rows, xKey, yKey) {
+  const agg = new Map();
+  rows.forEach((r) => {
+    const n = asNum(r[yKey]);
+    if (n == null) return;
+    const k = String(r[xKey] ?? "");
+    agg.set(k, (agg.get(k) || 0) + n);
+  });
+  const data = [...agg.entries()].map(([k, v]) => ({k, v})).sort((a, b) => b.v - a.v).slice(0, 24);
+  if (!data.length) { node.innerHTML = '<p class="sub">No numeric values for this chart.</p>'; return; }
+  const {svg, width, height} = chartFrame(node);
+  const m = {t:12, r:12, b:data.length > 8 ? 72 : 36, l:52};
+  const xs = d3.scaleBand().domain(data.map((d) => d.k)).range([m.l, width - m.r]).padding(0.28);
+  const ys = d3.scaleLinear().domain([0, d3.max(data, (d) => d.v) * 1.08 || 1]).nice().range([height - m.b, m.t]);
+  svg.append("g").attr("class", "gridl").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(ys).ticks(5).tickSize(-(width - m.l - m.r)).tickFormat(""));
+  const xAxis = svg.append("g").attr("class", "axis").attr("transform", `translate(0,${height - m.b})`).call(d3.axisBottom(xs).tickSizeOuter(0));
+  if (data.length > 8) xAxis.selectAll("text").attr("transform", "rotate(-35)").style("text-anchor", "end");
+  svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(ys).ticks(5).tickFormat(d3.format("~s"))).call((g) => g.select(".domain").remove());
+  svg.selectAll("rect.bar").data(data).join("rect").attr("class", "bar").attr("fill", cssVar("--s1")).attr("rx", 3)
+    .attr("x", (d) => xs(d.k)).attr("y", (d) => ys(d.v)).attr("width", xs.bandwidth()).attr("height", (d) => Math.max(0, ys(0) - ys(d.v)))
+    .on("mousemove", (event, d) => showTip(event, esc(d.k) + "<br><b>" + esc(fmtNum(d.v)) + "</b> " + esc(yKey)))
+    .on("mouseleave", hideTip);
+}
+function drawLine(node, rows, xKey, yKey) {
+  const pts = rows.map((r) => ({x:asDate(r[xKey]) || r[xKey], y:asNum(r[yKey])})).filter((d) => d.y != null);
+  const dated = pts.length && pts.every((d) => d.x instanceof Date);
+  pts.sort((a, b) => dated ? a.x - b.x : String(a.x).localeCompare(String(b.x)));
+  const step = Math.ceil(pts.length / 800);
+  const shown = step > 1 ? pts.filter((_, i) => i % step === 0) : pts;
+  if (!shown.length) { node.innerHTML = '<p class="sub">No numeric values for this chart.</p>'; return; }
+  const {svg, width, height} = chartFrame(node);
+  const m = {t:12, r:16, b:36, l:52};
+  const xs = dated
+    ? d3.scaleTime().domain(d3.extent(shown, (d) => d.x)).range([m.l, width - m.r])
+    : d3.scalePoint().domain(shown.map((d) => String(d.x))).range([m.l, width - m.r]);
+  const ys = d3.scaleLinear().domain([Math.min(0, d3.min(shown, (d) => d.y)), d3.max(shown, (d) => d.y) * 1.08 || 1]).nice().range([height - m.b, m.t]);
+  svg.append("g").attr("class", "gridl").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(ys).ticks(5).tickSize(-(width - m.l - m.r)).tickFormat(""));
+  svg.append("g").attr("class", "axis").attr("transform", `translate(0,${height - m.b})`).call(dated ? d3.axisBottom(xs).ticks(6) : d3.axisBottom(xs).tickValues(shown.filter((_, i) => i % Math.ceil(shown.length / 6) === 0).map((d) => String(d.x))));
+  svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(ys).ticks(5).tickFormat(d3.format("~s"))).call((g) => g.select(".domain").remove());
+  const line = d3.line().x((d) => xs(dated ? d.x : String(d.x))).y((d) => ys(d.y)).curve(d3.curveMonotoneX);
+  svg.append("path").attr("d", line(shown)).attr("fill", "none").attr("stroke", cssVar("--s1")).attr("stroke-width", 2);
+  if (step > 1) svg.append("text").attr("x", width - m.r).attr("y", 12).attr("text-anchor", "end").text("Sampled");
+}
+function drawHist(node, rows, yKey) {
+  const vals = rows.map((r) => asNum(r[yKey])).filter((v) => v != null);
+  if (!vals.length) { node.innerHTML = '<p class="sub">No numeric values for this chart.</p>'; return; }
+  let min = vals[0], max = vals[0];
+  vals.forEach((v) => { if (v < min) min = v; if (v > max) max = v; });
+  const bins = 20;
+  const widthBin = max === min ? 1 : (max - min) / bins;
+  const data = Array.from({length:bins}, (_, i) => ({k:min + i * widthBin, v:0, label:fmtNum(min + i * widthBin)}));
+  vals.forEach((v) => {
+    let i = Math.floor((v - min) / widthBin);
+    if (i < 0) i = 0;
+    if (i >= bins) i = bins - 1;
+    data[i].v++;
+  });
+  const {svg, width, height} = chartFrame(node);
+  const m = {t:12, r:12, b:36, l:44};
+  const xs = d3.scaleLinear().domain([min, max === min ? min + 1 : max]).range([m.l, width - m.r]);
+  const ys = d3.scaleLinear().domain([0, d3.max(data, (d) => d.v) * 1.08 || 1]).nice().range([height - m.b, m.t]);
+  svg.append("g").attr("class", "gridl").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(ys).ticks(5).tickSize(-(width - m.l - m.r)).tickFormat(""));
+  svg.append("g").attr("class", "axis").attr("transform", `translate(0,${height - m.b})`).call(d3.axisBottom(xs).ticks(6).tickFormat(d3.format("~s")));
+  svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(ys).ticks(5).tickFormat(d3.format("~s"))).call((g) => g.select(".domain").remove());
+  svg.selectAll("rect.bar").data(data).join("rect").attr("fill", cssVar("--s1"))
+    .attr("x", (d) => xs(d.k) + 1).attr("y", (d) => ys(d.v)).attr("width", Math.max(1, (width - m.l - m.r) / bins - 2)).attr("height", (d) => Math.max(0, ys(0) - ys(d.v)))
+    .on("mousemove", (event, d) => showTip(event, esc(yKey) + " from " + esc(fmtNum(d.k)) + "<br><b>" + fmt(d.v) + "</b> rows"))
+    .on("mouseleave", hideTip);
+}
+function drawPyramid(node, rows, spec) {
+  const data = rows.map((r) => ({b:String(r[spec.age] ?? ""), m:Math.abs(asNum(r[spec.male]) || 0), f:Math.abs(asNum(r[spec.female]) || 0)})).filter((d) => d.b);
+  if (!data.length) { node.innerHTML = '<p class="sub">No rows for an age pyramid.</p>'; return; }
+  const {svg, width, height} = chartFrame(node);
+  const m = {t:8, r:16, b:28, l:16};
+  const mid = width / 2, gap = 28;
+  const bands = data.map((d) => d.b);
+  const ys = d3.scaleBand().domain(bands.slice().reverse()).range([m.t, height - m.b]).padding(0.18);
+  const mx = d3.max(data, (d) => Math.max(d.m, d.f)) || 1;
+  const xl = d3.scaleLinear().domain([0, mx]).range([mid - gap, m.l]);
+  const xr = d3.scaleLinear().domain([0, mx]).range([mid + gap, width - m.r]);
+  svg.append("g").attr("class", "axis").attr("transform", `translate(0,${height - m.b})`).call(d3.axisBottom(xl).ticks(3).tickSizeOuter(0));
+  svg.append("g").attr("class", "axis").attr("transform", `translate(0,${height - m.b})`).call(d3.axisBottom(xr).ticks(3).tickSizeOuter(0));
+  svg.selectAll("text.lab").data(bands).join("text").attr("class", "lab").attr("x", mid).attr("y", (b) => ys(b) + ys.bandwidth() / 2).attr("dy", "0.35em").attr("text-anchor", "middle").text((b) => b);
+  const hover = (event, d) => showTip(event, "<b>" + esc(d.b) + "</b><br>Male " + esc(fmtNum(d.m)) + " · Female " + esc(fmtNum(d.f)));
+  svg.selectAll("rect.m").data(data).join("rect").attr("fill", cssVar("--s1")).attr("rx", 3).attr("x", (d) => xl(d.m)).attr("width", (d) => xl(0) - xl(d.m)).attr("y", (d) => ys(d.b)).attr("height", ys.bandwidth()).on("mousemove", hover).on("mouseleave", hideTip);
+  svg.selectAll("rect.f").data(data).join("rect").attr("fill", cssVar("--s2")).attr("rx", 3).attr("x", xr(0)).attr("width", (d) => xr(d.f) - xr(0)).attr("y", (d) => ys(d.b)).attr("height", ys.bandwidth()).on("mousemove", hover).on("mouseleave", hideTip);
+}
+function drawChart(node, preview) {
+  if (!node) return;
+  node.innerHTML = "";
+  if (typeof d3 === "undefined") { node.innerHTML = '<p class="sub">Charts load with d3. The table is ready either way.</p>'; return; }
+  const spec = resolveChart(preview);
+  if (!spec) { node.innerHTML = '<p class="sub">Add a numeric column to chart this table.</p>'; return; }
+  const rows = visibleRows(preview);
+  if (spec.kind === "line") drawLine(node, rows, spec.x, spec.y);
+  else if (spec.kind === "hist") drawHist(node, rows, spec.y);
+  else if (spec.kind === "pyramid") drawPyramid(node, rows, spec);
+  else drawBars(node, rows, spec.x, spec.y);
+}
+function chipText(col, rows) {
+  const vals = rows.map((r) => r[col.name]).filter((v) => v != null && String(v) !== "");
+  if (col.type === "number") {
+    const nums = vals.map(asNum).filter((v) => v != null);
+    if (!nums.length) return col.name;
+    let min = nums[0], max = nums[0];
+    nums.forEach((n) => { if (n < min) min = n; if (n > max) max = n; });
+    return col.name + "  " + fmtNum(min) + " – " + fmtNum(max);
+  }
+  return col.name + "  " + fmt(new Set(vals.map((v) => String(v))).size) + " values";
+}
+function paintPreview() {
+  const host = document.querySelector("#v-" + state.view + " .preview-host");
+  if (!host) return;
+  const preview = state.preview;
+  if (!preview || (state.view === "browse" && !state.selected)) {
+    host.innerHTML = '<div class="card empty"><h2>Select a file</h2><p>Open any object above. Tables get a column profile, a chart, and a paged grid. Images, text, and Parquet open here too. Open local file previews a file before it is in the bucket.</p></div>';
+    return;
+  }
+  if (preview.status === "loading") {
+    host.innerHTML = '<div class="card"><p class="sub">Loading ' + esc(preview.name) + '…</p></div>';
+    return;
+  }
+  if (preview.status === "error") {
+    host.innerHTML = '<div class="card empty"><h2>Could not preview</h2><p>' + esc(preview.error || "Unknown error") + '</p></div>';
+    return;
+  }
+  const file = preview.file || {};
+  const head = `<h2>${esc(preview.name.split("/").pop())}</h2><p class="sub">${esc(preview.name)}${preview.local ? " · local file" : ""} · ${esc(fmtBytes(file.size || preview.total))}${preview.note ? " · " + esc(preview.note) : ""}</p>`;
+  const download = preview.local ? "" : `<a class="btn" href="/api/file?name=${encodeURIComponent(preview.name)}&download=1">Download</a>`;
+  if (preview.kind === "image") {
+    host.innerHTML = `<div class="card">${head}<div class="toolbar">${download}</div><img class="preview-img" alt="" src="${esc(preview.url)}"></div>`;
+    return;
+  }
+  if (preview.kind === "text") {
+    host.innerHTML = `<div class="card">${head}<div class="toolbar">${download}</div><pre class="raw">${esc(preview.text || "")}</pre></div>`;
+    return;
+  }
+  if (preview.kind === "binary") {
+    host.innerHTML = `<div class="card empty">${head}<p>${esc(preview.note || "")}</p><div class="toolbar">${download}</div></div>`;
+    return;
+  }
+  const cols = preview.columns || [];
+  const options = (selected, list) => list.map((c) => `<option value="${esc(c.name)}"${c.name === selected ? " selected" : ""}>${esc(c.name)}</option>`).join("");
+  host.innerHTML = `<div class="card">${head}
+    <div class="toolbar">
+      <input type="search" class="tq" placeholder="Filter rows" aria-label="Filter rows" value="${esc(state.tableQuery)}">
+      <label>Chart <select class="chart-kind" aria-label="Chart type"><option value="auto"${state.chart.kind === "auto" ? " selected" : ""}>Auto</option><option value="bar"${state.chart.kind === "bar" ? " selected" : ""}>Bar</option><option value="line"${state.chart.kind === "line" ? " selected" : ""}>Line</option><option value="hist"${state.chart.kind === "hist" ? " selected" : ""}>Histogram</option><option value="pyramid"${state.chart.kind === "pyramid" ? " selected" : ""}>Age pyramid</option></select></label>
+      <label>X <select class="chart-x" aria-label="X axis">${options(state.chart.x, cols)}</select></label>
+      <label>Y <select class="chart-y" aria-label="Y axis">${options(state.chart.y, cols.filter((c) => c.type === "number").concat(cols.filter((c) => c.type !== "number")))}</select></label>
+      <button type="button" class="btn csv-btn">Export CSV</button>
+      ${download}
+    </div>
+    <div class="chips">${cols.slice(0, 12).map((c) => `<span class="chip"><b>${esc(c.type)}</b> ${esc(chipText(c, preview.rows))}</span>`).join("")}${cols.length > 12 ? `<span class="chip">+${cols.length - 12} columns</span>` : ""}</div>
+    <div class="chart-box"></div>
+    <div class="tbl-wrap"><table class="data-tbl"></table></div>
+    <div class="pager data-pager"></div>
+  </div>`;
+  drawChart(host.querySelector(".chart-box"), preview);
+  paintTableBody();
+}
+function paintTableBody() {
+  const host = document.querySelector("#v-" + state.view + " .preview-host");
+  const preview = state.preview;
+  if (!host || !preview || preview.kind !== "table") return;
+  const tbl = host.querySelector(".data-tbl");
+  const pager = host.querySelector(".data-pager");
+  if (!tbl || !pager) return;
+  const cols = preview.columns || [];
+  const rows = visibleRows(preview);
+  const pages = Math.max(1, Math.ceil(rows.length / PER));
+  state.page = Math.min(state.page, pages - 1);
+  const slice = rows.slice(state.page * PER, (state.page + 1) * PER);
+  const mark = (key) => state.sort.key === key ? (state.sort.dir > 0 ? " ▲" : " ▼") : "";
+  tbl.innerHTML = `<thead><tr>${cols.map((c) => `<th data-sort="${esc(c.name)}" class="${c.type === "number" ? "num" : ""}">${esc(c.name)}${mark(c.name)}</th>`).join("")}</tr></thead><tbody>${
+    slice.map((r) => `<tr>${cols.map((c) => `<td class="${c.type === "number" ? "num" : ""}">${fmtCell(r[c.name], c.type)}</td>`).join("")}</tr>`).join("") || `<tr><td colspan="${Math.max(1, cols.length)}" style="color:var(--muted)">No rows.</td></tr>`
+  }</tbody>`;
+  pager.innerHTML = `${fmt(rows.length)} rows · page ${state.page + 1} of ${pages} <button type="button" class="btn" data-page="prev" data-scope="table">Prev</button><button type="button" class="btn" data-page="next" data-scope="table">Next</button>`;
+}
+function exportCsv() {
+  const preview = state.preview;
+  if (!preview || preview.kind !== "table") return;
+  const cols = preview.columns || [];
+  const lines = [cols.map((c) => csvEscape(c.name)).join(",")];
+  visibleRows(preview).forEach((r) => lines.push(cols.map((c) => csvEscape(r[c.name])).join(",")));
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([lines.join("\n")], {type:"text/csv"}));
+  a.download = (preview.name || "preview").split("/").pop().replace(/\.\w+$/, "") + ".csv";
+  a.click();
+}
+function csvEscape(v) {
+  const s = v == null ? "" : String(v);
+  return /[",\n\r]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+}
+
+function enterLens(id) {
+  const root = document.getElementById("v-" + id);
+  const matches = filesForLens(id);
+  const chosen = state.lensFile[id] && matches.some((f) => f.name === state.lensFile[id]) ? state.lensFile[id] : (matches[0] && matches[0].name) || "";
+  state.lensFile[id] = chosen;
+  if (!matches.length) {
+    const wanted = state.manifest && state.manifest.views && state.manifest.views[id];
+    root.innerHTML = `<div class="card empty"><h2>No ${esc(LENSES[id].title.toLowerCase())} file yet</h2><p>Upload a table whose path mentions ${esc(LENSES[id].hint)}. ${wanted ? "The manifest points at " + esc(wanted) + "." : "Browse lists every object, whatever the name."}</p><button type="button" class="btn" data-jump="browse">Open Browse</button></div>`;
+    return;
+  }
+  const picker = matches.length === 1
+    ? `<p class="sub">Source · ${esc(chosen)}</p>`
+    : `<select class="lens-pick" aria-label="Source file">${matches.map((f) => `<option value="${esc(f.name)}"${f.name === chosen ? " selected" : ""}>${esc(f.name)}</option>`).join("")}</select>`;
+  root.innerHTML = `<div class="stack"><div class="toolbar">${picker}</div><div class="preview-host"></div></div>`;
+  if (state.preview && state.preview.name === chosen && state.preview.status === "ready") paintPreview();
+  else selectFile(chosen);
+}
+function inferClass(name) {
+  const listed = ((state.manifest && state.manifest.datasets) || []).find((d) => d.path === name);
+  if (listed && listed.class) return String(listed.class);
+  const p = name.toLowerCase();
+  if (/(^|\/)(gt|ground[-_]?truth)\//.test(p)) return "GT";
+  if (/(^|\/)(obs|observable)\//.test(p)) return "OBS";
+  if (/(^|\/)(meta|evidence|validation)\//.test(p)) return "META";
+  return "";
+}
+function datasetRows() {
+  const rows = [];
+  const seen = new Set();
+  ((state.manifest && state.manifest.datasets) || []).forEach((d) => {
+    const path = d.path || "";
+    const file = state.files.find((f) => f.name === path);
+    if (path) seen.add(path);
+    rows.push({id:d.id || "", name:d.name || path, path, className:d.class || inferClass(path), size:file ? file.size : null, uploaded:file ? file.uploaded : null, missing:!file});
+  });
+  state.files.forEach((f) => {
+    if (seen.has(f.name)) return;
+    rows.push({id:"", name:f.name, path:f.name, className:inferClass(f.name), size:f.size, uploaded:f.uploaded, missing:false});
+  });
+  const q = state.datasetQuery.trim().toLowerCase();
+  return rows.filter((r) => {
+    if (state.datasetClass === "none" && r.className) return false;
+    if (state.datasetClass && state.datasetClass !== "none" && r.className !== state.datasetClass) return false;
+    if (q && !(r.name + " " + r.path + " " + r.id).toLowerCase().includes(q)) return false;
+    return true;
+  });
+}
+function ensureDatasets() {
+  const root = document.getElementById("v-datasets");
+  if (root.dataset.ready) return;
+  root.dataset.ready = "1";
+  root.innerHTML = `<div class="card"><div class="toolbar">
+      <input type="search" class="dq" placeholder="Search datasets" aria-label="Search datasets">
+      <select class="dcls" aria-label="Class"><option value="">All classes</option><option>GT</option><option>OBS</option><option>META</option><option value="none">Unclassified</option></select>
+    </div><div class="tbl-wrap"><table class="data-sets"></table></div><p class="sub" id="dsetNote"></p></div>`;
+}
+function paintDatasetBody() {
+  ensureDatasets();
+  const tbl = document.querySelector("#v-datasets .data-sets");
+  const rows = datasetRows();
+  tbl.innerHTML = `<thead><tr><th>ID</th><th>Dataset</th><th>Class</th><th class="num">Size</th><th>Uploaded</th><th></th></tr></thead><tbody>${
+    rows.map((r) => `<tr><td>${r.id ? "<b>" + esc(r.id) + "</b>" : ""}</td><td class="name">${esc(r.name)}${r.name !== r.path ? `<div class="sub">${esc(r.path)}</div>` : ""}</td><td>${r.className ? `<span class="badge">${esc(r.className)}</span>` : ""}</td><td class="num">${r.missing ? "—" : fmtBytes(r.size)}</td><td>${r.missing ? "Not uploaded" : esc(fmtTime(r.uploaded))}</td><td>${r.missing ? "" : `<button type="button" class="btn" data-open="${esc(r.path)}">Open</button>`}</td></tr>`).join("") || `<tr><td colspan="6" style="color:var(--muted)">No datasets yet.</td></tr>`
+  }</tbody>`;
+  document.getElementById("dsetNote").textContent = fmt(rows.length) + " shown · " + fmt(state.files.length) + " objects in " + state.bucket;
+}
+
+function openInBrowse(name) {
+  const slash = name.lastIndexOf("/");
+  state.prefix = slash === -1 ? "" : name.slice(0, slash + 1);
+  state.query = "";
+  state.browsePage = 0;
+  state.view = "browse";
+  document.querySelectorAll("#nav button").forEach((b) => b.classList.toggle("on", b.dataset.v === "browse"));
+  document.querySelectorAll(".view").forEach((v) => v.classList.toggle("on", v.id === "v-browse"));
+  document.getElementById("title").textContent = TITLES.browse;
+  ensureBrowse();
+  const box = document.getElementById("bq");
+  if (box) box.value = "";
+  paintBrowseList();
+  selectFile(name);
+}
+
+document.body.addEventListener("click", (e) => {
+  const nav = e.target.closest("#nav button");
+  if (nav) { showView(nav.dataset.v); return; }
+  const idLink = e.target.closest("[data-open-id], [data-cat]");
+  if (idLink) {
+    e.preventDefault();
+    showDataset(idLink.dataset.openId || idLink.dataset.cat);
+    return;
+  }
+  const pick = e.target.closest("[data-pick]");
+  if (pick) {
+    showDataset(pick.dataset.pick);
+    return;
+  }
+  const jump = e.target.closest("[data-jump]");
+  if (jump) { showView(jump.dataset.jump); return; }
+  if (e.target.closest(".csv-btn")) { exportCsv(); return; }
+  const th = e.target.closest("th[data-sort]");
+  if (th) {
+    const key = th.dataset.sort;
+    if (th.closest("#browseTbl")) {
+      state.browseSort = {key, dir:state.browseSort.key === key ? -state.browseSort.dir : 1};
+      paintBrowseList();
+    } else {
+      state.sort = {key, dir:state.sort.key === key ? -state.sort.dir : 1};
+      state.page = 0;
+      paintTableBody();
+    }
+    return;
+  }
+  const pageBtn = e.target.closest("[data-page]");
+  if (pageBtn) {
+    const dir = pageBtn.dataset.page === "next" ? 1 : -1;
+    if (pageBtn.dataset.scope === "browse") { state.browsePage = Math.max(0, state.browsePage + dir); paintBrowseList(); }
+    else { state.page = Math.max(0, state.page + dir); paintTableBody(); }
+    return;
+  }
+  const opener = e.target.closest("[data-open]");
+  if (opener) {
+    const name = opener.dataset.open;
+    if (state.view === "browse") selectFile(name);
+    else openInBrowse(name);
+    return;
+  }
+  const goto = e.target.closest("[data-goto]");
+  if (goto) {
+    state.prefix = goto.dataset.goto || "";
+    state.query = "";
+    state.browsePage = 0;
+    const box = document.getElementById("bq");
+    if (box) box.value = "";
+    if (state.view !== "browse") showView("browse");
+    else paintBrowseList();
+  }
+});
+document.body.addEventListener("input", (e) => {
+  if (e.target.classList.contains("tq")) {
+    state.tableQuery = e.target.value;
+    state.page = 0;
+    paintTableBody();
+    const host = document.querySelector("#v-" + state.view + " .preview-host");
+    if (host && state.preview) drawChart(host.querySelector(".chart-box"), state.preview);
+  }
+  if (e.target.classList.contains("dq")) {
+    state.datasetQuery = e.target.value;
+    paintDatasetBody();
+  }
+  if (e.target.classList.contains("cq")) {
+    state.cat.query = e.target.value;
+    paintCatTable();
+    paintCatFigures();
+  }
+});
+document.body.addEventListener("change", (e) => {
+  if (e.target.classList.contains("chart-kind") || e.target.classList.contains("chart-x") || e.target.classList.contains("chart-y")) {
+    const host = e.target.closest(".preview-host");
+    state.chart = {
+      kind: host.querySelector(".chart-kind").value,
+      x: host.querySelector(".chart-x").value,
+      y: host.querySelector(".chart-y").value
+    };
+    drawChart(host.querySelector(".chart-box"), state.preview);
+  }
+  if (e.target.classList.contains("lens-pick")) {
+    state.lensFile[state.view] = e.target.value;
+    selectFile(e.target.value);
+  }
+  if (e.target.classList.contains("dcls")) {
+    state.datasetClass = e.target.value;
+    paintDatasetBody();
+  }
+  if (e.target.classList.contains("ccls") || e.target.classList.contains("cstat") || e.target.classList.contains("cpkg")) {
+    state.cat.cls = document.querySelector("#v-catalogue .ccls").value;
+    state.cat.status = document.querySelector("#v-catalogue .cstat").value;
+    state.cat.pkg = document.querySelector("#v-catalogue .cpkg").value;
+    paintCatTable();
+    paintCatFigures();
+  }
+  if (e.target.id === "localFile") {
+    const file = e.target.files && e.target.files[0];
+    e.target.value = "";
+    if (file) openLocal(file);
+  }
+});
+document.getElementById("refresh").onclick = async () => {
+  document.getElementById("pillText").textContent = "Refreshing…";
+  try {
+    if (!state.connected) await boot();
+    else {
+      await refreshFiles(true);
+      if (!state.files.length) watch();
+    }
+  } catch (err) {
+    state.error = err.message;
+    updateBanner();
+    updatePill();
+  }
+};
+document.getElementById("theme").onclick = () => {
+  const root = document.documentElement;
+  const dark = root.dataset.theme ? root.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+  root.dataset.theme = dark ? "light" : "dark";
+  try { localStorage.setItem("bn-theme", root.dataset.theme); } catch { /* private mode */ }
+  const host = document.querySelector("#v-" + state.view + " .preview-host");
+  if (host && state.preview && state.preview.kind === "table") drawChart(host.querySelector(".chart-box"), state.preview);
+  const y = scrollY;
+  if (state.cat.doc && state.view === "overview") renderOverview();
+  else if (state.cat.doc && state.view === "catalogue") paintCatFigures();
+  else if (state.cat.doc && PAGES[state.view]) renderTopic(state.view);
+  else redrawFigures();
+  scrollTo(0, y);
+};
+try {
+  const saved = localStorage.getItem("bn-theme");
+  if (saved === "light" || saved === "dark") document.documentElement.dataset.theme = saved;
+} catch { /* ignore */ }
+addEventListener("resize", () => {
+  clearTimeout(state.resizeTimer);
+  state.resizeTimer = setTimeout(() => {
+    const host = document.querySelector("#v-" + state.view + " .preview-host");
+    if (host && state.preview && state.preview.kind === "table") drawChart(host.querySelector(".chart-box"), state.preview);
+    redrawFigures();
+  }, 150);
+});
+
+function factCell(body, label) {
+  const match = new RegExp("^\\|\\s*" + label + "\\s*\\|\\s*(.*?)\\s*\\|\\s*$", "m").exec(body);
+  return match ? match[1].replace(/\*\*/g, "").trim() : "";
+}
+function anchorToId(href) {
+  const h = String(href || "").replace(/^#/, "");
+  const dataset = /^d(\d+)$/.exec(h);
+  if (dataset) return "D" + dataset[1].padStart(2, "0");
+  const appendix = /^appendix-([a-e])$/.exec(h);
+  if (appendix) return "Appendix " + appendix[1].toUpperCase();
+  return h;
+}
+function linkDatasetIds(html) {
+  const known = new Set(((state.cat.doc && state.cat.doc.sections) || []).map((s) => s.id));
+  let skip = 0;
+  return String(html).split(/(<[^>]+>)/).map((part) => {
+    if (part.startsWith("<")) {
+      const tag = /^<\/?([a-z0-9]+)/i.exec(part);
+      if (tag && tag[1].toLowerCase() === "a") skip += part.startsWith("</") ? -1 : (/\/>$/.test(part) ? 0 : 1);
+      if (skip < 0) skip = 0;
+      return part;
+    }
+    if (skip) return part;
+    return part.replace(/(?<![A-Za-z0-9])D(\d{2})(?!\d)/g, (m, n) => {
+      const id = "D" + n;
+      if (!known.has(id)) return m;
+      return `<a href="#${id.toLowerCase()}" data-open-id="${id}">${id}</a>`;
+    });
+  }).join("");
+}
+function renderInline(src) {
+  return linkDatasetIds(esc(src)
+    .replace(/`([^`]+)`/g, "<code>$1</code>")
+    .replace(/\*\*([^*]+)\*\*/g, "<b>$1</b>")
+    .replace(/\[([^\]]+)\]\((#[^)]+)\)/g, (_, label, href) => `<a href="${esc(href)}" data-cat="${esc(anchorToId(href))}">${label}</a>`));
+}
+function splitMdRow(line) {
+  return line.trim().replace(/^\|/, "").replace(/\|$/, "").split("|").map((cell) => cell.trim());
+}
+function renderMdTable(lines) {
+  const rows = lines.filter((line) => !/^\|?\s*:?-{3,}:?\s*(\|\s*:?-{3,}:?\s*)+\|?\s*$/.test(line.trim()));
+  if (!rows.length) return "";
+  const head = splitMdRow(rows[0]);
+  const body = rows.slice(1).map(splitMdRow);
+  return `<div class="tbl-wrap"><table><thead><tr>${head.map((cell) => `<th>${renderInline(cell)}</th>`).join("")}</tr></thead><tbody>${
+    body.map((row) => `<tr>${head.map((_, i) => `<td>${renderInline(row[i] || "")}</td>`).join("")}</tr>`).join("")
+  }</tbody></table></div>`;
+}
+function renderMarkdown(src) {
+  const details = [];
+  const text = String(src || "")
+    .replace(/<div style="page-break-after: always;"><\/div>/g, "")
+    .replace(/<a id="[^"]+"><\/a>/g, "")
+    .replace(/<details><summary>([\s\S]*?)<\/summary>([\s\S]*?)<\/details>/g, (_, summary, inner) => {
+      const n = details.length;
+      details.push({summary, inner});
+      return "\n\n@@DETAILS" + n + "@@\n\n";
+    });
+  const lines = text.replace(/\r\n/g, "\n").split("\n");
+  const out = [];
+  let i = 0;
+  while (i < lines.length) {
+    const line = lines[i];
+    if (!line.trim()) { i++; continue; }
+    const detail = /^@@DETAILS(\d+)@@$/.exec(line.trim());
+    if (detail) {
+      const block = details[Number(detail[1])];
+      out.push(`<details open><summary>${renderInline(block.summary)}</summary>${renderMarkdown(block.inner)}</details>`);
+      i++;
+      continue;
+    }
+    if (line.startsWith("```")) {
+      const buf = [];
+      i++;
+      while (i < lines.length && !lines[i].startsWith("```")) buf.push(lines[i++]);
+      if (i < lines.length) i++;
+      out.push(`<pre class="raw">${esc(buf.join("\n"))}</pre>`);
+      continue;
+    }
+    const heading = /^(#{1,4})\s+(.*)$/.exec(line);
+    if (heading) {
+      const level = heading[1].length;
+      out.push(`<h${level}>${renderInline(heading[2])}</h${level}>`);
+      i++;
+      continue;
+    }
+    if (line.startsWith(">")) {
+      const buf = [];
+      while (i < lines.length && lines[i].startsWith(">")) buf.push(lines[i++].replace(/^>\s?/, ""));
+      out.push(`<blockquote>${renderInline(buf.join(" "))}</blockquote>`);
+      continue;
+    }
+    if (line.startsWith("|")) {
+      const buf = [];
+      while (i < lines.length && lines[i].startsWith("|")) buf.push(lines[i++]);
+      out.push(renderMdTable(buf));
+      continue;
+    }
+    if (/^[-*]\s/.test(line)) {
+      const buf = [];
+      while (i < lines.length && /^[-*]\s/.test(lines[i])) buf.push(lines[i++].replace(/^[-*]\s+/, ""));
+      out.push(`<ul>${buf.map((item) => `<li>${renderInline(item)}</li>`).join("")}</ul>`);
+      continue;
+    }
+    if (/^---+$/.test(line.trim())) { i++; continue; }
+    const buf = [];
+    while (i < lines.length && lines[i].trim() && !lines[i].startsWith("|") && !lines[i].startsWith("```") && !lines[i].startsWith(">") && !/^#{1,4}\s/.test(lines[i]) && !/^[-*]\s/.test(lines[i]) && !/^@@DETAILS/.test(lines[i].trim()) && !/^---+$/.test(lines[i].trim())) {
+      buf.push(lines[i++]);
+    }
+    out.push(`<p>${renderInline(buf.join(" "))}</p>`);
+  }
+  return out.join("\n");
+}
+function parseCatalogue(raw) {
+  const md = raw.replace(/\r\n/g, "\n").replace(/<div style="page-break-after: always;"><\/div>/g, "").replace(/<a id="[^"]+"><\/a>/g, "");
+  const contentsAt = md.search(/^## Contents/m);
+  const intro = contentsAt < 0 ? md.trim() : md.slice(0, contentsAt).trim();
+  const rest = contentsAt < 0 ? "" : md.slice(contentsAt);
+  const sections = [];
+  rest.split(/\n(?=## )/).forEach((chunk) => {
+    const nl = chunk.indexOf("\n");
+    const heading = (nl < 0 ? chunk : chunk.slice(0, nl)).replace(/^##\s+/, "").trim();
+    const body = nl < 0 ? "" : chunk.slice(nl + 1).trim();
+    if (!heading || heading === "Contents") return;
+    const idMatch = /^(D\d{2}|Appendix [A-E])/.exec(heading);
+    const id = idMatch ? idMatch[1] : heading;
+    const title = heading.replace(/^(?:D\d{2}|Appendix [A-E])\s·\s/, "");
+    const statusText = factCell(body, "Status");
+    const status = (statusText.match(/^(present|partial|missing)/) || [""])[0];
+    const classText = factCell(body, "Class");
+    const cls = (classText.match(/^(GT|OBS|META)/) || [""])[0];
+    sections.push({
+      id, title, heading, body, cls, status, statusText,
+      pkg: factCell(body, "Package"),
+      rows: factCell(body, "Rows"),
+      size: factCell(body, "Size"),
+      path: factCell(body, "Path")
+    });
+  });
+  return {intro, sections};
+}
+function catDatasets() {
+  return ((state.cat.doc && state.cat.doc.sections) || []).filter((s) => /^D\d{2}$/.test(s.id));
+}
+function catAppendices() {
+  return ((state.cat.doc && state.cat.doc.sections) || []).filter((s) => s.id.startsWith("Appendix"));
+}
+function catVisible() {
+  const q = state.cat.query.trim().toLowerCase();
+  return catDatasets().filter((s) => {
+    if (state.cat.cls && s.cls !== state.cat.cls) return false;
+    if (state.cat.status && s.status !== state.cat.status) return false;
+    if (state.cat.pkg && s.pkg !== state.cat.pkg) return false;
+    if (!q) return true;
+    return (s.id + " " + s.title + " " + s.cls + " " + s.pkg + " " + s.path + " " + s.body).toLowerCase().includes(q);
+  });
+}
+function statusBadge(status) {
+  const kind = status === "present" ? "st-pass" : status === "partial" ? "st-run" : status === "missing" ? "st-pend" : "";
+  return status ? `<span class="badge ${kind}"><i></i>${esc(status)}</span>` : "";
+}
+function loadCatalogue() {
+  if (state.cat.doc) return Promise.resolve(state.cat.doc);
+  if (state.cat.promise) return state.cat.promise;
+  state.cat.loading = true;
+  state.cat.promise = fetch(new URL("datasets.md", document.baseURI).href, {cache:"no-store"})
+    .then(async (res) => {
+      if (!res.ok) throw new Error("datasets.md is missing beside data_viewer.html (" + res.status + ").");
+      state.cat.doc = parseCatalogue(await res.text());
+      state.cat.error = "";
+      const count = document.getElementById("nCat");
+      if (count) count.textContent = fmt(catDatasets().length);
+    })
+    .catch((err) => { state.cat.error = err.message || "Could not read the catalogue."; })
+    .finally(() => { state.cat.loading = false; });
+  return state.cat.promise;
+}
+function topicSections(view) {
+  const spec = PAGES[view];
+  if (!spec || !state.cat.doc) return [];
+  const byId = new Map(state.cat.doc.sections.map((s) => [s.id, s]));
+  const ids = view === "datasets" ? catDatasets().map((s) => s.id) : (spec.ids || []);
+  return ids.map((id) => byId.get(id)).filter(Boolean);
+}
+function topicRows(view) {
+  if (!state.cat.doc) return [];
+  if (view === "browse" || view === "datasets") return catDatasets();
+  return topicSections(view);
+}
+function renderTopic(view) {
+  const root = document.getElementById("v-" + view);
+  const spec = PAGES[view];
+  if (!state.cat.doc) {
+    root.innerHTML = `<div class="card"><p class="sub">${esc(state.cat.error || "Loading " + (TITLES[view] || "this page") + "…")}</p></div>`;
+    if (!state.cat.error) loadCatalogue().then(() => { if (state.view === view) renderTopic(view); });
+    return;
+  }
+  const sections = topicSections(view);
+  const rows = topicRows(view);
+  const selectable = sections.concat(rows.filter((s) => !sections.some((x) => x.id === s.id)));
+  const pick = state.pagePick[view] && selectable.some((s) => s.id === state.pagePick[view])
+    ? state.pagePick[view]
+    : ((selectable.find((s) => s.id === spec.open) || selectable.find((s) => s.status === "present") || selectable[0] || {}).id || "");
+  state.pagePick[view] = pick;
+  const chosen = selectable.find((s) => s.id === pick);
+  const tableRows = rows.length ? rows : sections;
+  const buttonSource = sections.length && sections.length <= 10 ? sections : [];
+  root.innerHTML = `
+    <div class="card">
+      <h2>${esc(TITLES[view])}</h2>
+      <p class="sub">${esc(spec.blurb)}</p>
+      ${buttonSource.length ? `<div class="checks">${buttonSource.map((s) => `<a href="#${esc(s.id.toLowerCase())}" class="btn${s.id === pick ? " cat-on" : ""}" data-open-id="${esc(s.id)}">${esc(s.id)}</a>`).join("")}</div>` : ""}
+    </div>
+    ${figureHtml(topicFigures(view))}
+    <div class="card">
+      <div class="tbl-wrap"><table><thead><tr><th>Dataset</th><th>Title</th><th>Class</th><th>Status</th><th class="num">Rows</th><th class="num">Size</th><th>Path</th></tr></thead><tbody>${
+        tableRows.map((s) => `<tr class="${s.id === pick ? "on" : ""}" data-pick="${esc(s.id)}" style="cursor:pointer"><td><a href="#${esc(s.id.toLowerCase())}" data-open-id="${esc(s.id)}"><b>${esc(s.id)}</b></a></td><td class="name">${esc(s.title)}</td><td>${s.cls ? `<span class="badge">${esc(s.cls)}</span>` : ""}</td><td>${statusBadge(s.status)}</td><td class="num">${esc(s.rows || "—")}</td><td class="num">${esc(s.size || "—")}</td><td class="name">${esc(s.path || "")}</td></tr>`).join("")
+      }</tbody></table></div>
+    </div>
+    <div class="card md" id="ds-info" style="margin-top:16px">${chosen ? `<h2><a href="#${esc(chosen.id.toLowerCase())}" data-open-id="${esc(chosen.id)}">${esc(chosen.id)}</a> · ${esc(chosen.title)}</h2><p class="sub">${linkDatasetIds(esc([chosen.cls, chosen.pkg, chosen.statusText].filter(Boolean).join(" · ")))}</p>${renderMarkdown(chosen.body)}` : ""}</div>`;
+  scheduleDraw(root, 0);
+}
+async function enterCatalogue() {
+  const root = document.getElementById("v-catalogue");
+  if (!state.cat.doc && !state.cat.error) root.innerHTML = '<div class="card"><p class="sub">Loading the dataset catalogue…</p></div>';
+  await loadCatalogue();
+  if (state.view !== "catalogue") return;
+  renderCatalogue();
+}
+function renderCatalogue() {
+  const root = document.getElementById("v-catalogue");
+  if (state.cat.error && !state.cat.doc) {
+    root.dataset.ready = "";
+    root.innerHTML = `<div class="card empty"><h2>Catalogue unavailable</h2><p>${esc(state.cat.error)}</p><p>Put <code>datasets.md</code> in the same folder as <code>data_viewer.html</code>.</p></div>`;
+    return;
+  }
+  if (!state.cat.doc) return;
+  if (!state.cat.selected) {
+    const first = catDatasets().find((s) => s.id === "D18") || catDatasets().find((s) => s.status === "present");
+    if (first) state.cat.selected = first.id;
+  }
+  if (!root.dataset.ready) {
+    const packages = [...new Set(catDatasets().map((s) => s.pkg).filter(Boolean))];
+    root.dataset.ready = "1";
+    root.innerHTML = `
+      <div id="catFigs"></div>
+      <div id="catHead"></div>
+      <div class="card" style="margin-top:16px">
+        <div class="toolbar">
+          <input type="search" class="cq" placeholder="Search" aria-label="Search the catalogue">
+          <select class="ccls" aria-label="Class"><option value="">All classes</option><option>GT</option><option>OBS</option><option>META</option></select>
+          <select class="cstat" aria-label="Status"><option value="">All statuses</option><option value="present">present</option><option value="partial">partial</option><option value="missing">missing</option></select>
+          <select class="cpkg" aria-label="Package"><option value="">All packages</option>${packages.map((p) => `<option>${esc(p)}</option>`).join("")}</select>
+        </div>
+        <p class="sub" id="catCount"></p>
+        <div class="tbl-wrap"><table class="cat-tbl"></table></div>
+        <p class="sub" style="margin-top:12px">Appendices</p>
+        <div class="checks" id="catApps"></div>
+      </div>
+      <div id="catDetail" style="margin-top:16px"></div>`;
+    document.getElementById("catHead").innerHTML = `<div class="card md cat-intro">${renderMarkdown(state.cat.doc.intro)}</div>`;
+  }
+  paintCatTable();
+  paintCatDetail();
+  paintCatFigures();
+}
+function paintCatTable() {
+  const tbl = document.querySelector("#v-catalogue .cat-tbl");
+  if (!tbl || !state.cat.doc) return;
+  const rows = catVisible();
+  const all = catDatasets();
+  const tally = (status) => all.filter((s) => s.status === status).length;
+  document.getElementById("catCount").textContent = fmt(rows.length) + " shown · " + fmt(all.length) + " declared · " + tally("present") + " present · " + tally("partial") + " partial · " + tally("missing") + " missing";
+  tbl.innerHTML = `<thead><tr><th>Dataset</th><th>Title</th><th>Class</th><th>Package</th><th>Status</th><th class="num">Rows</th><th class="num">Size</th></tr></thead><tbody>${
+    rows.map((s) => `<tr class="${s.id === state.cat.selected ? "on" : ""}" data-cat="${esc(s.id)}" style="cursor:pointer"><td><a href="#${esc(s.id.toLowerCase())}" data-open-id="${esc(s.id)}"><b>${esc(s.id)}</b></a></td><td class="name">${esc(s.title)}</td><td>${s.cls ? `<span class="badge">${esc(s.cls)}</span>` : ""}</td><td>${esc(s.pkg)}</td><td>${statusBadge(s.status)}</td><td class="num">${esc(s.rows || "—")}</td><td class="num">${esc(s.size || "—")}</td></tr>`).join("")
+    || `<tr><td colspan="7" style="color:var(--muted)">No dataset matches.</td></tr>`
+  }</tbody>`;
+  const q = state.cat.query.trim().toLowerCase();
+  document.getElementById("catApps").innerHTML = catAppendices().filter((s) => !q || (s.id + " " + s.title + " " + s.body).toLowerCase().includes(q)).map((s) => `<button type="button" class="btn${s.id === state.cat.selected ? " cat-on" : ""}" data-cat="${esc(s.id)}">${esc(s.id)}</button>`).join("");
+}
+function paintCatDetail() {
+  const host = document.getElementById("catDetail");
+  if (!host || !state.cat.doc) return;
+  const section = state.cat.doc.sections.find((s) => s.id === state.cat.selected);
+  if (!section) {
+    host.innerHTML = '<div class="card empty"><h2>Select a dataset</h2><p>Each row opens the full catalogue entry: description, facts, schema, sample, joins and validation. The appendices cover the folder tree, keys, conventions, design against disk, and the glossary.</p></div>';
+    return;
+  }
+  host.innerHTML = `<div class="card md"><h2><a href="#${esc(section.id.toLowerCase())}" data-open-id="${esc(section.id)}">${esc(section.id)}</a> · ${esc(section.title)}</h2>${section.pkg || section.status ? `<p class="sub">${linkDatasetIds(esc([section.cls, section.pkg, section.statusText].filter(Boolean).join(" · ")))}</p>` : ""}<div>${renderMarkdown(section.body)}</div></div>`;
+}
+
+window.__viewer = {
+  state,
+  previewCsv(name, text) {
+    showView("browse");
+    state.selected = name;
+    const parsed = parsePayload(name, text);
+    state.preview = {status:"ready", name, local:true, file:{name, size:text.length}, ...parsed};
+    state.chart = suggestChart(state.preview);
+    paintPreview();
+  }
+};
+boot();
+})();
+</script>
+</body>
+</html>

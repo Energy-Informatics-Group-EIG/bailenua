@@ -1,0 +1,63 @@
+# BER band energy boundaries (kWh/m2/yr of primary energy).
+#
+# PROVENANCE AND STATUS (ISSUES.md I-019)
+# These are the BER band boundaries defined by the Irish regulatory framework
+# (SEAI's DEAP methodology, under S.I. 666 of 2006 as amended). They are a
+# REGULATORY DEFINITION, not an empirical statistic, which is why they are
+# written down here at all - but they have NOT been read back from the SEAI
+# document in this run, so they carry [A] and are listed in ISSUES.md as an item
+# to verify in WP1 against the published DEAP manual.
+#
+# They are used for ONE purpose: to turn the BER band that CSO EBA02 reports
+# (which is a band, not a number) into an asset-rating energy figure, from which
+# the building's heat loss coefficient is derived. A wrong boundary would scale
+# every fabric parameter in that band, so the dependency is recorded explicitly
+# and the E1 report lists it as an unverified input.
+#
+# CSO EBA02 aggregates C, D and E into single letters, so both the fine bands
+# and the aggregates are given.
+source: "SEAI DEAP / BER band definitions (S.I. 666 of 2006 as amended)"
+evidence_tag: "[A] not read back from the SEAI document in this run; verify in WP1"
+unit: kWh/m2/yr primary energy
+bands:
+  A1: {lo: 0,   hi: 25}
+  A2: {lo: 25,  hi: 50}
+  A3: {lo: 50,  hi: 75}
+  B1: {lo: 75,  hi: 100}
+  B2: {lo: 100, hi: 125}
+  B3: {lo: 125, hi: 150}
+  C1: {lo: 150, hi: 175}
+  C2: {lo: 175, hi: 200}
+  C3: {lo: 200, hi: 225}
+  D1: {lo: 225, hi: 260}
+  D2: {lo: 260, hi: 300}
+  E1: {lo: 300, hi: 340}
+  E2: {lo: 340, hi: 380}
+  F:  {lo: 380, hi: 450}
+  G:  {lo: 450, hi: 600}
+# CSO EBA02's aggregated letters, mapped to the span of their sub-bands.
+aggregates:
+  A:   {lo: 0,   hi: 75,  members: [A1, A2, A3]}
+  A0:  {lo: 0,   hi: 25,  members: [A1]}
+  B:   {lo: 75,  hi: 150, members: [B1, B2, B3]}
+  C:   {lo: 150, hi: 225, members: [C1, C2, C3]}
+  D:   {lo: 225, hi: 300, members: [D1, D2]}
+  E:   {lo: 300, hi: 380, members: [E1, E2]}
+  "F-G": {lo: 380, hi: 600, members: [F, G]}
+
+# Fraction of primary energy that is SPACE heating, by band.
+#
+# [A]. DEAP's primary-energy figure includes space heating, water heating,
+# pumps/fans and lighting, and the space-heating share falls as fabric improves
+# (an A-rated home's water heating is a larger share of a smaller total). The
+# values below are a declared assumption with that monotone shape, used to get
+# from the BER figure to the space-heat demand that sets the heat loss
+# coefficient. Flagged and listed in ISSUES.md I-019.
+space_heat_fraction:
+  A: 0.45
+  B: 0.55
+  C: 0.62
+  D: 0.66
+  E: 0.70
+  F: 0.72
+  G: 0.74

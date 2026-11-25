@@ -1,0 +1,19 @@
+{
+  "bytes": 1589984,
+  "encoding": "utf-8",
+  "http_status": 200,
+  "intended_use": "validation",
+  "key": "cso.census2022.f2063_rooms_bedrooms_year_type",
+  "licence": "CC-BY 4.0 (CSO Open Data; https://www.cso.ie/en/aboutus/termsandconditions/)",
+  "model_development_exposure": "none",
+  "note": "Raw input, read-only after download. Excluded from git; this manifest is committed in its place.",
+  "publisher": "Central Statistics Office (Ireland)",
+  "relpath": "cso_housing/F2063_rooms_bedrooms_yearbuilt_accommodation_2022.json",
+  "retrieved_at": "2026-10-09",
+  "retrieved_at_utc": "2026-10-09T10:51:45Z",
+  "sha256": "a3120181bd4ce74470b6c2c274f8dd82fa3a1e341845cce8b7af69e29dab7b27",
+  "substitute_flag": null,
+  "title": "Census 2022 F2063: private dwellings by number of rooms, number of bedrooms, year built, type of private accommodation and county",
+  "url": "https://ws.cso.ie/public/api.restful/PxStat.Data.Cube_API.ReadDataset/F2063/JSON-stat/2.0/en",
+  "used_for": "PL-ROOMS-01: scores the modelled rooms x bedrooms x dwelling-type joint against Census 2022 for Cork County. I-019 / I-031 / U30."
+}

@@ -1,0 +1,19 @@
+{
+  "bytes": 5024,
+  "encoding": "utf-8",
+  "http_status": 200,
+  "intended_use": "calibration",
+  "key": "cso.gas.dberng01_by_dwelling_ber",
+  "licence": "CC-BY 4.0 (CSO Open Data; https://www.cso.ie/en/aboutus/termsandconditions/)",
+  "model_development_exposure": "tuning",
+  "note": "Raw input, read-only after download. Excluded from git; this manifest is committed in its place.",
+  "publisher": "Central Statistics Office (Ireland), from matched BER and Gas Networks Ireland meter data",
+  "relpath": "cso_electricity/DBERNG01_mean_gas_by_dwelling_and_ber.json",
+  "retrieved_at": "2026-10-10",
+  "retrieved_at_utc": "2026-10-10T22:10:05Z",
+  "sha256": "1014220a56604e9a2b7ed9d255741c844f93d60a63097a47eda6a73ae8dd4b28",
+  "substitute_flag": null,
+  "title": "Mean Gas Consumption by type of dwelling, energy rating and year (DBERNG01)",
+  "url": "https://ws.cso.ie/public/api.restful/PxStat.Data.Cube_API.ReadDataset/DBERNG01/JSON-stat/2.0/en",
+  "used_for": "The heating-side D24 target, and the one the estate actually needs: 49 of its 50 homes heat with gas, so their space heat never appears in the electricity meter and DBEREL01 cannot see it. In a gas-heated dwelling, gas consumption IS space heating plus hot water, which makes this the direct check on the F1 physics and the heating schedule - the largest energy term in the model and, until now, the one with no public target at all. Same axes as DBEREL01 (dwelling type x BER band), so the two can be read together per dwelling. Exposure is 'tuning' because the floor-area and room-allocation fixes in I-031 were checked against it, and from week 3 the fabric is derived from the BER Research Tool whose own validation runs through this axis. So PL-GAS-01, which scores against this table, is a CONSISTENCY check against a calibration input and NOT an independent validation - the held-out gas axis is DBERNG02 (dwelling type x period of construction), exposure 'none', which is what U31 uses. See I-058."
+}

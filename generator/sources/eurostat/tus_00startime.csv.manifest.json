@@ -1,0 +1,19 @@
+{
+  "bytes": 10644931,
+  "encoding": "utf-8",
+  "http_status": 200,
+  "intended_use": "calibration",
+  "key": "eurostat.hetus.tus_00startime",
+  "licence": "CC-BY 4.0 (Eurostat re-use policy)",
+  "model_development_exposure": "tuning",
+  "note": "Raw input, read-only after download. Excluded from git; this manifest is committed in its place.",
+  "publisher": "Eurostat",
+  "relpath": "eurostat/tus_00startime.csv",
+  "retrieved_at": "2026-10-11",
+  "retrieved_at_utc": "2026-10-11T00:17:19Z",
+  "sha256": "b681d632fd0fa6e5ddaea2a243ed712019b410aa64d5379b4c2ac408bb3fbbae",
+  "substitute_flag": "[A] UK donor; HETUS has no Irish data at all (I-008, U04, K02)",
+  "title": "HETUS 2000/2010: participation rate in the main activity by sex and time of the day (tus_00startime)",
+  "url": "https://ec.europa.eu/eurostat/api/dissemination/sdmx/2.1/data/tus_00startime/?format=SDMX-CSV&compressed=false",
+  "used_for": "The diurnal participation profile. This is the single most important HETUS table for a semi-Markov engine, because it constrains WHEN each activity happens rather than only how long it lasts. TUNING-EXPOSED for activity timing: U32's sleep offsets and week 3's appliance timing are derived from it, so the awake-share fit and the V0 activity-share check are CONSISTENCY checks against a calibration input and NOT independent validations. The independent check on the resulting load shape is LP1 via PL-PEAK-01, exposure 'none'. See I-060."
+}

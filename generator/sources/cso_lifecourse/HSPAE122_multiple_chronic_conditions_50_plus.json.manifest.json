@@ -1,0 +1,19 @@
+{
+  "bytes": 3086,
+  "encoding": "utf-8",
+  "http_status": 200,
+  "intended_use": "calibration",
+  "key": "cso.health.hspae122_multiple_chronic_conditions",
+  "licence": "CC-BY 4.0 (CSO Open Data; https://www.cso.ie/en/aboutus/termsandconditions/)",
+  "model_development_exposure": "none",
+  "note": "Raw input, read-only after download. Excluded from git; this manifest is committed in its place.",
+  "publisher": "Central Statistics Office (Ireland)",
+  "relpath": "cso_lifecourse/HSPAE122_multiple_chronic_conditions_50_plus.json",
+  "retrieved_at": "2026-10-10",
+  "retrieved_at_utc": "2026-10-10T12:13:43Z",
+  "sha256": "d2d889d27311f43e065d8abcf4206de7e8b1e6ba2bf72f7487fcb16973c48a87",
+  "substitute_flag": null,
+  "title": "HSPAE122: multiple chronic conditions among people aged 50 and over",
+  "url": "https://ws.cso.ie/public/api.restful/PxStat.Data.Cube_API.ReadDataset/HSPAE122/JSON-stat/2.0/en",
+  "used_for": "WP5 generic health states: the prevalence of a persistent health state at 50+, which the onset hazard has to reproduce as a stock. Under-50 onset is [A] (hazards.py A-25e)."
+}

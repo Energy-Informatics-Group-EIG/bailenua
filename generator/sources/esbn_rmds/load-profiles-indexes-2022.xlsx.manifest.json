@@ -1,0 +1,19 @@
+{
+  "bytes": 4543727,
+  "encoding": "utf-8",
+  "http_status": 200,
+  "intended_use": "validation",
+  "key": "esbn.rmds.slp_indexes_2022",
+  "licence": "ESB Networks / Retail Market Design Service published market data; re-use terms not stated on the publication page, to be confirmed in WP1",
+  "model_development_exposure": "none",
+  "note": "Raw input, read-only after download. Excluded from git; this manifest is committed in its place.",
+  "publisher": "ESB Networks / Retail Market Design Service",
+  "relpath": "esbn_rmds/load-profiles-indexes-2022.xlsx",
+  "retrieved_at": "2026-10-09",
+  "retrieved_at_utc": "2026-10-09T11:22:40Z",
+  "sha256": "a4e010ab89699b295cca77b83740cf135092e592fb3873759266520b70408752",
+  "substitute_flag": null,
+  "title": "ESB Networks Standard Load Profiles 2022: quarter-hourly Demand Energy Coefficients for LP1 Urban Domestic 24 Hour through LP9, unitised to sum to 1.0 over the year",
+  "url": "https://cdn.rmdservice.com/media/docs/default-source/references/standard-load-profiles/standard-load-profiles-2022/load-profiles-indexes-2022.xlsx?sfvrsn=a00f02e5_1",
+  "used_for": "PL-PEAK-01 (I-039): the after-diversity domestic load factor and peak-to-mean ratio, against which the aggregate feeder load of the simulated town is checked before S11."
+}

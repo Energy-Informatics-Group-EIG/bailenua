@@ -1,0 +1,19 @@
+{
+  "bytes": 20000,
+  "encoding": "utf-8",
+  "http_status": 200,
+  "intended_use": "calibration",
+  "key": "cso.education.eda99_third_level_enrolments_by_institution",
+  "licence": "CC-BY 4.0 (CSO Open Data; https://www.cso.ie/en/aboutus/termsandconditions/)",
+  "model_development_exposure": "design",
+  "note": "Raw input, read-only after download. Excluded from git; this manifest is committed in its place.",
+  "publisher": "Central Statistics Office (Ireland)",
+  "relpath": "cso_venues/EDA99_third_level_enrolments_by_institution.json",
+  "retrieved_at": "2026-10-11",
+  "retrieved_at_utc": "2026-10-11T12:14:46Z",
+  "sha256": "433ce54d0bd9ccd6c6d72f60796cb7cf019c7554d1dcd0de6cecdefdc8657a97",
+  "substitute_flag": null,
+  "title": "EDA99: students enrolled in and entrants to third level courses, by institution",
+  "url": "https://ws.cso.ie/public/api.restful/PxStat.Data.Cube_API.ReadDataset/EDA99/JSON-stat/2.0/en",
+  "used_for": "WP7 venues. Full-time enrolment at National University of Ireland, Cork, which sizes the college venue the town's 19-and-over students attend. Exposure `design` and not `none`: the venue capacity is DERIVED from it, so it can never afterwards validate venue occupancy (7.1, I-058)."
+}

@@ -1,0 +1,19 @@
+{
+  "bytes": 421032,
+  "encoding": "utf-8",
+  "http_status": 200,
+  "intended_use": "calibration",
+  "key": "cso.census.fy047b_economic_status_by_age_and_county",
+  "licence": "CC-BY 4.0 (CSO Open Data; https://www.cso.ie/en/aboutus/termsandconditions/)",
+  "model_development_exposure": "tuning",
+  "note": "Raw input, read-only after download. Excluded from git; this manifest is committed in its place.",
+  "publisher": "Central Statistics Office (Ireland)",
+  "relpath": "cso_population/FY047B_principal_economic_status_by_age_group_and_county.json",
+  "retrieved_at": "2026-10-11",
+  "retrieved_at_utc": "2026-10-11T11:55:40Z",
+  "sha256": "6364fd592824649bd14a4b0a946cd594d389572ae9de45764dccd46b401072b6",
+  "substitute_flag": null,
+  "title": "FY047B: population aged 15 years and over, by county and city, sex, principal economic status and age group",
+  "url": "https://ws.cso.ie/public/api.restful/PxStat.Data.Cube_API.ReadDataset/FY047B/JSON-stat/2.0/en",
+  "used_for": "I-069's fix. The age profile WITHIN each principal economic status for Cork City and Cork County, used to condition the economic-status draw on age in population/synthesise.py. SAPS publishes economic status by sex and small area and NEVER by age, so this is the only way the joint can be fitted at all. Exposure is `tuning` because the population is built from it, so it can never validate the population (7.1, I-058) - F1054 does that, held out."
+}

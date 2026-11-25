@@ -1,0 +1,19 @@
+{
+  "bytes": 5851305,
+  "encoding": "utf-8",
+  "http_status": 200,
+  "intended_use": "calibration",
+  "key": "cso.vitalstats.vsa08_deaths_by_age_and_sex",
+  "licence": "CC-BY 4.0 (CSO Open Data; https://www.cso.ie/en/aboutus/termsandconditions/)",
+  "model_development_exposure": "none",
+  "note": "Raw input, read-only after download. Excluded from git; this manifest is committed in its place.",
+  "publisher": "Central Statistics Office (Ireland)",
+  "relpath": "cso_vitalstats/VSA08_deaths_occurring_by_age_group_and_sex.json",
+  "retrieved_at": "2026-10-10",
+  "retrieved_at_utc": "2026-10-10T12:17:17Z",
+  "sha256": "a54a0f9f29bf90319281db4d1578213ab6072be23eca66ea101fc14610b2ddf2",
+  "substitute_flag": null,
+  "title": "VSA08: deaths occurring by year, sex, cause of death and age group at death",
+  "url": "https://ws.cso.ie/public/api.restful/PxStat.Data.Cube_API.ReadDataset/VSA08/JSON-stat/2.0/en",
+  "used_for": "WP5 mortality hazard, numerator: deaths by age group and sex for a recent year (all causes). CEPHA05, the decennial life table, is the only table PxStat publishes as a life table and it stops at 1990, which cannot age a 2022 population."
+}

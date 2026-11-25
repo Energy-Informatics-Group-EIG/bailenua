@@ -1,0 +1,19 @@
+{
+  "bytes": 23710635,
+  "encoding": "utf-8",
+  "http_status": 200,
+  "intended_use": "calibration",
+  "key": "cso.ber.ebq02_renewables",
+  "licence": "CC-BY 4.0 (CSO Open Data; https://www.cso.ie/en/aboutus/termsandconditions/)",
+  "model_development_exposure": "none",
+  "note": "Raw input, read-only after download. Excluded from git; this manifest is committed in its place.",
+  "publisher": "Central Statistics Office (Ireland), from the SEAI BER register",
+  "relpath": "seai/EBQ02_domestic_ber_renewables_by_region.json",
+  "retrieved_at": "2026-10-08",
+  "retrieved_at_utc": "2026-10-08T20:40:11Z",
+  "sha256": "4ab2045e6714b2a3a47cb647a2b1d9bbc3db48c509f50decb0707217c720e1e7",
+  "substitute_flag": null,
+  "title": "Domestic Building Energy Ratings by dwelling type, renewable energy source, year of construction, heating fuel and NUTS3 region (EBQ02)",
+  "url": "https://ws.cso.ie/public/api.restful/PxStat.Data.Cube_API.ReadDataset/EBQ02/JSON-stat/2.0/en",
+  "used_for": "Also closes I-011. Census records heating FUEL, so a heat pump and direct electric resistance heating are the same row ('Electricity') - yet their COP differs by a factor of three or more and dominates the heating load (design 5.7). EBQ02 reports heat-pump and solar-panel penetration for the South-West NUTS3 region, which is Cork (IE053, confirmed from the OSi small-area attributes), so the split within electrically-heated homes comes from real regional data. Also supplies the PV and heat-pump adoption base rates for D04 at t0 (5.9 DER row)."
+}

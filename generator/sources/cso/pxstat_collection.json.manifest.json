@@ -1,0 +1,19 @@
+{
+  "bytes": 45608626,
+  "encoding": "utf-8",
+  "http_status": 200,
+  "intended_use": "reference",
+  "key": "cso.pxstat.collection",
+  "licence": "CC-BY 4.0 (CSO Open Data; https://www.cso.ie/en/aboutus/termsandconditions/)",
+  "model_development_exposure": "design",
+  "note": "Raw input, read-only after download. Excluded from git; this manifest is committed in its place.",
+  "publisher": "Central Statistics Office (Ireland)",
+  "relpath": "cso/pxstat_collection.json",
+  "retrieved_at": "2026-10-09",
+  "retrieved_at_utc": "2026-10-09T10:46:29Z",
+  "sha256": "5335948ac4d088795e10a58669cf5de606b607c5a2b9fef5b3cd13b593a58c4a",
+  "substitute_flag": null,
+  "title": "PxStat full table catalogue (ReadCollection): all CSO tables with titles and dimension labels",
+  "url": "https://ws.cso.ie/public/api.restful/PxStat.Data.Cube_API.ReadCollection",
+  "used_for": "U30: the sweep of every remaining [A] assumption flag against what the CSO actually publishes. Each flag is either retired against a named table or kept with the search that failed to find one (docs/ISSUES.md I-040: an [A] flag should record what was searched)."
+}

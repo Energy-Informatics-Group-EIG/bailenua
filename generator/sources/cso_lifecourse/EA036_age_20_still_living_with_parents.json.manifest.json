@@ -1,0 +1,19 @@
+{
+  "bytes": 4116,
+  "encoding": "utf-8",
+  "http_status": 200,
+  "intended_use": "calibration",
+  "key": "cso.census.ea036_age_20_living_with_parents",
+  "licence": "CC-BY 4.0 (CSO Open Data; https://www.cso.ie/en/aboutus/termsandconditions/)",
+  "model_development_exposure": "none",
+  "note": "Raw input, read-only after download. Excluded from git; this manifest is committed in its place.",
+  "publisher": "Central Statistics Office (Ireland)",
+  "relpath": "cso_lifecourse/EA036_age_20_still_living_with_parents.json",
+  "retrieved_at": "2026-10-10",
+  "retrieved_at_utc": "2026-10-10T12:20:12Z",
+  "sha256": "418b6dd2540e3497a6d84113be4ca00be42341c497a0ea862128d81161dc0486",
+  "substitute_flag": null,
+  "title": "EA036: population aged 20 still living with parents, 2011 to 2016",
+  "url": "https://ws.cso.ie/public/api.restful/PxStat.Data.Cube_API.ReadDataset/EA036/JSON-stat/2.0/en",
+  "used_for": "WP5 child-leaving-home hazard BOUND (hazards.py A-25d). The only published quantity found is this single-age STOCK at 20; the hazard over ages 18-30 is assumed and has to pass through it."
+}

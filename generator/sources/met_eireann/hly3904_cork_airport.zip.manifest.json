@@ -1,0 +1,19 @@
+{
+  "bytes": 10607064,
+  "encoding": "utf-8",
+  "http_status": 200,
+  "intended_use": "calibration",
+  "key": "met.cork_airport.hourly",
+  "licence": "CC-BY 4.0 (Met \u00c9ireann open data)",
+  "model_development_exposure": "none",
+  "note": "Raw input, read-only after download. Excluded from git; this manifest is committed in its place.",
+  "publisher": "Met \u00c9ireann",
+  "relpath": "met_eireann/hly3904_cork_airport.zip",
+  "retrieved_at": "2026-10-08",
+  "retrieved_at_utc": "2026-10-08T19:50:19Z",
+  "sha256": "8d592587f0c861163be89337c405efa78edb638d13f67e3bdf27079e9d34d2d7",
+  "substitute_flag": null,
+  "title": "Hourly climate data, Cork Airport (station 3904)",
+  "url": "https://clidata.met.ie/cli/climate_data/webdata/hly3904.zip",
+  "used_for": "The observable station series D31. Design 6.4 item 7 requires the observable weather to come from the nearest official station rather than the true site microclimate; Cork Airport is inland and elevated, so the station-to-site gap is physically real rather than injected noise."
+}

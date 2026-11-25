@@ -1,0 +1,307 @@
+# Domestic hot water, boiler and cylinder losses: the DEAP figures (U25).
+#
+# WHY THESE AND NOT A CSO SERIES. U30 searched the whole PxStat catalogue -
+# 13,086 tables, titles and every dimension label - for `hot water`, `water
+# heating`, `immersion` and `cooking fuel`, and found ZERO hits for every one
+# of them (sweep flags A-05, A-27; see docs/ISSUES.md I-043). There is no CSO
+# series to calibrate domestic hot water against. The Irish reference is the
+# regulatory methodology itself: SEAI's DEAP manual, which every Irish BER
+# assessment is computed with.
+#
+# HOW THE NUMBERS GOT HERE. The manual is a PDF, so it is not machine-readable
+# in the sense the JSON-stat sources are, and the brief's rule for that case
+# applies: record the value by hand with its citation. Every number below
+# names the table or section it came from, and `tests/test_dhw.py` asserts the
+# provenance block still matches the declared source's manifest - so a value
+# cannot drift from the document it claims to come from without the suite
+# saying so.
+#
+# WHAT IS STILL ASSUMED. DEAP takes bath capacity and tap flow rates from
+# manufacturers' product data rather than publishing defaults, so those are
+# declared assumptions and flagged [A] below, each with the search that
+# justifies it. The shower is NOT assumed: DEAP applies a minimum of 6 L/min
+# to all mixer showers, and the model uses the duration its own activity
+# engine already simulates.
+
+provenance:
+  source_key: seai.deap.manual_4_2_7
+  source_sha256: e2aee5b29399
+  document: DEAP Manual version 4.2.7
+  publisher: Sustainable Energy Authority of Ireland
+  read_on: "2026-10-09"
+  machine_readable: false
+  note: >
+    Transcribed by hand from the fetched PDF in sources/seai/. Each entry
+    names its table or section so it can be checked against the document.
+
+# --------------------------------------------------------------------------- #
+# Table 3: primary circuit losses, kWh/year.
+#
+# The pipes between a primary water heater and the hot water tank. Note the
+# shape of it: a cylinder thermostat halves the loss (1220 -> 610 uninsulated,
+# 610 -> 360 insulated), and insulating the pipework halves it again. DEAP's
+# own instruction is that pipework which cannot be seen must be assumed
+# UNINSULATED unless it can be proven otherwise, which is why the older stock
+# in the mixed-age slice should mostly take the higher figures.
+# --------------------------------------------------------------------------- #
+primary_circuit_losses_kwh_yr:
+  table: "Table 3"
+  section: "4.3 Primary circuit losses"
+  values:
+    electric_immersion_heater: 0
+    boiler_uninsulated_no_cylinder_thermostat: 1220
+    boiler_insulated_no_cylinder_thermostat: 610
+    boiler_uninsulated_with_cylinder_thermostat: 610
+    boiler_insulated_with_cylinder_thermostat: 360
+    combi_boiler: 0
+    cpsu: 0
+    boiler_and_thermal_store_single_casing: 0
+    separate_store_insulated_within_1_5_m: 0
+    separate_store_uninsulated_pipework: 470
+    separate_store_insulated_over_1_5_m: 280
+    community_group_district_heating: 360
+  deap_rule_on_hidden_pipework: >
+    "Where some of the pipework is not visible (if for example it runs
+    through walls or floors), then it must be assumed to be uninsulated
+    unless it can be proven to be insulated."
+
+# --------------------------------------------------------------------------- #
+# Table 3a: additional losses for combi boilers, kWh/year.
+#
+# These exist because a combi draws off water until the taps run hot, and that
+# water is heated and then not used. DEAP flags the table as provisional
+# pending EN test results, which is recorded here rather than silently relied
+# on. The scaling note matters for a small household: the loss is proportional
+# to usage below 100 litres a day.
+# --------------------------------------------------------------------------- #
+combi_additional_losses_kwh_yr:
+  table: "Table 3a"
+  section: "4.3 Primary circuit losses"
+  deap_status: >
+    "The data in Table 3a are provisional pending the availability of test
+    results based on relevant EN standards."
+  values:
+    instantaneous_without_keep_hot: 600
+    instantaneous_keep_hot_time_clocked: 600
+    instantaneous_keep_hot_not_time_clocked: 900
+    storage_combi_store_at_least_55_l: 0
+  storage_combi_under_55_l_formula: "600 - ((V - 15) * 15)"
+  scaling_below_100_l_per_day: >
+    "If the hot water usage is less than 100 litres/day, multiply by (daily
+    hot water usage) / 100"
+
+# --------------------------------------------------------------------------- #
+# Table 2: temperature factors applied to cylinder, thermal store and CPSU
+# losses. DEAP sources this table from SAP 2005.
+# --------------------------------------------------------------------------- #
+cylinder_temperature_factors:
+  table: "Table 2"
+  section: "4.2 Hot water storage losses"
+  deap_source_note: "(Source SAP 2005)"
+  values:
+    cylinder_immersion_main_water_heater: 0.60
+    cylinder_indirect: 0.60
+    hot_water_only_thermal_store_declared_loss: 0.89
+    hot_water_only_thermal_store_calculated_loss: 1.08
+    integrated_thermal_store_gas_cpsu_declared_loss: 0.89
+    integrated_thermal_store_gas_cpsu_calculated_loss: 1.08
+  storage_combi_primary_store:
+    at_least_115_l: 0.82
+    under_115_l_formula: "0.82 + 0.0022 * (115 - V)"
+  storage_combi_secondary_store:
+    at_least_115_l: 0.60
+    under_115_l_formula: "0.60 + 0.0016 * (115 - V)"
+
+# --------------------------------------------------------------------------- #
+# Section 4.5(d): DEAP's own fallback cylinder, used here as the standing-loss
+# anchor. This is the one place the manual states both a volume and a loss
+# together, which makes it the figure a modelled tank can be judged against.
+# --------------------------------------------------------------------------- #
+default_cylinder:
+  section: "4.5 Group/community heating and district heating schemes, item (d)"
+  volume_l: 110
+  loss_factor_kwh_per_day: 1.672
+  primary_circuit_loss_to_use: boiler_insulated_with_cylinder_thermostat
+  quoted: >
+    "If none of the above applies, the calculation should assume that the
+    dwelling has a cylinder of 110 litres and loss factor of 1.672 kWh/day.
+    Primary circuit loss for insulated pipework and cylinder thermostat
+    should be included (Table 3)."
+
+# --------------------------------------------------------------------------- #
+# Section 4 and Appendix I: the demand side, as far as DEAP publishes it.
+# --------------------------------------------------------------------------- #
+demand:
+  section: "4. Domestic hot water; Appendix I Water efficiency"
+  mixer_shower_minimum_l_per_min: 6.0
+  mixer_shower_minimum_quote: >
+    "(ii) A minimum of 6L/Min is applied by DEAP to all mixer showers."
+  water_efficiency_target_l_per_person_day: 125
+  hot_water_reduction_if_target_met: 0.05
+  water_efficiency_quote: >
+    "Hot water usage in DEAP is reduced by 5% if the dwelling is designed to
+    achieve a water use target of not more than 125 litres per person per day
+    (all water use, hot and cold)."
+  electric_showers_are_not_water_heating: >
+    "Number of electric showers (this uses electricity directly rather than
+    from the water heating system)" - so an electric shower is an electrical
+    load and must never be charged to the water-heating system as well.
+  deap_demand_basis: >
+    "The demand for domestic hot water (DHW) is based on the SAP methodology
+    (SAP 10). It is derived from the dwelling floor area." The floor-area
+    route is NOT used here: U25 asks for draw events, so demand is built from
+    the activities the model already simulates and DEAP's annual figure is
+    kept as the thing to be judged against rather than the thing assumed.
+
+# --------------------------------------------------------------------------- #
+# Section 9.3.9, quoted in 4.3: the interlock penalty.
+# --------------------------------------------------------------------------- #
+boiler_interlock:
+  section: "4.3, referring to 9.3.9"
+  efficiency_penalty_if_not_interlocked: 0.05
+  quoted: >
+    "The efficiency for both space and water heating is reduced by 5% if a gas
+    or oil boiler is not interlocked for both space and water heating."
+
+# --------------------------------------------------------------------------- #
+# Declared assumptions. DEAP takes these from manufacturers' product data
+# rather than publishing defaults, and U30 established there is no CSO series
+# for any of them, so they are assumptions with a search behind them.
+# --------------------------------------------------------------------------- #
+assumptions:
+  evidence_tag: "[A]"
+  searched: >
+    PxStat, 9 Oct 2026, 13,086 tables by title and dimension label: `hot
+    water`, `water heating`, `immersion`, `cooking fuel` - zero hits each
+    (U30, sweep flags A-05 and A-27).
+  shower_water_minutes_median: 7.5
+  shower_water_minutes_max: 15.0
+  shower_water_minutes_note: >
+    The minutes the water actually RUNS, which is not the length of the
+    shower_bath episode. The activity engine's episodes are time in the
+    bathroom - undressing, showering, drying, grooming - and run to 25
+    minutes. Charging 6 L/min across a whole 25-minute episode gives a 150
+    litre shower, and the first version of this did exactly that: showers came
+    out at 70 to 85% of all hot water and the household total reached 800
+    litres a day, against DEAP's all-water target of 125 litres per person per
+    day. The running time is capped by the episode, so a 5-minute visit to the
+    bathroom cannot contain a 7-minute shower.
+    .
+    DEAP publishes the flow rate and not the duration - duration is an
+    assessor input - so this is a declared assumption, and PL-DHW-01 bounds
+    the consequence against DEAP's own per-person water target rather than
+    leaving it unchecked.
+  bath_volume_l: 80.0
+  bath_volume_note: >
+    DEAP asks for "total capacity of the bath to overflow, in litres
+    (excluding displacement, this is already included...)" from product data
+    and publishes no default. 80 L is a declared mid-range domestic bath
+    drawn to a usable depth, not the overflow capacity.
+  hand_wash_l: 2.0
+  washing_up_l: 12.0
+  kitchen_tap_other_l: 4.0
+  draw_temperature_c: 40.0
+  draw_temperature_note: >
+    The delivered mixed temperature at the outlet, not the tank temperature.
+    A draw of V litres at this temperature from a tank at T_tank mixes with
+    cold feed, so the volume TAKEN FROM THE TANK is less than V.
+  cold_feed_temperature_c: 10.0
+  cold_feed_note: >
+    Annual mean mains water temperature. Varied seasonally in the model from
+    this mean; a fixed value would understate winter DHW energy and overstate
+    summer.
+
+# --------------------------------------------------------------------------- #
+# Table 4b: gross seasonal efficiency for gas and oil boilers, %.
+#
+# This is the table that makes U22 measurable. The efficiency a dwelling's
+# boiler runs at depends on its era, and the spread is wide: a floor-mounted
+# gas boiler from before 1979 is 55% against 83% for a modern condensing one.
+# So an old dwelling burns half again as much gas for the same delivered heat,
+# before any behaviour is considered - which is exactly the confound U22 has
+# to separate comfort-taking from.
+#
+# DEAP's own instruction, recorded because it bounds what these defaults are:
+# "This table is intended only for gas and oil boilers where the HARP
+# efficiency is not available." HARP is a per-appliance register and there is
+# no appliance register for a synthetic town, so the defaults are the right
+# instrument here.
+# --------------------------------------------------------------------------- #
+boiler_gross_seasonal_efficiency_pct:
+  table: "Table 4b"
+  deap_scope_note: >
+    "This table is intended only for gas and oil boilers where the HARP
+    efficiency is not available." Also: "The same seasonal efficiencies
+    should be assumed for water heating when hot water is supplied from a
+    boiler system." - so one efficiency serves both space heat and DHW.
+  gas_1998_or_later:
+    non_condensing_automatic_ignition: 73
+    condensing_automatic_ignition: 83
+    non_condensing_permanent_pilot: 69
+    condensing_permanent_pilot: 79
+    back_boiler_to_radiators: 65
+  gas_pre_1998_fan_assisted_flue:
+    low_thermal_capacity: 72
+    high_or_unknown_thermal_capacity: 68
+    combi: 70
+    condensing_combi: 83
+    condensing: 83
+  gas_pre_1998_balanced_or_open_flue:
+    wall_mounted: 65
+    floor_mounted_pre_1979: 55
+    floor_mounted_1979_to_1997: 65
+    combi: 65
+    back_boiler_to_radiators: 65
+  oil:
+    standard_pre_1985: 65
+    standard_1985_to_1997: 70
+    standard_1998_or_later: 79
+    condensing: 83
+    combi_pre_1998: 70
+    combi_1998_or_later: 76
+    condensing_combi: 81
+    room_heater_plus_boiler_pre_2000: 65
+    room_heater_plus_boiler_2000_or_later: 70
+  cpsu_mains_gas_and_lpg:
+    permanent_pilot_non_condensing: 70
+    automatic_ignition_non_condensing: 74
+    permanent_pilot_condensing: 79
+    automatic_ignition_condensing: 83
+
+# --------------------------------------------------------------------------- #
+# Gas cooking. DEAP does not model it at all - cooking is outside DEAP's
+# primary-energy boundary - but the GAS METER sees it, and DBERNG01 measures
+# what passes the meter. So it has to be modelled and it has no DEAP anchor.
+#
+# U30 searched PxStat for `cooking fuel` and found zero hits, so there is no
+# CSO series either. The chain used instead ties gas cooking to a quantity the
+# model has already calibrated: the hob and oven appliance signatures deliver
+# a known useful cooking energy, and a gas burner delivers the same useful
+# energy at a lower pan-side efficiency. That makes the declared assumption a
+# single RATIO rather than a new energy figure invented from nothing.
+# --------------------------------------------------------------------------- #
+gas_cooking:
+  evidence_tag: "[A]"
+  searched: >
+    PxStat, 9 Oct 2026. The first search used `cooking fuel` and `gas cooking`
+    and found zero hits, and that conclusion was WRONG: the CSO's tables are
+    titled "Main fuel used for cooking in households" (HEBEU31 to HEBEU36), so
+    the words are there in the other order. The plain term `cooking` matches
+    six tables. Those tables give which fuel households cook WITH, which is
+    now sourced (see `physics/dhw.py cooking_fuel_shares`, sweep flag A-33,
+    and I-046). What remains assumed and what this block holds is only how
+    EFFICIENTLY the appliance uses that fuel, which no CSO table publishes and
+    which DEAP omits because cooking is outside its primary-energy boundary.
+  deap_boundary_note: >
+    Cooking is not in DEAP's primary-energy calculation, which is why
+    data/ber_bands.yaml records what DEAP's figure does and does not include.
+    It IS in DBERNG01, because that is a meter reading.
+  hob_pan_side_efficiency_electric: 0.74
+  hob_pan_side_efficiency_gas: 0.40
+  oven_efficiency_electric: 0.80
+  oven_efficiency_gas: 0.50
+  basis: >
+    A gas flame loses heat around the pan that an electric element in contact
+    with it does not, and a gas oven vents combustion products that carry heat
+    out with them. The DIRECTION is not in doubt and the ratio is roughly two
+    to one on the hob; the exact values are declared.

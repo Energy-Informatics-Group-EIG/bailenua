@@ -1,0 +1,19 @@
+{
+  "bytes": 4213,
+  "encoding": "utf-8",
+  "http_status": 200,
+  "intended_use": "calibration",
+  "key": "cso.census.cd565_divorced_and_separated_population",
+  "licence": "CC-BY 4.0 (CSO Open Data; https://www.cso.ie/en/aboutus/termsandconditions/)",
+  "model_development_exposure": "none",
+  "note": "Raw input, read-only after download. Excluded from git; this manifest is committed in its place.",
+  "publisher": "Central Statistics Office (Ireland)",
+  "relpath": "cso_lifecourse/CD565_divorced_and_separated_population.json",
+  "retrieved_at": "2026-10-10",
+  "retrieved_at_utc": "2026-10-10T22:06:20Z",
+  "sha256": "0d709de70e74c1b8897634d5f9b7ddf2fb9dafc6f72de766e5ec30807a27ad3f",
+  "substitute_flag": null,
+  "title": "CD565: divorced and separated population aged 15 and over by age group, sex and number of children in the household",
+  "url": "https://ws.cso.ie/public/api.restful/PxStat.Data.Cube_API.ReadDataset/CD565/JSON-stat/2.0/en",
+  "used_for": "WP5 separation hazard BOUND (hazards.py A-25c). PxStat publishes no separation or divorce transition rate for Ireland; this is the resulting STOCK, which the assumed hazard has to reproduce."
+}

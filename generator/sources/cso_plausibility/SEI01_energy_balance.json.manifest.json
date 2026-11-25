@@ -1,0 +1,19 @@
+{
+  "bytes": 494277,
+  "encoding": "utf-8",
+  "http_status": 200,
+  "intended_use": "validation",
+  "key": "cso.energy.sei01_energy_balance",
+  "licence": "CC-BY 4.0 (CSO Open Data; https://www.cso.ie/en/aboutus/termsandconditions/)",
+  "model_development_exposure": "none",
+  "note": "Raw input, read-only after download. Excluded from git; this manifest is committed in its place.",
+  "publisher": "Central Statistics Office (Ireland), from the SEAI national energy balance",
+  "relpath": "cso_plausibility/SEI01_energy_balance.json",
+  "retrieved_at": "2026-10-09",
+  "retrieved_at_utc": "2026-10-09T09:45:34Z",
+  "sha256": "1ea0736fe45fa88b371c10f75732207c8b3cd8547991cbf4b54bc2a098bcaea6",
+  "substitute_flag": null,
+  "title": "Energy Balance by energy supply and consumption category, fuel type and year (SEI01)",
+  "url": "https://ws.cso.ie/public/api.restful/PxStat.Data.Cube_API.ReadDataset/SEI01/JSON-stat/2.0/en",
+  "used_for": "U27 plausibility: the national residential energy balance by fuel, in ktoe. Gives the FUEL MIX of Irish household energy - how much is electricity against gas, oil, coal, peat and renewables - which is the one quantity that checks whether the simulated town's heating fuel shares and the relative size of its electricity and gas totals are jointly plausible. Every other reference checks one fuel at a time and so cannot see a town that gets both right separately and the balance between them wrong."
+}

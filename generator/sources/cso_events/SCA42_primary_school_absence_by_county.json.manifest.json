@@ -1,0 +1,19 @@
+{
+  "bytes": 45030,
+  "encoding": "utf-8",
+  "http_status": 200,
+  "intended_use": "calibration",
+  "key": "cso.education.sca42_primary_absence_by_county",
+  "licence": "CC-BY 4.0 (CSO Open Data; https://www.cso.ie/en/aboutus/termsandconditions/)",
+  "model_development_exposure": "none",
+  "note": "Raw input, read-only after download. Excluded from git; this manifest is committed in its place.",
+  "publisher": "Central Statistics Office (Ireland)",
+  "relpath": "cso_events/SCA42_primary_school_absence_by_county.json",
+  "retrieved_at": "2026-10-10",
+  "retrieved_at_utc": "2026-10-10T22:06:20Z",
+  "sha256": "1942e3fbbb7ff9c4764bec80fecead684d9a1eb6a043a7490f90c05ac56c3aa7",
+  "substitute_flag": null,
+  "title": "SCA42: average percentage of primary school children absent, by year, county, DEIS status and school location",
+  "url": "https://ws.cso.ie/public/api.restful/PxStat.Data.Cube_API.ReadDataset/SCA42/JSON-stat/2.0/en",
+  "used_for": "WP6 school-term attendance BOUND. Read carefully: SCA42 is the share of children absent for TWENTY DAYS OR MORE in the school year, which is chronic absence and not a daily absence rate. It therefore bounds the daily school-day attendance probability from below rather than setting it; the daily rate is [A] (calendar_events.py A-41)."
+}

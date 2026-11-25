@@ -1,0 +1,19 @@
+{
+  "bytes": 33493066,
+  "encoding": "utf-8",
+  "http_status": 200,
+  "intended_use": "calibration",
+  "key": "cso.ber.eba02_by_county",
+  "licence": "CC-BY 4.0 (CSO Open Data; https://www.cso.ie/en/aboutus/termsandconditions/)",
+  "model_development_exposure": "none",
+  "note": "Raw input, read-only after download. Excluded from git; this manifest is committed in its place.",
+  "publisher": "Central Statistics Office (Ireland), from the SEAI BER register",
+  "relpath": "seai/EBA02_domestic_ber_by_county.json",
+  "retrieved_at": "2026-10-08",
+  "retrieved_at_utc": "2026-10-08T20:40:09Z",
+  "sha256": "031f0fcf64cde7dcae63b55c47db6a4fc0a61d6d867de9262c8c124f089e8ea5",
+  "substitute_flag": null,
+  "title": "Domestic Building Energy Rating by BER band, dwelling type, heating fuel, year of construction and county (EBA02)",
+  "url": "https://ws.cso.ie/public/api.restful/PxStat.Data.Cube_API.ReadDataset/EBA02/JSON-stat/2.0/en",
+  "used_for": "Closes I-011. SAPS Table 6.1 publishes only House/Bungalow vs Flat/Apartment, but the schema's dwelling_type enum, the archetype library (5.7) and U18's 'Terraced' gap all need houses split into detached, semi-detached and terraced. EBA02 gives that split for Co. Cork, crossed with BER band and year of construction, so D02's BER and fabric parameters are conditioned on real Irish data rather than on an assumption. The house/apartment RATIO stays anchored to the Census marginal; BER supplies only the within-house split."
+}

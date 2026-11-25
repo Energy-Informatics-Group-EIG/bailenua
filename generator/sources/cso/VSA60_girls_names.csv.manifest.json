@@ -1,0 +1,19 @@
+{
+  "bytes": 50841385,
+  "encoding": "utf-8",
+  "http_status": 200,
+  "intended_use": "calibration",
+  "key": "cso.babynames.girls",
+  "licence": "CC-BY 4.0 (CSO Open Data; https://www.cso.ie/en/aboutus/termsandconditions/)",
+  "model_development_exposure": "none",
+  "note": "Raw input, read-only after download. Excluded from git; this manifest is committed in its place.",
+  "publisher": "Central Statistics Office (Ireland)",
+  "relpath": "cso/VSA60_girls_names.csv",
+  "retrieved_at": "2026-10-08",
+  "retrieved_at_utc": "2026-10-08T20:03:49Z",
+  "sha256": "bd72b96a02bca8e7bcc0ac8273aa4c19c17ef86caae20647b171fbc330d7f96a",
+  "substitute_flag": null,
+  "title": "Girls' names in Ireland with 3 or more occurrences, by year (VSA60)",
+  "url": "https://ws.cso.ie/public/api.restful/PxStat.Data.Cube_API.ReadDataset/VSA60/CSV/1.0/en",
+  "used_for": "D05.given_name for females; as VSA50."
+}

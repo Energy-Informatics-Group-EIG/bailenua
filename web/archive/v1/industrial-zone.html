@@ -1,0 +1,1673 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light}body{margin:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif}[hidden]{display:none!important}</style></head><body>
+<title>Baile Nua Industrial Zone</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,500;7..72,700&family=Atkinson+Hyperlegible:wght@400;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a full-bleed industrial plain; the same chart-room panels as Baile Nua float over it; quiet chart-room panels float over it (brand top-left, explore panel left, place card bottom-right, counts bottom-left). */
+:root {
+  --bg: #cddfe6;
+  --ink: #15242c;
+  --muted: #56666e;
+  --panel: rgba(248, 247, 242, 0.88);
+  --panel-solid: #f8f7f2;
+  --line: rgba(21, 36, 44, 0.13);
+  --accent: #1d6a86;      /* harbour water */
+  --accent-ink: #ffffff;
+  --buoy: #d9752b;        /* channel buoy orange: the grid overlay */
+  --pv: #2f6fd1;
+  --hp: #e0662a;
+  --ev: #1f9d6b;
+  --para: #0f8a80;       /* PARA//EL, in every building */
+  --edge: #6a4bc4;       /* EdgeWare, one per co-op */
+  --flexus: #a8700a;     /* FLEXUS Ltd */
+  --ok: #1f8a4c;
+  --term-bg: #0d1a1f;
+  --term-fg: #cfe9e4;
+  --term-dim: #7f9c98;
+  --term-ps: #5fe0d3;
+  --f-display: "Literata", Georgia, "Times New Roman", serif;
+  --f-body: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --shadow: 0 6px 24px rgba(16, 32, 40, 0.14);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0c171c;
+    --ink: #e6eef0;
+    --muted: #9fb1b8;
+    --panel: rgba(14, 24, 30, 0.84);
+    --panel-solid: #0e181e;
+    --line: rgba(230, 238, 240, 0.14);
+    --accent: #6cb6d1;
+    --accent-ink: #0c171c;
+    --buoy: #f0a05a;
+    --pv: #79a8f2;
+    --hp: #f39463;
+    --ev: #5fd0a2;
+    --para: #4fd1c5;
+    --edge: #b39af5;
+    --flexus: #f2c14e;
+    --ok: #5fd08a;
+    --term-bg: #071114;
+    --shadow: 0 6px 24px rgba(0, 0, 0, 0.4);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0c171c;
+  --ink: #e6eef0;
+  --muted: #9fb1b8;
+  --panel: rgba(14, 24, 30, 0.84);
+  --panel-solid: #0e181e;
+  --line: rgba(230, 238, 240, 0.14);
+  --accent: #6cb6d1;
+  --accent-ink: #0c171c;
+  --buoy: #f0a05a;
+  --pv: #79a8f2;
+  --hp: #f39463;
+  --ev: #5fd0a2;
+  --para: #4fd1c5;
+  --edge: #b39af5;
+  --flexus: #f2c14e;
+  --ok: #5fd08a;
+  --term-bg: #071114;
+  --shadow: 0 6px 24px rgba(0, 0, 0, 0.4);
+  color-scheme: dark;
+}
+html, body { height: 100%; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--f-body);
+  font-size: 14px;
+  line-height: 1.45;
+  overflow: hidden;
+}
+#scene { position: fixed; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; outline: none; }
+.glass {
+  background: var(--panel);
+  -webkit-backdrop-filter: blur(10px) saturate(1.2);
+  backdrop-filter: blur(10px) saturate(1.2);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+}
+.brand {
+  position: fixed;
+  top: calc(16px + env(safe-area-inset-top, 0px));
+  left: 16px;
+  padding: 12px 16px 12px;
+  max-width: 300px;
+}
+.brand h1 {
+  margin: 0;
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: 28px;
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+.brand p { margin: 4px 0 0; color: var(--muted); font-size: 13px; }
+.brand .note { margin-top: 8px; font-size: 12px; }
+.panel {
+  position: fixed;
+  left: 16px;
+  top: calc(140px + env(safe-area-inset-top, 0px));
+  width: 300px;
+  max-height: calc(100% - 156px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+  overflow-y: auto;
+  padding: 14px 16px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.panel h2 {
+  margin: 0 0 8px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.group-label { font-size: 12px; color: var(--muted); margin: 8px 0 4px; }
+.zone-list { display: flex; flex-wrap: wrap; gap: 6px; }
+.zbtn, .btn {
+  font: inherit;
+  font-size: 13px;
+  color: var(--ink);
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 4px 10px;
+  cursor: pointer;
+}
+.zbtn:hover, .btn:hover { border-color: var(--accent); }
+.zbtn[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.zbtn:focus-visible, .btn:focus-visible, .toggle input:focus-visible + span, input[type=range]:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.toggles { display: flex; flex-direction: column; gap: 8px; }
+.toggle { display: flex; align-items: flex-start; gap: 10px; cursor: pointer; }
+.toggle input { position: absolute; opacity: 0; pointer-events: none; }
+.toggle .sw {
+  flex: none;
+  width: 32px; height: 18px; border-radius: 999px;
+  background: var(--line);
+  position: relative;
+  margin-top: 1px;
+  transition: background .2s;
+}
+.toggle .sw::after {
+  content: ""; position: absolute; top: 2px; left: 2px; width: 14px; height: 14px; border-radius: 50%;
+  background: var(--panel-solid); box-shadow: 0 1px 2px rgba(0,0,0,.25); transition: transform .2s;
+}
+.toggle input:checked + .sw { background: var(--accent); }
+.toggle input:checked + .sw::after { transform: translateX(14px); }
+.toggle .t { display: flex; flex-direction: column; }
+.toggle .t small { color: var(--muted); font-size: 12px; }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 12px; margin-top: 2px; font-size: 12px; color: var(--muted); }
+.legend i { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 5px; vertical-align: 0; }
+.time-row { display: flex; align-items: center; gap: 10px; }
+.time-row input[type=range] { flex: 1; min-width: 0; accent-color: var(--accent); }
+.clock { font-family: var(--f-mono); font-variant-numeric: tabular-nums; font-size: 13px; min-width: 44px; text-align: right; }
+.stats {
+  position: fixed;
+  left: 332px;
+  top: calc(16px + env(safe-area-inset-top, 0px));
+  display: flex;
+  gap: 0;
+  padding: 8px 6px;
+  max-width: calc(100% - 332px - 84px);
+  overflow-x: auto;
+}
+.stat { padding: 0 12px; border-left: 1px solid var(--line); white-space: nowrap; }
+.stat:first-child { border-left: 0; }
+.stat b { display: block; font-family: var(--f-mono); font-weight: 500; font-size: 16px; font-variant-numeric: tabular-nums; }
+.stat span { font-size: 11px; color: var(--muted); letter-spacing: 0.03em; }
+.card {
+  position: fixed;
+  right: 16px;
+  bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+  width: 348px;
+  max-width: calc(100% - 32px);
+  padding: 14px 16px 16px;
+}
+.card .ga { font-family: var(--f-display); font-style: italic; color: var(--muted); font-size: 13px; }
+.card h3 { margin: 0 0 2px; font-family: var(--f-display); font-weight: 700; font-size: 21px; line-height: 1.15; text-wrap: balance; }
+.card p { margin: 8px 0 0; }
+.card .facts { margin: 10px 0 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 6px; }
+.card .facts li { font-size: 12px; border: 1px solid var(--line); border-radius: 6px; padding: 2px 8px; }
+.card .close { position: absolute; top: 8px; right: 8px; border: 0; background: transparent; color: var(--muted); font-size: 20px; line-height: 1; cursor: pointer; padding: 4px 8px; border-radius: 6px; }
+.card .close:hover { color: var(--ink); }
+.compass {
+  position: fixed;
+  top: calc(16px + env(safe-area-inset-top, 0px));
+  right: 16px;
+  width: 52px; height: 52px; border-radius: 50%;
+  display: grid; place-items: center;
+}
+.compass .needle { width: 26px; height: 26px; transition: transform .05s linear; }
+.labels { position: fixed; inset: 0; pointer-events: none; overflow: hidden; }
+.tag {
+  position: absolute; left: 0; top: 0;
+  pointer-events: auto;
+  font: inherit; font-size: 12px; font-weight: 700;
+  color: var(--ink);
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 3px 9px;
+  white-space: nowrap;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,.12);
+  will-change: transform;
+}
+.tag::after { content: ""; position: absolute; left: 50%; top: 100%; width: 1px; height: 12px; background: var(--ink); opacity: .35; }
+.tag.on { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.tag:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.menu-btn { display: none; }
+.loading {
+  position: fixed; inset: 0; display: grid; place-items: center; pointer-events: none;
+  font-family: var(--f-display); font-size: 18px; color: var(--muted);
+}
+.err { position: fixed; inset: auto 16px 16px 16px; padding: 12px 14px; }
+.stats-inline { display: none; }
+@media (max-width: 760px) {
+  .brand { right: 84px; max-width: none; padding: 10px 12px; }
+  .brand h1 { font-size: 22px; }
+  .brand .note { display: none; }
+  .stats { display: none; }
+  .menu-btn {
+    display: block;
+    position: fixed; left: 16px; bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+    font: inherit; font-weight: 700; padding: 10px 16px; border-radius: 999px; cursor: pointer;
+    color: var(--ink);
+  }
+  .panel {
+    top: auto;
+    bottom: calc(68px + env(safe-area-inset-bottom, 0px));
+    right: 16px; width: auto;
+    max-height: 58%;
+  }
+  .panel.closed { display: none; }
+  .stats-inline { display: flex; flex-wrap: wrap; gap: 8px 0; }
+  .stats-inline .stat { flex: 1 1 33%; }
+  .card { bottom: calc(68px + env(safe-area-inset-bottom, 0px)); width: auto; left: 16px; }
+  .card.panel-open { display: none; }
+  .tag { font-size: 11px; padding: 2px 7px; }
+}
+.road { position:absolute; left:0; top:0; pointer-events:none; font-family: var(--f-display); font-style: italic; font-size: 12px; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,.75), 0 0 6px rgba(0,0,0,.45); white-space: nowrap; will-change: transform; }
+.ctl { display: grid; grid-template-columns: 52px 1fr 48px; align-items: center; gap: 8px; margin-bottom: 6px; }
+.ctl label { font-size: 12px; color: var(--muted); }
+.ctl input[type=range] { min-width: 0; accent-color: var(--accent); }
+.wx { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 10px; }
+.btn-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.cond { margin: 10px 0 0; font-size: 12px; color: var(--muted); }
+.chip { position: fixed; top: calc(24px + env(safe-area-inset-top, 0px)); right: 84px; padding: 6px 12px; font-size: 12px; font-family: var(--f-mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+@media (max-width: 1180px) { .chip { top: calc(84px + env(safe-area-inset-top, 0px)); right: 16px; } }
+@media (max-width: 760px) { .chip { top: calc(80px + env(safe-area-inset-top, 0px)); right: 16px; left: auto; } }
+@media (prefers-reduced-motion: reduce) {
+  .toggle .sw, .toggle .sw::after { transition: none; }
+}
+/* ---------- BNIT-FLEXUS additions ---------- */
+.drawer[hidden], .ops[hidden], .card[hidden] { display: none !important; }
+.brand h1 .sep { color: var(--para); }
+.panel .small { margin: 6px 0 8px; font-size: 12px; color: var(--muted); }
+.flowkey { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; font-size: 12px; font-weight: 700; }
+.flowkey .fk { border: 1.5px solid currentColor; border-radius: 6px; padding: 2px 7px; }
+.fk.para, .ch.para, .node.para { color: var(--para); }
+.fk.edge, .ch.edge, .node.edge { color: var(--edge); }
+.fk.flexus, .ch.flexus, .node.flexus { color: var(--flexus); }
+.flowkey .arr, .chain .arr { color: var(--muted); font-weight: 400; }
+.live { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin: 10px 0; }
+.live div { border: 1px solid var(--line); border-radius: 8px; padding: 5px 7px; min-width: 0; }
+.live b { display: block; font-family: var(--f-mono); font-weight: 500; font-size: 13px; font-variant-numeric: tabular-nums; }
+.live span { font-size: 11px; color: var(--muted); }
+.coopline { font-size: 13px; margin: 10px 0 8px; }
+.etag { position: absolute; left: 0; top: 0; pointer-events: auto; font: inherit; font-size: 11px; font-weight: 700; color: var(--edge); background: var(--panel); border: 1px solid var(--edge); border-radius: 6px; padding: 2px 7px; white-space: nowrap; cursor: pointer; will-change: transform; display: inline-flex; align-items: center; gap: 5px; }
+.etag i { width: 7px; height: 7px; background: currentColor; transform: rotate(45deg); }
+.etag:focus-visible { outline: 2px solid var(--edge); outline-offset: 2px; }
+.drawer { position: fixed; right: 16px; top: calc(84px + env(safe-area-inset-top, 0px)); bottom: calc(16px + env(safe-area-inset-bottom, 0px)); width: 470px; max-width: calc(100% - 32px); display: flex; flex-direction: column; padding: 14px 16px 0; z-index: 6; }
+.drawer .close, .ops .close { position: absolute; top: 8px; right: 8px; border: 0; background: transparent; color: var(--muted); font-size: 22px; line-height: 1; cursor: pointer; padding: 4px 8px; border-radius: 6px; }
+.drawer .close:hover, .ops .close:hover { color: var(--ink); }
+.dw-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: var(--muted); padding-right: 32px; }
+.drawer h3 { font-family: var(--f-display); font-weight: 700; font-size: 22px; line-height: 1.15; margin: 3px 0 0; padding-right: 30px; text-wrap: balance; }
+.dw-sub { color: var(--muted); font-size: 13px; margin-top: 2px; }
+.chain { display: flex; align-items: center; gap: 5px; flex-wrap: wrap; margin: 10px 0 8px; }
+.ch { font: inherit; font-size: 12px; font-weight: 700; background: transparent; border: 1px solid var(--line); border-radius: 6px; padding: 3px 8px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+.ch i { width: 8px; height: 8px; border-radius: 2px; background: currentColor; }
+.ch.here { border-color: currentColor; box-shadow: inset 0 0 0 1px currentColor; }
+.ch:hover { border-color: currentColor; }
+.tabs { display: flex; gap: 2px; border-bottom: 1px solid var(--line); overflow-x: auto; flex: none; scrollbar-width: none; }
+.tab { font: inherit; font-size: 13px; background: none; border: 0; border-bottom: 2px solid transparent; padding: 8px 10px; color: var(--muted); cursor: pointer; white-space: nowrap; }
+.tab[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--para); font-weight: 700; }
+.tab:focus-visible, .ch:focus-visible, .ew-card:focus-visible, .linkbtn:focus-visible, .chipbtn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.dw-body { flex: 1; overflow-y: auto; padding: 12px 2px 16px 0; min-height: 0; }
+.dw-body.termmode { display: flex; flex-direction: column; }
+.sec { margin-bottom: 16px; }
+.sec h4 { margin: 0 0 6px; font-size: 11px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: var(--muted); }
+.kv { display: grid; grid-template-columns: minmax(110px, auto) 1fr; gap: 4px 14px; font-size: 13px; margin: 0; }
+.kv dt { color: var(--muted); }
+.kv dd { margin: 0; min-width: 0; overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
+.mono { font-family: var(--f-mono); font-size: 12px; }
+.dim { color: var(--muted); }
+.tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin-bottom: 12px; }
+.tiles.wide { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+.tile { border: 1px solid var(--line); border-radius: 8px; padding: 6px 8px; min-width: 0; }
+.tile b { display: block; font-family: var(--f-mono); font-weight: 500; font-size: 15px; font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tile span { font-size: 11px; color: var(--muted); }
+.chart { width: 100%; height: 150px; display: block; }
+.chart.tall { height: 190px; }
+.clegend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 11px; color: var(--muted); margin-top: 4px; }
+.clegend i { display: inline-block; width: 14px; height: 3px; border-radius: 2px; margin-right: 5px; vertical-align: 3px; }
+.clegend i.dash { background-image: repeating-linear-gradient(90deg, currentColor 0 4px, transparent 4px 7px) !important; }
+.linkbtn { font: inherit; color: var(--edge); background: none; border: 0; padding: 0; cursor: pointer; text-decoration: underline; text-underline-offset: 2px; font-weight: 700; }
+.pill { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 700; border-radius: 999px; padding: 1px 8px; border: 1px solid currentColor; white-space: nowrap; }
+.pill i { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.pill.ok { color: var(--ok); }
+.pill.off { color: var(--muted); }
+.svcs { display: flex; flex-direction: column; gap: 4px; }
+.svc { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.4fr) auto; gap: 8px; align-items: center; font-size: 12px; border-bottom: 1px solid var(--line); padding: 3px 0; }
+.svc .mono { overflow-wrap: anywhere; }
+.svc .d { color: var(--muted); }
+.tbl { width: 100%; border-collapse: collapse; font-size: 12px; }
+.tbl th, .tbl td { text-align: left; padding: 5px 6px; border-bottom: 1px solid var(--line); vertical-align: top; }
+.tbl th { font-size: 11px; color: var(--muted); font-weight: 700; }
+.tbl .n { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; font-family: var(--f-mono); }
+.tblwrap { overflow-x: auto; }
+tr.click { cursor: pointer; }
+tr.click:hover td { background: var(--line); }
+.pipe { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; font-size: 11px; }
+.pipe span { border: 1px solid var(--line); border-radius: 5px; padding: 2px 6px; }
+.pipe span:last-child { color: var(--edge); border-color: var(--edge); font-weight: 700; }
+.pipe i { color: var(--muted); font-style: normal; }
+.asset { border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; margin-bottom: 8px; }
+.asset header { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.asset h5 { margin: 0; font-size: 14px; }
+.asset .model { margin: 3px 0 0; font-size: 12.5px; }
+.asset .iface { margin: 2px 0 8px; color: var(--muted); font-size: 11.5px; overflow-wrap: anywhere; }
+.afields { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+.afields div { min-width: 0; }
+.afields span { display: block; font-size: 11px; color: var(--muted); }
+.afields b { font-family: var(--f-mono); font-weight: 500; font-size: 13px; font-variant-numeric: tabular-nums; }
+.rdbox b { font-family: var(--f-mono); font-weight: 500; font-size: 18px; color: var(--para); }
+.rdbox p { margin: 4px 0 0; font-size: 12.5px; color: var(--muted); }
+.nilm { list-style: none; margin: 0; padding: 0; font-size: 12.5px; }
+.nilm li { display: grid; grid-template-columns: 52px 1fr auto; gap: 8px; padding: 3px 0; border-bottom: 1px solid var(--line); }
+.privacy { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
+.privacy > div { border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; font-size: 12px; }
+.privacy > div:first-child { border-color: var(--para); }
+.privacy ul { margin: 4px 0 0; padding-left: 16px; }
+.field { display: block; font-size: 12px; color: var(--muted); margin-bottom: 4px; }
+select { font: inherit; font-size: 13px; color: var(--ink); background: var(--panel-solid); border: 1px solid var(--line); border-radius: 6px; padding: 5px 8px; max-width: 100%; }
+select:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.hint { font-size: 12px; color: var(--muted); margin: 6px 0 0; }
+pre.json { background: var(--term-bg); color: var(--term-fg); border-radius: 8px; padding: 10px; font-family: var(--f-mono); font-size: 11.5px; overflow-x: auto; margin: 6px 0 0; }
+ul.plain { margin: 0; padding-left: 18px; font-size: 13px; }
+ul.plain li { margin-bottom: 3px; }
+.termchips { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 8px; }
+.chipbtn { font-size: 11px; color: var(--ink); background: transparent; border: 1px solid var(--line); border-radius: 6px; padding: 3px 7px; cursor: pointer; }
+.chipbtn:hover { border-color: var(--para); }
+.termhost { flex: 1; min-height: 0; display: flex; }
+.term { flex: 1; min-height: 340px; background: var(--term-bg); color: var(--term-fg); font-family: var(--f-mono); font-size: 12px; line-height: 1.5; border-radius: 8px; padding: 10px 12px; overflow-y: auto; cursor: text; }
+.term-out > div { white-space: pre-wrap; word-break: break-word; }
+.term-out .dim { color: var(--term-dim); }
+.term-out .cmd { color: #ffffff; }
+.term-line { display: flex; gap: 7px; }
+.term-ps { color: var(--term-ps); white-space: nowrap; }
+.term-in { flex: 1; min-width: 0; background: transparent; border: 0; outline: 0; color: #ffffff; font: inherit; caret-color: var(--term-ps); padding: 0; }
+.ops { position: fixed; top: calc(16px + env(safe-area-inset-top, 0px)); bottom: calc(16px + env(safe-area-inset-bottom, 0px)); left: 16px; right: 16px; z-index: 8; display: flex; flex-direction: column; padding: 16px 18px 0; background: var(--panel-solid); }
+.ops-h { font-family: var(--f-display); font-weight: 700; font-size: 26px; margin: 2px 0 0; text-wrap: balance; }
+.arch { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 13px; margin: 10px 0 12px; }
+.arch .node { border: 1.5px solid currentColor; border-radius: 8px; padding: 3px 10px; font-weight: 700; }
+.arch .node.dso { color: var(--muted); }
+.arch i { color: var(--muted); font-style: normal; }
+.ops-grid { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: 18px; flex: 1; min-height: 0; overflow-y: auto; padding-bottom: 16px; }
+.ops-col { min-width: 0; }
+.ew-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 8px; }
+.ew-card { font: inherit; color: inherit; text-align: left; background: transparent; border: 1px solid var(--line); border-left: 3px solid var(--edge); border-radius: 8px; padding: 8px 10px; cursor: pointer; display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.ew-card:hover { border-color: var(--edge); }
+.ewh { display: flex; justify-content: space-between; gap: 6px; align-items: center; font-size: 13px; }
+.ewh b { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ewv { display: grid; grid-template-columns: 1fr 1fr; gap: 1px 8px; font-size: 11.5px; color: var(--muted); }
+.ewv b { color: var(--ink); font-family: var(--f-mono); font-weight: 500; font-variant-numeric: tabular-nums; }
+.drform { display: grid; grid-template-columns: auto 1fr; gap: 6px 10px; align-items: center; font-size: 13px; margin-bottom: 10px; }
+.drform label { color: var(--muted); }
+.drstat { font-size: 13px; margin-top: 10px; }
+.drstat p { margin: 0 0 4px; }
+.log { font-size: 12px; max-height: 300px; overflow-y: auto; border: 1px solid var(--line); border-radius: 8px; padding: 6px 8px; }
+.lg { display: grid; grid-template-columns: 44px 1fr; gap: 6px; padding: 3px 0; border-bottom: 1px solid var(--line); border-left: 3px solid transparent; padding-left: 6px; }
+.lg.ew { border-left-color: var(--edge); }
+.lg.para { border-left-color: var(--para); }
+.lg.fx { border-left-color: var(--flexus); }
+@media (max-width: 1100px) { .tiles.wide { grid-template-columns: repeat(3, minmax(0, 1fr)); } .ops-grid { grid-template-columns: 1fr; } }
+@media (max-width: 760px) {
+  .drawer { top: auto; left: 16px; right: 16px; width: auto; height: 74%; }
+  .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .tiles.wide { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .privacy { grid-template-columns: 1fr; }
+  .afields { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .svc { grid-template-columns: 1fr auto; } .svc .d { display: none; }
+  .ops { padding: 14px 14px 0; }
+  .etag { font-size: 10px; }
+}
+
+/* ---------- Industrial Zone additions (same tokens as Baile Nua) ---------- */
+.brand h1 .sep { color: var(--hp); }
+.backlink { display: inline-flex; align-items: center; gap: 6px; margin-top: 8px; font-size: 12px; font-weight: 700; color: var(--accent); text-decoration: none; border: 1px solid var(--line); border-radius: 999px; padding: 3px 10px; }
+.backlink:hover { border-color: var(--accent); }
+.backlink:focus-visible, .gotag:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.stag { position: absolute; left: 0; top: 0; pointer-events: auto; font: inherit; font-size: 11px; font-weight: 700; color: var(--ink); background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 2px 7px; white-space: nowrap; cursor: pointer; will-change: transform; display: inline-flex; align-items: center; gap: 5px; }
+.stag i { width: 8px; height: 8px; border-radius: 2px; }
+.stag:hover { border-color: var(--hp); }
+.stag:focus-visible { outline: 2px solid var(--hp); outline-offset: 2px; }
+.gotag { position: absolute; left: 0; top: 0; pointer-events: auto; font: inherit; font-size: 13px; font-weight: 700; color: var(--accent-ink); background: var(--buoy); border: 0; border-radius: 999px; padding: 5px 12px; white-space: nowrap; cursor: pointer; text-decoration: none; box-shadow: 0 2px 10px rgba(0,0,0,.2); will-change: transform; }
+.sz { display: inline-grid; place-items: center; min-width: 18px; height: 18px; border-radius: 4px; font-size: 11px; font-weight: 700; font-family: var(--f-mono); color: var(--accent-ink); }
+.sz.S { background: var(--ev); } .sz.M { background: var(--accent); } .sz.L { background: var(--hp); }
+.stages { display: flex; flex-direction: column; gap: 4px; }
+.stage { display: grid; grid-template-columns: minmax(0,1fr) 64px auto; gap: 8px; align-items: center; font-size: 12.5px; border-bottom: 1px solid var(--line); padding: 3px 0; }
+.stage .t { font-family: var(--f-mono); font-size: 12px; text-align: right; font-variant-numeric: tabular-nums; }
+.pill.warn { color: var(--hp); }
+.pill.no { color: var(--muted); }
+.sl { display: grid; grid-template-columns: 112px minmax(0,1fr) 64px; gap: 8px; align-items: center; font-size: 12.5px; margin-bottom: 6px; }
+.sl label { color: var(--muted); }
+.sl input[type=range] { min-width: 0; accent-color: var(--hp); }
+.sl output { font-family: var(--f-mono); font-size: 12px; text-align: right; font-variant-numeric: tabular-nums; }
+.engines { display: flex; flex-wrap: wrap; gap: 4px; margin: 0 0 10px; }
+.engines span { font-family: var(--f-mono); font-size: 10.5px; border: 1px solid var(--line); border-radius: 5px; padding: 1px 6px; color: var(--muted); }
+.eq { font-family: var(--f-mono); font-size: 12px; background: var(--line); border-radius: 6px; padding: 6px 8px; margin: 4px 0 8px; overflow-x: auto; white-space: nowrap; }
+.note { font-size: 12px; color: var(--muted); margin: 6px 0 0; }
+.reg-sum { display: grid; grid-template-columns: repeat(6, minmax(0,1fr)); gap: 8px; margin-bottom: 12px; }
+th.sort { cursor: pointer; user-select: none; }
+th.sort:hover { color: var(--ink); }
+th.sort[aria-sort] { color: var(--ink); }
+.drawer .tiles.wide { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.ops-one { flex: 1; min-height: 0; overflow: auto; padding-bottom: 16px; }
+@media (max-width: 1100px) { .reg-sum { grid-template-columns: repeat(3, minmax(0,1fr)); } }
+@media (max-width: 760px) { .sl { grid-template-columns: 92px minmax(0,1fr) 56px; } .stag { font-size: 10px; } }
+</style>
+
+<canvas id="scene" tabindex="0" aria-label="3D model of the Baile Nua Industrial Zone. Drag to orbit, scroll or pinch to zoom, click a building to open its site and digital twin."></canvas>
+<div class="labels" id="labels"></div>
+<div class="loading" id="loading">Building the Industrial Zone&#8230;</div>
+
+<header class="brand glass">
+  <h1>Baile Nua<span class="sep"> &#183; </span>Industrial Zone</h1>
+  <p>Factories, plants and campuses east of town, each with an optiFEM digital twin</p>
+  <p class="note">Synthetic sites with invented names. Footprints and heights follow real Irish planning files; energy figures are screening estimates.</p>
+  <a class="backlink" href="./" id="backBn">&#8592; Back to Baile Nua</a>
+</header>
+
+<button class="menu-btn glass" id="menuBtn" aria-expanded="false" aria-controls="panel">Explore</button>
+
+<nav class="panel glass" id="panel" aria-label="Explore the Industrial Zone">
+  <section>
+    <h2>Places</h2>
+    <div id="zones"></div>
+  </section>
+  <section>
+    <h2>Layers</h2>
+    <div class="toggles">
+      <label class="toggle"><input type="checkbox" id="tLabels" checked><span class="sw"></span><span class="t">Place names</span></label>
+      <label class="toggle"><input type="checkbox" id="tSites" checked><span class="sw"></span><span class="t">Site names<small>Shown when you zoom in</small></span></label>
+      <label class="toggle"><input type="checkbox" id="tGrid"><span class="sw"></span><span class="t">Electricity network<small>110 kV line, zone substation and MV feeders</small></span></label>
+      <label class="toggle"><input type="checkbox" id="tRetro" checked><span class="sw"></span><span class="t">INNOV8HEAT retrofit<small>PCM containers and high-temperature heat pumps sized by each twin</small></span></label>
+    </div>
+    <div class="legend" id="legend"></div>
+  </section>
+  <section>
+    <h2>optiFEM twins</h2>
+    <p class="small">Every site has a small, medium or large twin: heat demand, process temperatures, a PCM store and an HTHP, dispatched against today's prices. Click any building to open its twin.</p>
+    <div class="live" id="izLive" aria-live="off"><div><b data-k="lheat">&#8211;</b><span>Heat demand</span></div><div><b data-k="lhp">&#8211;</b><span>HTHP electric</span></div><div><b data-k="lpcm">&#8211;</b><span>PCM stored</span></div></div>
+    <div class="btn-row"><button class="btn primary" id="openReg" type="button">Open zone register</button></div>
+  </section>
+  <section>
+    <h2>Moment</h2>
+    <div class="ctl"><label for="time">Time</label><input type="range" id="time" min="0" max="23.95" step="0.05" value="10.5"><span class="clock" id="clock">10:30</span></div>
+    <div class="ctl"><label for="month">Month</label><input type="range" id="month" min="1" max="12" step="1" value="3"><span class="clock" id="monthLabel">Mar</span></div>
+    <div class="wx" id="wx" role="group" aria-label="Weather"></div>
+    <div class="btn-row"><button class="btn" id="play" type="button" aria-pressed="false">Play</button><button class="btn primary" id="random" type="button">Random moment</button></div>
+    <p class="cond" id="cond" aria-live="polite"></p>
+  </section>
+  <section class="stats-inline" id="statsInline" aria-label="Counts in this model"></section>
+</nav>
+
+<aside class="card glass" id="card" hidden aria-live="polite">
+  <button class="close" id="cardClose" aria-label="Close">&#215;</button>
+  <div class="ga" id="cardGa"></div>
+  <h3 id="cardTitle"></h3>
+  <p id="cardText"></p>
+  <ul class="facts" id="cardFacts"></ul>
+  <div id="cardExtra"></div>
+</aside>
+
+<aside class="drawer glass" id="drawer" hidden aria-labelledby="dwTitle">
+  <button class="close" id="dwClose" type="button" aria-label="Close">&#215;</button>
+  <div class="dw-eyebrow" id="dwEyebrow"></div>
+  <h3 id="dwTitle"></h3>
+  <div class="dw-sub" id="dwSub"></div>
+  <div class="tabs" role="tablist" id="dwTabs"></div>
+  <div class="dw-body" id="dwBody"></div>
+</aside>
+
+<div class="ops glass" id="ops" hidden role="dialog" aria-label="Zone register"></div>
+
+<footer class="stats glass" id="stats" aria-label="Counts in this model"></footer>
+
+<div class="chip glass" id="chip" aria-hidden="true"></div>
+<div class="compass glass" aria-hidden="true">
+  <svg class="needle" id="needle" viewBox="0 0 26 26"><path d="M13 1 L18 14 L13 11 L8 14 Z" fill="var(--buoy)"/><path d="M13 25 L8 12 L13 15 L18 12 Z" fill="var(--muted)"/><text x="13" y="9.5" text-anchor="middle" font-size="6" font-weight="700" fill="var(--panel-solid)" font-family="Atkinson Hyperlegible, sans-serif">N</text></svg>
+</div>
+
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+} }
+</script>
+<script id="sites" type="application/json">[{"ref":"PT-01","name":"Quayside Heavy Fabrication","d":"PT","a":"crane_fab","area":173200,"b":[["hall",170.6,98.4,22.1,1,false,"New 3-span production hall, 32 m spans"],["office",160,9,12.5,3,false,"Offices and welfare along the new hall"],["hall",169,65,14,1,false,"1972 fabrication hall (height est.)"],["hall",140,87,14,1,true,"1999 painting and final assembly building"],["hall",120,76,12,1,true,"2006 plate cutting and shot-blast hall"],["hall",75,40,12,1,true,"1994 pre-assembly hall"],["hall",50,25,10,1,true,"2010 machining hall"],["hall",60,30,9,1,true,"1958 hall"],["hall",60,30,9,1,true,"1958 hall"],["office",40,15,7,2,true,"Original office building"]],"f":[["qcrane",2],["yard",220,90],["pond",60,25]],"cars":220,"fuels":["LPG","diesel","electricity"],"conf":"medium","note":"Crane structures assembled in the open yard and shipped from the quay.","ov":{},"emp":null,"ops":null,"gfa_stated":null,"fp":58962,"gfa":62442,"size":"L"},{"ref":"PT-02","name":"Cask House Maturation Stores","d":"PT","a":"maturation","area":115780,"b":[["wh",137,75,7.5,1,false,"Maturation warehouse (L-shaped in the source)"],["wh",92,40,7.1,1,false,"Existing maturation store"],["wh",120,65,7.5,1,true,"Former factory hall"],["wh",90,55,7.5,1,true,"Former factory hall"],["wh",70,45,7.5,1,true,"Former factory hall"],["shed",60,10,4.5,1,true,"Loading docks and annexes"]],"f":[["lagoon",40,15],["tank",2,12,8],["tank",1,10,6]],"cars":60,"fuels":["electricity"],"conf":"medium","note":"Casks mature at ambient temperature; the load is lighting, ventilation and forklifts.","ov":{},"emp":null,"ops":null,"gfa_stated":null,"fp":30455,"gfa":30455,"size":"L"},{"ref":"PT-03","name":"Harbour Smokehouse","d":"PT","a":"seafood","area":9900,"b":[["hall",55,38,6.5,1,true,"Factory: fresh, frozen and smoked fish"],["shed",8,6,3.5,1,true,"Outbuilding"],["shed",8,6,3.5,1,true,"Outbuilding"]],"f":[["tank",2,6,3],["yard",40,25]],"cars":20,"fuels":["electricity","wood chips"],"conf":"low","note":"Cold smoking kiln, chill and frozen storage on a coastal site.","ov":{},"emp":null,"ops":null,"gfa_stated":null,"fp":2186,"gfa":2186,"size":"S"},{"ref":"PT-04","name":"Pier Seafood Processors","d":"PT","a":"seafood","area":6620,"b":[["hall",40,25,5.4,1,true,"Twin-gable wet process hall"],["cold",23,16,7.3,1,true,"Cold room, blast freezers and chills"],["shed",15,8,4.5,1,true,"Plate freezer shed and plant rooms"],["hall",7,7,4,1,false,"Fish-smoking extension"],["cold",10,7,6,2,false,"Chill with changing rooms over"]],"f":[["yard",30,20]],"cars":15,"fuels":["electricity"],"conf":"medium","note":"Chilling, blast and plate freezing, smoking.","ov":{},"emp":null,"ops":null,"gfa_stated":null,"fp":1607,"gfa":1677,"size":"S"},{"ref":"PT-05","name":"Shellfish Processing Co-op","d":"PT","a":"seafood","area":6995,"b":[["hall",62.7,26.3,5.4,1,false,"Factory with shellfish tanks, processing and cold rooms"],["cold",21.6,12.9,7.65,2,false,"Cold store No.2 at -40 C"],["wh",13,10.85,4,1,false,"New store"]],"f":[["pv",0.5],["yard",45,40]],"cars":44,"fuels":["electricity","LPG"],"conf":"high","note":"Cold stores at -25 C and -40 C.","ov":{},"emp":null,"ops":null,"gfa_stated":null,"fp":2069,"gfa":2347,"size":"S"},{"ref":"FD-01","name":"Gleann Dairy Ingredients","d":"FD","a":"dairy_powder","area":100000,"b":[["dryer",40,30,40,6,false,"6-storey reinforced-concrete dryer building, 40 m high"],["wh",60,40,12,1,true,"Bagging and palletising"],["hall",40,25,12,1,true,"Pasteurisation building"],["hall",35,20,8,1,true,"Milk intake bays"],["office",30,20,8,2,true,"Control room, laboratory and visitor centre"],["boiler",40,25,12,1,true,"Utilities building"]],"f":[["silo",8,5,22],["silo",4,4,18],["stack",2,45],["yard",160,160],["tank",2,14,8]],"cars":120,"fuels":["natural gas"],"conf":"medium","note":"Spray dryer at about 190 C inlet air, evaporators, pasteurisers and CIP: the heaviest steam user in the zone.","ov":{},"emp":null,"ops":null,"gfa_stated":null,"fp":6900,"gfa":8700,"size":"M"},{"ref":"FD-02","name":"Valley Milk Crumb","d":"FD","a":"milk_crumb","area":64000,"b":[["hall",170,45,12,1,true,"Crumb production and stores block"],["dryer",60,25,26,4,false,"Evaporator building, 26 m"],["hall",39,23,8,1,true,"Bulk milk intake"],["office",36,25,8,2,true,"Laboratory, office, CIP and stores"],["wh",30,25,9,1,true,"Powder store"],["boiler",15,10,8,1,true,"Boiler house"]],"f":[["silo",4,4.5,18],["silo",2,4.5,24],["stack",1,30],["clar",6,18],["tank",1,12,6]],"cars":80,"fuels":["heavy fuel oil","electricity"],"conf":"medium","note":"Milk is evaporated, cooked with sugar and cocoa, then vacuum-dried to crumb.","ov":{},"emp":null,"ops":null,"gfa_stated":null,"fp":11847,"gfa":14247,"size":"M"},{"ref":"FD-03","name":"Ard\u00e1n Cooked Meats","d":"FD","a":"meat","area":40590,"b":[["hall",50,35,8,1,true,"Manufacturing (cooking, smoking, slicing)"],["wh",60,40,10,1,true,"Warehouse with pallet storage"],["office",21,14,4,1,true,"Offices"],["boiler",10,8,6,1,true,"Boiler, generator and oil tank"],["shed",10,8.5,4,1,false,"Plant room"]],"f":[["tank",2,8,4],["clar",2,10],["stack",1,14]],"cars":80,"fuels":["oil","electricity"],"conf":"medium","note":"Cooking, smoking and washdown with blast chill and cold rooms.","ov":{},"emp":null,"ops":null,"gfa_stated":null,"fp":4609,"gfa":4609,"size":"M"},{"ref":"FD-04","name":"Curing House Bacon","d":"FD","a":"meat","area":36200,"b":[["hall",97.6,30,8,1,false,"Main hall: intake, injection, maturing, packing"],["shed",50,8.5,6,1,false,"Service strip and plant room"],["office",37,23,7,2,true,"Office and staff wing"],["cold",20,14,6,1,true,"Tray wash and storage extension"]],"f":[["tank",4,6,8]],"cars":70,"fuels":["electricity"],"conf":"medium","note":"Curing, smoking, chilling and blast freezing.","ov":{},"emp":null,"ops":null,"gfa_stated":null,"fp":4484,"gfa":5335,"size":"M"},{"ref":"FD-05","name":"Kitchen Lane Sauces","d":"FD","a":"sauces","area":5269,"b":[["hall",54,26,9,2,false,"Production with first-floor offices"],["boiler",6,5,5,1,true,"Boiler house"],["cold",12,8,8,1,true,"Double-height fridge room"]],"f":[["tank",3,3,6]],"cars":30,"fuels":["electricity"],"conf":"medium","note":"Cooking, hot fill and CIP.","ov":{},"emp":null,"ops":null,"gfa_stated":null,"fp":1530,"gfa":2934,"size":"M"},{"ref":"FD-06","name":"Corner Bakehouse","d":"FD","a":"bakery","area":6000,"b":[["hall",50,42,8,1,true,"Bakery building (outline est. from map)"]],"f":[["lpg",1]],"cars":20,"fuels":["LPG","electricity"],"conf":"low","note":"Ovens and provers.","ov":{},"emp":null,"ops":null,"gfa_stated":null,"fp":2100,"gfa":2100,"size":"S"},{"ref":"FD-07","name":"Cocoa Workshop","d":"FD","a":"confectionery","area":4300,"b":[["hall",30,18,7.3,2,true,"Factory with first floor"],["wh",15,10,7.3,2,false,"Storage extension"]],"f":[],"cars":41,"fuels":["electricity"],"conf":"high","note":"Melting, tempering and cooling; a visitor shop.","ov":{},"emp":null,"ops":null,"gfa_stated":null,"fp":690,"gfa":1380,"size":"S"},{"ref":"FD-08","name":"Reek Craft Distillery","d":"FD","a":"distillery","area":8400,"b":[["hall",55,33,9,1,true,"Distillery in a refurbished warehouse"],["office",13,10,10,3,true,"Office wing"],["visitor",36,25,11,3,true,"Visitor centre and cafe"]],"f":[["ct",1],["tank",4,3,7]],"cars":60,"fuels":["oil or gas","electricity"],"conf":"medium","note":"Mashing, fermentation and distillation.","ov":{},"emp":null,"ops":null,"gfa_stated":null,"fp":2845,"gfa":4905,"size":"M"},{"ref":"FD-09","name":"Feamainn Marine Extracts","d":"FD","a":"seaweed","area":8000,"b":[["hall",51,29,8,1,false,"Extraction, evaporation and drying"],["boiler",10,8,6,1,true,"LPG steam boiler room"]],"f":[["stack",5,19],["tank",3,5,6],["lpg",1]],"cars":25,"fuels":["LPG","electricity"],"conf":"medium","note":"Seaweed extraction with spray, drum and ring dryers.","ov":{"boilerMW":4.8},"emp":null,"ops":null,"gfa_stated":null,"fp":1559,"gfa":1559,"size":"S"},{"ref":"FD-10","name":"Boning Hall Butchers","d":"FD","a":"meat","area":1000,"b":[["hall",41.6,15.1,8,2,false,"Boning hall, chills and freezer"]],"f":[],"cars":6,"fuels":["electricity"],"conf":"medium","note":"Chilled carcass intake, boning and packing.","ov":{},"emp":null,"ops":null,"gfa_stated":null,"fp":628,"gfa":1256,"size":"S"},{"ref":"LS-01","name":"Biosensor Campus","d":"LS","a":"meddev_clean","area":324718,"b":[["clean",203.3,75,20,4,true,"Main production block, two cleanrooms"],["office",75,33,20,4,true,"Office and amenity wing"],["sub",60,40,8,1,true,"MV and 38 kV GIS buildings"],["sub",30,20,6,1,true,"Transformer compound"]],"f":[["pond",120,60],["pond",80,40],["clar",2,14],["tank",1,12,10]],"cars":500,"fuels":["electricity","diesel standby"],"conf":"medium","note":"Continuous-glucose-sensor style cleanroom manufacturing.","ov":{},"emp":null,"ops":null,"gfa_stated":null,"fp":20722,"gfa":43395,"size":"L"},{"ref":"LS-02","name":"Sterile Fill-Finish Campus","d":"LS","a":"pharma_ff","area":124000,"b":[["clean",170,67,20,2,true,"North production block: vial filling and warehouse"],["clean",120,86,17,2,true,"South production block"],["wh",67,32,12,1,true,"Ambient warehouse"],["office",48,25,14.8,3,false,"Personnel support facility"],["office",35,22,8,2,true,"Detached building"],["lab",48,22,8,2,true,"Detached building"],["boiler",40,20,10,1,true,"EHS, engineering and plant"]],"f":[["tank",2,12,10],["stack",2,25]],"cars":450,"fuels":["natural gas","electricity"],"conf":"medium","note":"Aseptic filling with WFI, clean steam and cleanroom HVAC.","ov":{},"emp":null,"ops":null,"gfa_stated":null,"fp":27680,"gfa":53616,"size":"L"},{"ref":"LS-03","name":"Bioreactor Campus","d":"LS","a":"pharma_bio","area":100000,"b":[["clean",110,65,22,2,true,"Process building, 15,400 L production bioreactors"],["office",50,25,12,3,true,"Administration"],["wh",60,40,17,1,false,"High-bay warehouse, 17 m"],["cold",50,46,9,1,true,"Distribution and cold-chain warehouse 2,300 m2"],["boiler",50,30,12,1,true,"Central utilities"],["shed",20,15,6,1,true,"Waste management building"]],"f":[["tank",4,6,14],["ct",2],["stack",2,28]],"cars":400,"fuels":["natural gas","electricity"],"conf":"medium","note":"Cell culture, purification, WFI and clean steam.","ov":{},"emp":null,"ops":null,"gfa_stated":null,"fp":14900,"gfa":24550,"size":"L"},{"ref":"LS-04","name":"Catheter Manufacturing","d":"LS","a":"meddev_clean","area":64970,"b":[["clean",80.2,75.5,14.25,2,false,"Manufacturing, multi-span roof"],["office",73,22.4,10,2,false,"Office and canteen wing"]],"f":[["ct",10],["tank",2,10,8],["pond",50,25]],"cars":276,"fuels":["electricity","diesel standby"],"conf":"high","note":"Cleanroom assembly with ten chillers and heat pumps.","ov":{},"emp":null,"ops":null,"gfa_stated":null,"fp":7690,"gfa":15381,"size":"L"},{"ref":"LS-05","name":"Device Moulding Hall","d":"LS","a":"meddev_clean","area":14000,"b":[["clean",80.2,74.2,10.4,2,false,"Moulding, cleanroom and warehouse"],["sub",23,7.3,4.1,1,false,"Store, substation and switchroom"]],"f":[],"cars":120,"fuels":["natural gas","electricity"],"conf":"medium","note":"Cleanroom HVAC and moulding.","ov":{},"emp":null,"ops":null,"gfa_stated":null,"fp":6119,"gfa":12070,"size":"M"},{"ref":"LS-06","name":"Animal Health Formulations","d":"LS","a":"pharma_form","area":30000,"b":[["hall",58.4,25,9,2,false,"2014 factory and warehouse"],["clean",61,27.6,9,2,false,"2018 paste manufacture and filling"],["wh",92,64,9,1,true,"Existing factory and warehouse"]],"f":[["tank",1,10,8]],"cars":161,"fuels":["electricity"],"conf":"medium","note":"GMP HVAC, CIP and drying.","ov":{},"emp":null,"ops":null,"gfa_stated":null,"fp":9032,"gfa":12175,"size":"M"},{"ref":"LS-07","name":"Silicone Moulding & Filters","d":"LS","a":"meddev_clean","area":7500,"b":[["hall",55,36,6.3,1,true,"Original factory"],["clean",72,36.8,8.4,1,false,"Cleanroom extension"],["office",30,8,7,2,true,"Offices, canteen, locker rooms"],["sub",6,4,3,1,false,"ESB substation"]],"f":[["tank",1,6,3]],"cars":12,"fuels":["electricity"],"conf":"medium","note":"Liquid silicone moulding in cleanrooms, 24/7.","ov":{},"emp":68,"ops":"24/7","gfa_stated":null,"fp":4894,"gfa":5134,"size":"M"},{"ref":"LS-08","name":"Precision Medical Components","d":"LS","a":"meddev_clean","area":3718,"b":[["hall",48,38.1,8.6,1,false,"Advance factory shell"],["office",24.5,9.2,7.4,2,false,"Office and canteen"]],"f":[["lpg",1]],"cars":100,"fuels":["LPG","electricity"],"conf":"medium","note":"Passivation baths and space heating.","ov":{},"emp":null,"ops":null,"gfa_stated":null,"fp":2054,"gfa":2280,"size":"S"},{"ref":"LS-09","name":"Spray-Dried API Plant","d":"LS","a":"api_spray","area":20000,"b":[["dryer",35,25,22,4,true,"Spray dryer, fluid-bed dryer and granulation over 4 floors"],["hall",40,25,9,1,true,"Solution preparation and solids handling"],["boiler",20,12,8,1,true,"Utilities"]],"f":[["tank",4,4,10],["stack",1,30]],"cars":60,"fuels":["natural gas","electricity"],"conf":"low","note":"Spray drying and secondary drying of an active ingredient.","ov":{},"emp":null,"ops":null,"gfa_stated":null,"fp":2115,"gfa":2990,"size":"M"},{"ref":"LS-10","name":"Chip Design & Test Centre","d":"LS","a":"rnd_office","area":20000,"b":[["lab",74.2,51.8,17,3,false,"U-shaped office and lab building"],["sub",10,6,3.5,1,true,"ESB substation and RMU"]],"f":[["pv",0.3]],"cars":220,"fuels":["electricity"],"conf":"high","note":"Offices with electronics labs and roof plant.","ov":{},"emp":null,"ops":null,"gfa_stated":null,"fp":3904,"gfa":11591,"size":"M"},{"ref":"SC-01","name":"Wafer Fab Campus","d":"SC","a":"semiconductor","area":670000,"b":[["fab",148,157,22,4,true,"Fab A (basement, subfab, cleanroom, plenum)"],["fab",161,127,22,4,true,"Fab A extension"],["fab",178,106,22,4,true,"Fab B"],["fab",127,140,20,3,true,"Fab C"],["fab",186,89,18,3,true,"Fab D and support"],["office",140,72,15,4,true,"Office building"],["office",161,51,12,3,true,"Office building"],["hall",93,106,12,2,true,"Older manufacturing building"],["hall",97,80,12,2,true,"Manufacturing support"],["hall",64,76,12,2,true,"Manufacturing support"],["wh",80,59,10,1,true,"Warehouse and chemical stores"],["energy",89,47,15,2,true,"Energy centre"],["energy",89,38,15,2,true,"Energy centre"],["hall",51,38,15,2,true,"Process building"],["shed",80,42,8,1,true,"Nitrogen plant"],["mscp",168,48,12,4,false,"Multi-storey car park, 1,295 cars"],["mscp",92,48,10,3,false,"Multi-storey car park, 656 cars"],["mscp",144,68,10,3,true,"Multi-storey car park"]],"f":[["tank",4,25,14],["ct",16],["stack",6,28],["sub110",1]],"cars":900,"fuels":["natural gas","electricity"],"conf":"low","note":"Five fabs with ultrapure water, cleanroom HVAC and exhaust abatement.","ov":{},"emp":null,"ops":null,"gfa_stated":null,"fp":177513,"gfa":405653,"size":"L"},{"ref":"EN-01","name":"Toolmaking & Machining Works","d":"EN","a":"machining","area":79400,"b":[["hall",190,80,9,1,true,"Interconnected multi-bay factory (part 1)"],["hall",110,60,9,1,true,"Interconnected multi-bay factory (part 2)"],["hall",35,24,7,1,false,"Machine shop extension"],["wh",30,20,6,1,true,"Garage and stores"],["office",24,18,4,1,true,"Monitoring office"],["boiler",9,7,4,1,true,"Plant and shot-blast rooms"]],"f":[["lpg",2],["clar",1,10]],"cars":220,"fuels":["LPG","electricity"],"conf":"low","note":"Machine shop, lathe room, assembly.","ov":{},"emp":null,"ops":null,"gfa_stated":null,"fp":23735,"gfa":23735,"size":"L"},{"ref":"EN-02","name":"Milking Systems Works","d":"EN","a":"metal_fab","area":41800,"b":[["hall",91,41,12,3,false,"High-tech manufacturing and office building"],["wh",134,83,10,1,false,"Stores, steel assembly and dispatch"],["hall",69,30,8,1,true,"Retained building"],["hall",121,12.6,7,1,true,"Retained long building"]],"f":[["tank",1,8,6]],"cars":200,"fuels":["electricity"],"conf":"medium","note":"Stainless fabrication, assembly and polymer moulding.","ov":{},"emp":null,"ops":null,"gfa_stated":null,"fp":18448,"gfa":22179,"size":"L"},{"ref":"EN-03","name":"Sheet Metal Enclosures","d":"EN","a":"paint_finish","area":22260,"b":[["hall",133,73.3,9,1,true,"Portal-frame shed with production cells, paint line"],["office",30,8,7,2,true,"First-floor offices"]],"f":[["lpg",2],["tank",1,4,3]],"cars":168,"fuels":["LPG","oil","electricity"],"conf":"medium","note":"Pre-treatment wash and powder-coat curing ovens.","ov":{},"emp":null,"ops":null,"gfa_stated":null,"fp":9989,"gfa":10229,"size":"M"},{"ref":"EN-04","name":"Strapping Extrusion Plant","d":"EN","a":"plastics","area":25800,"b":[["hall",78.7,67.3,11.25,1,false,"Extrusion hall, 13 bays"],["office",60,10.7,6.8,2,false,"Two-storey office block"],["shed",75,6,6.3,1,false,"Workshops, switchrooms and boiler"]],"f":[["silo",5,3.5,14],["ct",3]],"cars":80,"fuels":["natural gas","electricity"],"conf":"high","note":"Plastic extrusion with process chillers.","ov":{},"emp":null,"ops":null,"gfa_stated":null,"fp":6389,"gfa":7031,"size":"M"},{"ref":"EN-05","name":"Injection Moulding Plant","d":"EN","a":"plastics","area":8700,"b":[["hall",81.6,46.7,9,1,false,"Moulding and assembly"],["office",36,7.3,7,2,false,"Office and canteen"],["wh",20,15.5,7,2,true,"Loading extension"]],"f":[["silo",2,3,12],["ct",1]],"cars":60,"fuels":["electricity"],"conf":"high","note":"Injection moulding with resin drying and chillers.","ov":{},"emp":null,"ops":null,"gfa_stated":null,"fp":4384,"gfa":4956,"size":"M"},{"ref":"EN-06","name":"Dairy Equipment Moulding","d":"EN","a":"plastics","area":12000,"b":[["hall",58.7,40.6,9.4,1,false,"Factory with moulding rooms"],["wh",60,44,9.4,1,true,"Storage and steel extension (2,625 m2)"]],"f":[["tank",1,8,1.5]],"cars":60,"fuels":["electricity"],"conf":"high","note":"Injection moulding of dairy parts.","ov":{},"emp":null,"ops":null,"gfa_stated":null,"fp":5023,"gfa":5023,"size":"M"},{"ref":"EN-07","name":"Mechanical Engineering Works","d":"EN","a":"metal_fab","area":11430,"b":[["hall",75,49,8,1,true,"Unit 1 with extensions"],["hall",47.5,36,8.2,1,false,"Unit 2"]],"f":[],"cars":79,"fuels":["electricity"],"conf":"medium","note":"Mechanical fabrication.","ov":{},"emp":null,"ops":null,"gfa_stated":null,"fp":5385,"gfa":5385,"size":"M"},{"ref":"EN-08","name":"Structural Steel Fabricators","d":"EN","a":"metal_fab","area":17180,"b":[["hall",68.8,34.3,6.4,1,false,"Factory with two-storey office"],["shed",12,8,4,1,true,"Plant rooms"]],"f":[["gantry",27.6,13.8]],"cars":40,"fuels":["electricity"],"conf":"high","note":"Steel fabrication and paint spraying.","ov":{},"emp":null,"ops":null,"gfa_stated":null,"fp":2456,"gfa":2456,"size":"S"},{"ref":"EN-09","name":"Light Engineering Units","d":"EN","a":"metal_fab","area":21600,"b":[["hall",71.2,24.7,9.5,1,false,"Building 1"],["wh",43,19.9,8,1,false,"Building 2"],["wh",18,13,6,1,true,"Storage building"]],"f":[["yard",60,40]],"cars":45,"fuels":["electricity"],"conf":"high","note":"Light manufacturing.","ov":{},"emp":null,"ops":null,"gfa_stated":null,"fp":2848,"gfa":2848,"size":"M"},{"ref":"EN-10","name":"Worktop Postforming Plant","d":"EN","a":"wood","area":15000,"b":[["hall",80,45,7,1,true,"Production, 5 m eaves"],["office",30,10,7,2,true,"Reception, display and offices"]],"f":[],"cars":60,"fuels":["electricity"],"conf":"low","note":"Laminate postforming and edging.","ov":{},"emp":null,"ops":null,"gfa_stated":null,"fp":3900,"gfa":4200,"size":"M"},{"ref":"EN-11","name":"Veneer & Panel Works","d":"EN","a":"wood","area":10600,"b":[["hall",92.5,31.4,10.5,1,false,"Factory floor and veneer store"],["office",33,5.5,6,2,false,"Offices"],["boiler",12,8,6,1,true,"Boiler, dust extraction and substation"]],"f":[["stack",1,14],["silo",1,4,12]],"cars":40,"fuels":["wood residue","electricity"],"conf":"medium","note":"Veneer pressing; wood residue boiler.","ov":{},"emp":null,"ops":null,"gfa_stated":null,"fp":3182,"gfa":3364,"size":"M"},{"ref":"EN-12","name":"Timber Products Factory","d":"EN","a":"wood","area":9000,"b":[["hall",92.9,28.1,9.6,1,false,"Replacement factory"]],"f":[["yard",60,40]],"cars":30,"fuels":["electricity"],"conf":"low","note":"Timber processing; drying assumed.","ov":{},"emp":null,"ops":null,"gfa_stated":null,"fp":2610,"gfa":2610,"size":"M"},{"ref":"EN-13","name":"Film Capacitor Plant","d":"EN","a":"electronics","area":15000,"b":[["hall",67,36.75,6.6,1,true,"Main factory, winding and curing"],["hall",36,25,6,1,true,"Second building"],["wh",40,25,7,1,true,"Warehouse"],["shed",36.5,3,4,1,false,"Store strip"]],"f":[["tank",1,6,6]],"cars":70,"fuels":["oil","electricity"],"conf":"low","note":"Vacuum curing ovens and burn-in.","ov":{},"emp":null,"ops":null,"gfa_stated":null,"fp":4472,"gfa":4472,"size":"M"},{"ref":"EN-14","name":"Electronics Assembly","d":"EN","a":"electronics","area":11350,"b":[["hall",36,32,6.5,1,false,"Original building"],["hall",44.6,39,7,1,false,"1997 extension"],["office",21,12.5,7,2,false,"Mezzanine office"]],"f":[],"cars":73,"fuels":["oil","electricity"],"conf":"medium","note":"Surface-mount assembly with reflow ovens.","ov":{},"emp":200,"ops":"2 shifts","gfa_stated":null,"fp":3154,"gfa":3416,"size":"M"},{"ref":"EN-15","name":"Precision Fabrication","d":"EN","a":"metal_fab","area":8370,"b":[["hall",36.5,32.8,6.9,1,false,"North block"],["hall",42.8,22.8,6.6,1,false,"South block"],["wh",36.5,20,5.9,1,false,"Raw materials extension"],["shed",30.4,6.5,6.9,1,false,"Side extension"]],"f":[],"cars":30,"fuels":["electricity"],"conf":"medium","note":"Precision engineering and fabrication.","ov":{},"emp":null,"ops":null,"gfa_stated":null,"fp":3101,"gfa":3101,"size":"M"},{"ref":"EN-16","name":"Drawn Tube Mill","d":"EN","a":"tubes","area":2800,"b":[["hall",35,22.6,6,1,true,"Twin-bay factory"],["office",17,12.7,6.5,2,true,"Offices and QC"],["wh",19.25,18.5,6,1,false,"Storage extension"]],"f":[],"cars":10,"fuels":["electricity"],"conf":"medium","note":"Cold drawing with annealing.","ov":{},"emp":null,"ops":null,"gfa_stated":null,"fp":1363,"gfa":1579,"size":"S"},{"ref":"MN-01","name":"Clinker & Cement Works","d":"MN","a":"cement","area":400000,"b":[["kilnhouse",30,25,60,1,true,"Preheater tower (typical, not in source)"],["hall",30,20,25,1,true,"Coal mill building"],["wh",80,30,14.3,1,true,"Raw materials building"],["wh",60,25,12.2,1,true,"Coarse alternative-fuels building"],["hall",40,20,12,2,true,"Fine solids handling"],["wh",120,50,20,1,true,"Clinker store (typical)"],["office",40,15,8,2,true,"Offices and control"]],"f":[["kiln",75,5],["silo",3,5,25],["silo",4,15,40],["stack",1,90],["pile",4,22],["pit",260,180]],"cars":60,"fuels":["coal/petcoke","alternative fuels","electricity"],"conf":"low","note":"Rotary kiln to about 1,450 C; many dimensions are typical, not from the file.","ov":{"thGWh":560,"elGWh":60,"T":1450,"fuel":"coal"},"emp":null,"ops":null,"gfa_stated":null,"fp":12650,"gfa":14050,"size":"L","sizeNote":"Sized by site and output, not floor area"},{"ref":"MN-02","name":"Ridge Sand & Gravel","d":"MN","a":"quarry","area":185000,"b":[["shed",39.8,25.7,8.1,2,false,"Repairs and administration shed"],["sub",8.6,3.95,3.8,1,false,"ESB substation"],["office",9.8,3.65,2.6,1,false,"Portacabins"],["shed",24,3,2.4,1,false,"Storage containers"]],"f":[["silo",1,5,14.8],["pile",8,18],["pit",300,220],["lagoon",60,30],["lagoon",40,25]],"cars":38,"fuels":["diesel","electricity"],"conf":"high","note":"Crushing, screening, washing, ready-mix and blocks.","ov":{"thGWh":0.1,"elGWh":2.5},"emp":38,"ops":null,"gfa_stated":null,"fp":1165,"gfa":2187,"size":"M","sizeNote":"Sized by site and output, not floor area"},{"ref":"MN-03","name":"Limestone Quarry & Asphalt Plant","d":"MN","a":"asphalt","area":80000,"b":[["dryer",10,10,20,1,false,"Mixing tower: elevator, screen, hot bins"],["shed",9,3,4,1,true,"Rotary dryer housing"],["shed",8,5,6,1,true,"Bag filter house"],["office",5,3,3,1,false,"Control cabin"]],"f":[["silo",3,4,14],["tank",3,3.5,8],["stack",1,18],["pile",6,14],["pit",200,150]],"cars":10,"fuels":["oil","LPG","electricity"],"conf":"medium","note":"Oil-fired aggregate dryer rated about 10 MW.","ov":{"boilerMW":10,"hours":1500,"T":170,"fuel":"oil"},"emp":null,"ops":null,"gfa_stated":null,"fp":182,"gfa":182,"size":"M","sizeNote":"Sized by site and output, not floor area"},{"ref":"MN-04","name":"Precast Concrete Yard","d":"MN","a":"precast","area":17000,"b":[["hall",98.5,16,7,1,false,"Long shed, hollowcore production"],["hall",26.8,20,7,1,false,"Wider bay at one end"]],"f":[["silo",1,3.5,14],["pile",3,8],["yard",80,50]],"cars":15,"fuels":["electricity"],"conf":"medium","note":"Concrete batching and curing.","ov":{},"emp":null,"ops":null,"gfa_stated":null,"fp":2112,"gfa":2112,"size":"S"},{"ref":"GW-01","name":"Unit Row Advance Factory","d":"GW","a":"light_units","area":15000,"b":[["hall",56,30,7.45,1,false,"Four units of about 14 x 24 m"],["office",56,6,6.5,2,false,"Office strip"]],"f":[],"cars":16,"fuels":["electricity"],"conf":"high","note":"Four empty advance units.","ov":{},"emp":null,"ops":null,"gfa_stated":null,"fp":2016,"gfa":2352,"size":"S"},{"ref":"GW-02","name":"Estate Print Works","d":"GW","a":"print","area":1480,"b":[["hall",30,23,7,1,false,"Warehouse unit converted to printing, with mezzanine"]],"f":[],"cars":10,"fuels":["electricity"],"conf":"high","note":"Printing, drying and laminating.","ov":{},"emp":null,"ops":null,"gfa_stated":null,"fp":690,"gfa":690,"size":"S"},{"ref":"GW-03","name":"Joinery & Furniture Workshop","d":"GW","a":"wood","area":5400,"b":[["hall",23.8,11.8,7.6,1,false,"Workshop"],["wh",23.8,14.7,7.6,1,false,"Store"],["shed",9.1,6.1,3.5,1,false,"Metal store"],["office",4.3,3.7,2.6,1,false,"Portacabin"]],"f":[],"cars":8,"fuels":["electricity"],"conf":"high","note":"Furniture making.","ov":{},"emp":null,"ops":null,"gfa_stated":null,"fp":702,"gfa":702,"size":"S"},{"ref":"GW-04","name":"CNC Machining Unit","d":"GW","a":"machining","area":1465,"b":[["hall",30.2,9,6.7,2,false,"Manufacturing, CNC room and office"]],"f":[],"cars":8,"fuels":["electricity"],"conf":"high","note":"CNC machining.","ov":{},"emp":null,"ops":null,"gfa_stated":null,"fp":272,"gfa":544,"size":"S"},{"ref":"GW-05","name":"Hygiene Chemicals Blending","d":"GW","a":"chem_blend","area":3995,"b":[["hall",28.5,19.5,8.2,2,false,"Production and offices"],["shed",14,5.4,4,1,false,"Open-sided store"]],"f":[["tank",5,3,6],["pv",0.6]],"cars":15,"fuels":["electricity"],"conf":"high","note":"Mixing and blending of cleaning products.","ov":{},"emp":null,"ops":null,"gfa_stated":null,"fp":631,"gfa":1187,"size":"S"},{"ref":"GW-06","name":"Spray Finishing Shed","d":"GW","a":"paint_finish","area":1300,"b":[["hall",13.4,7.3,5,1,false,"Workshop"],["shed",9.6,7.6,4,1,false,"Spray room and drying"],["shed",10,6,3.5,1,true,"Lean-to shed"]],"f":[],"cars":3,"fuels":["electricity"],"conf":"low","note":"Small spray-finishing workshop.","ov":{},"emp":null,"ops":null,"gfa_stated":null,"fp":231,"gfa":231,"size":"S"},{"ref":"GW-07","name":"Pavement Test Laboratory","d":"GW","a":"lab_test","area":1890,"b":[["lab",36,15,10.7,3,false,"Equipment room, laboratory and offices"],["shed",20,12.6,6.4,1,false,"Vehicle storage shed"],["boiler",4.1,3.1,3.6,1,false,"Oil boiler house"]],"f":[],"cars":20,"fuels":["oil","electricity"],"conf":"high","note":"Pavement testing labs and vehicle shed.","ov":{},"emp":null,"ops":null,"gfa_stated":null,"fp":805,"gfa":1885,"size":"S"},{"ref":"GW-08","name":"Monumental Stone Workshop","d":"GW","a":"stone","area":490,"b":[["hall",12.35,9.45,4,1,false,"Existing workshop"],["hall",22.9,11.8,4.65,1,false,"Workshop with display and office"]],"f":[],"cars":4,"fuels":["electricity"],"conf":"high","note":"Stone cutting and lettering.","ov":{},"emp":null,"ops":null,"gfa_stated":null,"fp":387,"gfa":387,"size":"S"},{"ref":"GW-09","name":"Micro Bakery","d":"GW","a":"bakery","area":900,"b":[["hall",12.6,6.1,4.5,1,false,"Bakery unit"]],"f":[],"cars":3,"fuels":["electricity"],"conf":"high","note":"Small electric ovens.","ov":{},"emp":null,"ops":null,"gfa_stated":null,"fp":77,"gfa":77,"size":"S"},{"ref":"GW-10","name":"Knitwear Mill","d":"GW","a":"textile","area":1500,"b":[["hall",44,19,7,2,true,"Knitting and yarn store"]],"f":[],"cars":7,"fuels":["electricity"],"conf":"medium","note":"Knitting machines.","ov":{},"emp":null,"ops":null,"gfa_stated":null,"fp":836,"gfa":1672,"size":"S"},{"ref":"UT-01","name":"Zone Water Treatment Works","d":"UT","a":"water","area":50000,"b":[["hall",80,50,10,1,true,"Treatment building"],["office",20,12,7,2,true,"Control building"]],"f":[["clar",4,25],["lagoon",90,45]],"cars":20,"fuels":["electricity"],"conf":"low","note":"Clarification, filtration and pumping.","ov":{"thGWh":0.2,"elGWh":6},"emp":null,"ops":null,"gfa_stated":null,"fp":4240,"gfa":4480,"size":"M"}]</script>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const isSmall = window.innerWidth < 760;
+const SITES = JSON.parse(document.getElementById('sites').textContent);
+const SITE = Object.fromEntries(SITES.map(s => [s.ref, s]));
+const BN_URL = document.getElementById('backBn').getAttribute('href');
+
+/* ---------- seeded randomness: the same zone every load ---------- */
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+const R = mulberry32(20261009);
+const rand = (a,b)=>a+(b-a)*R();
+const pick = a=>a[Math.floor(R()*a.length)];
+const smooth = (a,b,v)=>{let t=(v-a)/(b-a);t=t<0?0:t>1?1:t;return t*t*(3-2*t);};
+const hash2 = (a,b)=>{const s=Math.sin(a*127.1+b*311.7)*43758.5453;return s-Math.floor(s);};
+const clamp=(v,a,b)=>v<a?a:v>b?b:v;
+
+/* ---------- terrain: an estuary bay to the south-east, the plain the zone sits on, and quarry hills to the north ---------- */
+const SHORE=[[-1800,660],[-1300,640],[-900,628],[-500,622],[-200,616],[100,620],[380,614],[540,600],[630,578],[760,550],[1000,542],[1250,546],[1420,556],[1560,590],[1800,650]];
+function shoreZ(x){
+  if(x<=SHORE[0][0])return SHORE[0][1];
+  for(let i=1;i<SHORE.length;i++){
+    if(x<=SHORE[i][0]){
+      const p0=SHORE[Math.max(0,i-2)][1],p1=SHORE[i-1][1],p2=SHORE[i][1],p3=SHORE[Math.min(SHORE.length-1,i+1)][1];
+      const t=(x-SHORE[i-1][0])/(SHORE[i][0]-SHORE[i-1][0]),t2=t*t,t3=t2*t;
+      const quay=x>690&&x<1450?0:1;
+      return 0.5*((2*p1)+(-p0+p2)*t+(2*p0-5*p1+4*p2-p3)*t2+(-p0+3*p1-3*p2+p3)*t3)+quay*(4*Math.sin(x/37)+2.5*Math.sin(x/13+1));
+    }
+  }
+  return SHORE[SHORE.length-1][1];
+}
+function baseH(x,z){
+  const sz=shoreZ(x);
+  let h=3.2+Math.max(0,sz-z)*0.011;
+  const n=smooth(-560,-1250,z);
+  h+=n*(62+18*Math.sin(x/210+0.4)+9*Math.sin(x/93+2.1)+6*Math.cos(z/130));
+  h+=smooth(-300,-760,z)*smooth(250,700,x)*26;                 // the ridge the quarries cut into
+  h+=smooth(1250,1650,Math.abs(x))*40*(0.8+0.2*Math.sin(z/150));
+  h+=2.2*Math.sin(x/170)*Math.cos(z/150)*(1-n)*(1-smooth(sz-90,sz,z));
+  if(z>sz)h=Math.min(h,2.6-(z-sz)*0.3);
+  if(inRecl(x,z))h=3.4;
+  return h;
+}
+const RECL={x0:690,x1:1450,z1:960};
+function inRecl(x,z){return x>RECL.x0&&x<RECL.x1&&z<RECL.z1&&z>shoreZ(x)-6;}
+const PADS=[],PITS=[];
+function H(x,z){
+  let h=baseH(x,z);
+  for(const p of PADS){
+    const dx=Math.max(p.x0-x,0,x-p.x1),dz=Math.max(p.z0-z,0,z-p.z1);
+    if(dx>30||dz>30)continue;
+    const d=Math.hypot(dx,dz);
+    if(d<30){const m=1-smooth(0,30,d);h=h+(p.h-h)*m;}
+  }
+  for(const q of PITS){
+    if(x<q.x0||x>q.x1||z<q.z0||z>q.z1)continue;
+    const inset=Math.min(x-q.x0,q.x1-x,z-q.z0,q.z1-z);
+    const k=smooth(0,q.bank,inset);const steps=Math.floor(k*4)/4;h-=q.depth*(0.55*k+0.45*steps);
+  }
+  return h;
+}
+function pad(x0,x1,z0,z1,hOverride){const h=hOverride??Math.max(3.3,baseH((x0+x1)/2,(z0+z1)/2));PADS.push({x0,x1,z0,z1,h});return PADS[PADS.length-1];}
+
+/* ---------- renderer, scene, camera ---------- */
+const canvas=document.getElementById('scene');
+const renderer=new THREE.WebGLRenderer({canvas,antialias:true,powerPreference:'high-performance'});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio,isSmall?1.5:2));
+renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.toneMapping=THREE.ACESFilmicToneMapping;
+const scene=new THREE.Scene();
+const camera=new THREE.PerspectiveCamera(42,1,2,12000);
+const controls=new OrbitControls(camera,canvas);
+controls.enableDamping=true;controls.dampingFactor=0.08;controls.maxPolarAngle=1.42;
+controls.minDistance=25;controls.maxDistance=3600;controls.screenSpacePanning=false;
+
+const std=(c,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:0.9,metalness:0},o));
+const M={
+  inst:std('#ffffff'),roof:std('#ffffff',{flatShading:true}),leaf:std('#ffffff',{flatShading:true}),conifer:std('#ffffff',{flatShading:true}),
+  wood:std('#6b5a45'),pv:std('#1d2f4f',{roughness:0.35,metalness:0.25}),metal:std('#ffffff',{roughness:0.45,metalness:0.35}),
+  lamp:new THREE.MeshStandardMaterial({color:'#3a3a38',emissive:'#ffc77a',emissiveIntensity:0}),
+  wire:new THREE.LineBasicMaterial({color:'#2b2b2b',transparent:true,opacity:0.75}),
+  win:new THREE.MeshBasicMaterial({color:'#3d4651'}),red:new THREE.MeshBasicMaterial({color:'#401010'}),
+  water:std('#2e6d8c',{roughness:0.18,metalness:0.15,transparent:true,opacity:0.93}),
+};
+const roadMat=c=>std(c,{polygonOffset:true,polygonOffsetFactor:-2,polygonOffsetUnits:-2});
+const roadMats={main:roadMat('#4d5155'),estate:roadMat('#5b5f63'),rural:roadMat('#5d615c'),line:std('#e9e5da',{polygonOffset:true,polygonOffsetFactor:-4,polygonOffsetUnits:-4})};
+
+/* ---------- collections ---------- */
+const boxes=[],roofs=[],windows=[],pvs=[],cars=[],cyl=[],cones=[],slabs=[];
+const broadleaf=[],conifers=[],poles=[],arms=[],lampPosts=[],kiosks=[];
+const wirePts=[];
+const retro={boxes:[],cyl:[]};
+const ZR=[];
+function zoneRect(x0,x1,z0,z1){ZR.push({x0,x1,z0,z1});}
+function inZone(x,z,m=0){for(const q of ZR)if(x>q.x0-m&&x<q.x1+m&&z>q.z0-m&&z<q.z1+m)return true;return false;}
+
+/* ---------- roads (same ribbons as Baile Nua) ---------- */
+const roadCells=new Map(),roads={};
+function regRoad(x,z,w){const k=Math.floor(x/20)+','+Math.floor(z/20);let a=roadCells.get(k);if(!a){a=[];roadCells.set(k,a);}a.push(x,z,w);}
+function nearRoad(x,z,m){const cx=Math.floor(x/20),cz=Math.floor(z/20);for(let i=-1;i<=1;i++)for(let j=-1;j<=1;j++){const a=roadCells.get((cx+i)+','+(cz+j));if(!a)continue;for(let k=0;k<a.length;k+=3)if(Math.hypot(a[k]-x,a[k+1]-z)<a[k+2]/2+m)return true;}return false;}
+function ribbon(sp,width,lift,dash,offset=0){
+  const v=[],idx=[];const n=sp.length-1;
+  for(let i=0;i<=n;i++){
+    const p=sp[i],a=sp[Math.max(0,i-1)],b=sp[Math.min(n,i+1)];
+    let tx=b.x-a.x,tz=b.z-a.z;const l=Math.hypot(tx,tz)||1;tx/=l;tz/=l;
+    const px=tz,pz=-tx,cx=p.x+px*offset,cz=p.z+pz*offset;
+    const lx=cx+px*width/2,lz=cz+pz*width/2,rx=cx-px*width/2,rz=cz-pz*width/2;
+    const y=(p.y!==undefined?p.y:Math.max(H(cx,cz),H(lx,lz),H(rx,rz)))+lift;
+    v.push(lx,y,lz,rx,y,rz);
+    if(i<n&&(!dash||Math.floor(i/2)%2===0)){const k=i*2;idx.push(k,k+1,k+2,k+1,k+3,k+2);}
+  }
+  const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(v,3));g.setIndex(idx);g.computeVertexNormals();return g;
+}
+let RID=0;
+function addRoad(name,pts,width,kind='main',centre=false){
+  name=name||('r'+(RID++));
+  const curve=new THREE.CatmullRomCurve3(pts.map(([x,z])=>new THREE.Vector3(x,0,z)),false,'centripetal');
+  const len=curve.getLength(),n=Math.max(2,Math.ceil(len/4));const sp=curve.getSpacedPoints(n);
+  const cum=[0];for(let i=1;i<sp.length;i++)cum.push(cum[i-1]+Math.hypot(sp[i].x-sp[i-1].x,sp[i].z-sp[i-1].z));
+  sp.forEach(p=>{let y=Math.max(H(p.x,p.z),H(p.x+width/2,p.z),H(p.x-width/2,p.z),H(p.x,p.z+width/2),H(p.x,p.z-width/2));if(y<3.3)y=3.3;p.y=y;regRoad(p.x,p.z,width);});
+  const m=new THREE.Mesh(ribbon(sp,width,0.3,false),roadMats[kind]);m.receiveShadow=true;scene.add(m);
+  if(centre)scene.add(new THREE.Mesh(ribbon(sp,0.25,0.34,true),roadMats.line));
+  const path={name,sp,cum,len:cum[cum.length-1],width,curve,kind};roads[name]=path;return path;
+}
+function pathAt(P,s){const {sp,cum}=P;s=Math.max(0,Math.min(P.len-0.001,s));let lo=0,hi=cum.length-1;while(hi-lo>1){const m=(lo+hi)>>1;if(cum[m]<=s)lo=m;else hi=m;}
+  const a=sp[lo],b=sp[hi];const t=(s-cum[lo])/((cum[hi]-cum[lo])||1);let tx=b.x-a.x,tz=b.z-a.z;const l=Math.hypot(tx,tz)||1;return {x:a.x+(b.x-a.x)*t,z:a.z+(b.z-a.z)*t,tx:tx/l,tz:tz/l};}
+function streetLights(P,offset,every){for(let s=every/2;s<P.len;s+=every){const m=pathAt(P,s);for(const sd of [1,-1]){const x=m.x+m.tz*offset*sd,z=m.z-m.tx*offset*sd;lampPosts.push({x,z,y:H(x,z),rot:Math.atan2(-m.tz,m.tx)+Math.PI/2});}}}
+
+/* ================= OPTIFEM ARCHETYPES =================
+   Screening intensities per m\u00b2 of floor area (kWh/m\u00b2\u00b7yr), the hottest process temperature, the share of heat at or below 150 \u00b0C
+   (what a high-temperature heat pump can serve today), the operating pattern and the main process stages. */
+const ARCH={
+  dairy_powder:{n:'Dairy powders',sec:'Food and drink',th:5200,el:420,T:190,hp:0.55,ops:'24/7',waste:true,st:[['Milk reception and chilling',4],['Pasteurisation',75],['Evaporation (falling film)',70],['Spray drying, inlet air',190],['CIP',80]]},
+  milk_crumb:{n:'Milk chocolate crumb',sec:'Food and drink',th:2600,el:300,T:140,hp:0.85,ops:'24/7',waste:true,st:[['Milk intake',4],['Evaporation',70],['Crumb cooking',95],['Vacuum drying',120],['CIP',80]]},
+  meat:{n:'Meat processing',sec:'Food and drink',th:260,el:330,T:85,hp:0.95,ops:'2-shift',waste:true,st:[['Chilling',2],['Cooking and scalding',75],['Smoking',80],['Washdown',60],['CIP',75]]},
+  seafood:{n:'Seafood processing',sec:'Food and drink',th:140,el:380,T:80,hp:0.9,ops:'2-shift',waste:true,st:[['Chill rooms',0],['Blast and plate freezing',-35],['Smoking',80],['Washdown',60]]},
+  bakery:{n:'Bakery',sec:'Food and drink',th:650,el:160,T:230,hp:0.25,ops:'2-shift',waste:false,st:[['Proving',35],['Baking ovens',230],['Cooling',20],['Tray wash',60]]},
+  confectionery:{n:'Chocolate and confectionery',sec:'Food and drink',th:260,el:220,T:60,hp:1,ops:'1-shift',waste:false,st:[['Melting',45],['Tempering',50],['Cooling tunnel',12]]},
+  sauces:{n:'Sauces and ready foods',sec:'Food and drink',th:420,el:160,T:95,hp:1,ops:'2-shift',waste:false,st:[['Cooking kettles',95],['Hot fill and pasteurising',90],['CIP',80]]},
+  distillery:{n:'Distillery',sec:'Food and drink',th:2400,el:160,T:135,hp:0.9,ops:'24/7',waste:true,st:[['Mashing',65],['Fermentation (cooling)',30],['Distillation, 3 barg steam',135],['CIP',80]]},
+  maturation:{n:'Spirit maturation warehousing',sec:'Food and drink',th:4,el:7,T:20,hp:1,ops:'1-shift',waste:false,st:[['Ambient cask storage',12]]},
+  seaweed:{n:'Marine extraction and drying',sec:'Chemicals and pharma',th:0,el:180,T:160,hp:0.6,ops:'2-shift',waste:true,st:[['Extraction',85],['Evaporation',70],['Drum and ring drying',160],['Spray drying',180],['CIP',80]]},
+  pharma_ff:{n:'Sterile fill-finish',sec:'Chemicals and pharma',th:520,el:720,T:125,hp:1,ops:'24/7',waste:true,st:[['HVAC reheat',40],['WFI generation',85],['Clean steam / SIP',125],['CIP',80]]},
+  pharma_bio:{n:'Biologics (cell culture)',sec:'Chemicals and pharma',th:650,el:780,T:125,hp:1,ops:'24/7',waste:true,st:[['Media and buffer prep',37],['Bioreactor temperature control',37],['WFI generation',85],['Clean steam / SIP',125],['HVAC reheat',40]]},
+  pharma_form:{n:'Pharma formulation',sec:'Chemicals and pharma',th:260,el:320,T:90,hp:1,ops:'2-shift',waste:false,st:[['GMP HVAC',40],['Mixing and paste manufacture',60],['Drying',90],['CIP',80]]},
+  api_spray:{n:'Spray-dried active ingredient',sec:'Chemicals and pharma',th:950,el:420,T:160,hp:0.55,ops:'24/7',waste:true,st:[['Solution preparation',50],['Spray drying',160],['Secondary drying',80],['Solvent recovery',80]]},
+  meddev_clean:{n:'Medical devices (cleanroom)',sec:'Medical devices and electronics',th:160,el:420,T:60,hp:1,ops:'24/7',waste:true,st:[['Cleanroom HVAC reheat',40],['Humidification',60],['Moulding temperature control',60]]},
+  semiconductor:{n:'Semiconductor fab',sec:'Medical devices and electronics',th:240,el:2300,T:80,hp:1,ops:'24/7',waste:true,st:[['Ultrapure water heating',80],['Cleanroom make-up air',40],['Exhaust abatement (electric)',0]]},
+  rnd_office:{n:'R&D offices and labs',sec:'Medical devices and electronics',th:85,el:170,T:45,hp:1,ops:'1-shift',waste:false,st:[['Space heating',45],['Lab HVAC',40]]},
+  electronics:{n:'Electronics assembly',sec:'Medical devices and electronics',th:70,el:230,T:60,hp:0.8,ops:'2-shift',waste:false,st:[['Space heating',45],['Curing ovens',125],['Reflow (electric)',240]]},
+  plastics:{n:'Plastics moulding and extrusion',sec:'Engineering and materials',th:45,el:650,T:80,hp:1,ops:'24/7',waste:true,st:[['Resin drying',80],['Mould temperature control',60],['Space heating',40]]},
+  metal_fab:{n:'Metal fabrication and assembly',sec:'Engineering and materials',th:115,el:115,T:180,hp:0.7,ops:'1-shift',waste:false,st:[['Space heating',45],['Parts washing',60],['Paint curing',180]]},
+  paint_finish:{n:'Sheet metal with paint line',sec:'Engineering and materials',th:230,el:140,T:200,hp:0.45,ops:'2-shift',waste:false,st:[['Pre-treatment wash',60],['Dry-off oven',120],['Powder cure oven',200],['Space heating',45]]},
+  machining:{n:'Precision machining',sec:'Engineering and materials',th:95,el:165,T:60,hp:1,ops:'2-shift',waste:false,st:[['Space heating',45],['Parts washing',60]]},
+  tubes:{n:'Tube drawing',sec:'Engineering and materials',th:40,el:300,T:1050,hp:0.3,ops:'2-shift',waste:false,st:[['Degreasing',60],['Space heating',45],['Annealing (electric furnace)',1050]]},
+  crane_fab:{n:'Heavy steel fabrication',sec:'Engineering and materials',th:70,el:65,T:70,hp:1,ops:'1-shift',waste:false,st:[['Space heating (LPG)',45],['Paint drying',60]]},
+  wood:{n:'Timber, panel and furniture',sec:'Engineering and materials',th:280,el:120,T:90,hp:1,ops:'1-shift',waste:false,st:[['Kiln drying',70],['Hot pressing',120],['Space heating',45]]},
+  print:{n:'Printing',sec:'Engineering and materials',th:60,el:180,T:80,hp:1,ops:'1-shift',waste:false,st:[['Ink drying',80],['Space heating',45]]},
+  textile:{n:'Knitting and textiles',sec:'Engineering and materials',th:110,el:140,T:60,hp:1,ops:'1-shift',waste:false,st:[['Humidification',60],['Space heating',45]]},
+  chem_blend:{n:'Chemical blending',sec:'Chemicals and pharma',th:85,el:90,T:60,hp:1,ops:'1-shift',waste:false,st:[['Warm blending',50],['Space heating',45]]},
+  light_units:{n:'Advance units (light industry)',sec:'Engineering and materials',th:80,el:60,T:45,hp:1,ops:'1-shift',waste:false,st:[['Space heating',45]]},
+  lab_test:{n:'Testing laboratory',sec:'Engineering and materials',th:100,el:100,T:45,hp:1,ops:'1-shift',waste:false,st:[['Space heating',45],['Sample ovens',110]]},
+  stone:{n:'Stone workshop',sec:'Minerals',th:40,el:120,T:45,hp:1,ops:'1-shift',waste:false,st:[['Space heating',45]]},
+  precast:{n:'Precast concrete',sec:'Minerals',th:55,el:55,T:60,hp:1,ops:'1-shift',waste:false,st:[['Accelerated curing',60],['Aggregate heating (winter)',30]]},
+  quarry:{n:'Sand and gravel processing',sec:'Minerals',th:0,el:0,T:20,hp:0,ops:'1-shift',waste:false,st:[['Crushing and screening (electric)',20],['Washing',12]]},
+  asphalt:{n:'Asphalt plant',sec:'Minerals',th:0,el:40,T:170,hp:0,ops:'1-shift',waste:false,st:[['Aggregate drying',170],['Bitumen storage',160]]},
+  cement:{n:'Cement (clinker kiln)',sec:'Minerals',th:0,el:0,T:1450,hp:0.01,ops:'24/7',waste:true,st:[['Raw meal drying',250],['Preheater and calciner',900],['Rotary kiln',1450],['Coal and alt-fuel drying',120]]},
+  port:{n:'Container and ro-ro port',sec:'Logistics',th:25,el:240,T:45,hp:1,ops:'24/7',waste:false,st:[['Reefer containers (electric)',-25],['Building heating',45],['Crane drives (electric)',0]]},
+  water:{n:'Water treatment',sec:'Utilities',th:0,el:0,T:20,hp:1,ops:'24/7',waste:false,st:[['Clarification and filtration',12],['High-lift pumping',12]]},
+};
+const OPS={'24/7':{h:8200,days:350,f:t=>0.88+0.08*Math.sin((t-9)/24*6.283)},'2-shift':{h:4200,days:250,f:t=>t>=6&&t<22?1:0.12},'1-shift':{h:2300,days:248,f:t=>t>=7.5&&t<17.5?1:0.08}};
+const FUEL={gas:{n:'Natural gas',p:55,ef:0.205,eta:0.88},lpg:{n:'LPG',p:85,ef:0.230,eta:0.88},oil:{n:'Gas oil',p:95,ef:0.264,eta:0.85},hfo:{n:'Heavy fuel oil',p:70,ef:0.274,eta:0.84},coal:{n:'Coal and petcoke',p:30,ef:0.341,eta:0.75},bio:{n:'Wood residue',p:35,ef:0,eta:0.8},elec:{n:'Electric heating',p:0,ef:0,eta:1}};
+function mainFuel(s){
+  const f=(s.ov&&s.ov.fuel)||'';const l=(s.fuels||[]).join(' ').toLowerCase();
+  if(f==='coal'||/coal|petcoke/.test(l))return 'coal';if(f==='oil')return 'oil';
+  if(/heavy fuel/.test(l))return 'hfo';if(/natural gas/.test(l))return 'gas';if(/lpg/.test(l))return 'lpg';if(/wood residue/.test(l))return 'bio';if(/\boil\b|gas oil/.test(l))return 'oil';
+  return 'elec';
+}
+const PRICE={hthpCapex:800000,pcmCapex:200000,pcmMWh:5,pcmMW:1,eta:0.45};
+
+/* the port is drawn by hand on reclaimed land, so it joins the list here rather than in the planning data */
+const PORT_B=[['wh',120,50,16,1,true,'Bulk store (grain and feed)'],['wh',180,80,13,1,true,'Port logistics centre'],['office',44,18,10.5,3,true,'Terminal administration'],
+  ['office',40,20,8,2,true,'Ferry terminal building'],['hall',30,20,9,1,true,'Container maintenance and repair'],['shed',24,12,7,1,true,'Truck gate canopy and kiosks'],['shed',36,8,4,1,true,'Reefer power and monitoring']];
+SITES.push({ref:'PT-00',name:'Port of Baile Nua',a:'port',d:'PT',custom:true,area:233000,b:PORT_B,f:[['silo',8,11,32]],cars:2400,fuels:['electricity','diesel (straddle and RTG backup)'],conf:'low',
+  note:'Container terminal with ship-to-shore cranes, a ro-ro ferry berth, a vehicle import compound and a bulk berth, on reclaimed land. Laid out after a typical Irish deep-water port; not from a planning file.',
+  ov:{},size:'L',sizeNote:'Port: sized by land area and berth length',gfa:PORT_B.reduce((a,b)=>a+b[1]*b[2]*b[4],0),fp:PORT_B.reduce((a,b)=>a+b[1]*b[2],0)});
+SITE['PT-00']=SITES[SITES.length-1];
+
+/* typical ancillary buildings, plant and parking that every real site has but the planning extracts rarely list */
+const PROC=new Set(['dairy_powder','milk_crumb','distillery','seaweed','pharma_ff','pharma_bio','pharma_form','api_spray','chem_blend','sauces','meat']);
+const DENS={pharma_ff:45,pharma_bio:45,pharma_form:55,api_spray:60,meddev_clean:40,semiconductor:45,rnd_office:22,electronics:45,dairy_powder:120,milk_crumb:90,meat:50,seafood:50,bakery:60,sauces:60,confectionery:50,distillery:90,plastics:80,metal_fab:70,paint_finish:70,machining:60,crane_fab:120,wood:90,print:60,textile:50,chem_blend:80,light_units:60,lab_test:30,stone:60,tubes:60,seaweed:60};
+for(const s of SITES){
+  s.nFile=s.b.length;s.carsFile=s.cars;if(s.custom)continue;
+  const big=s.size!=='S',L=s.size==='L',a=s.a,heavy=['quarry','asphalt','cement','water','maturation'].includes(a);
+  const add=(use,l,w,h,st,note)=>s.b.push([use,l,w,h,st,true,note]);
+  if(big)add('shed',7,5,3.6,1,'Gatehouse and security');
+  if(big&&!heavy){add('boiler',L?32:20,L?18:12,L?10:7,1,'Utilities: boilers, compressors, chillers');add('wh',L?40:24,L?22:14,L?9:7,1,'Stores and engineering workshop');add('shed',14,8,4,1,'Waste and recycling compound');}
+  if(L&&!heavy){add('wh',50,26,10,1,'Warehouse and goods-in');add('office',36,16,10.5,3,'Admin, training and canteen');add('shed',30,10,3.2,1,'Contractor cabins');}
+  if(L&&PROC.has(a)){add('hall',40,24,14,2,'QC labs and pilot plant');add('energy',30,20,12,1,'Central utilities building');}
+  if(heavy&&big)add('shed',20,10,6,1,'Workshop and stores');
+  if(PROC.has(a)&&big){s.f.push(['tank',L?8:4,5,9]);s.rack=true;}
+  if(L&&PROC.has(a)&&!s.f.some(f=>f[0]==='clar'))s.f.push(['clar',2,16]);
+  if(['semiconductor','pharma_ff','pharma_bio','api_spray'].includes(a))s.rack=true;
+  if(big&&!heavy&&!s.f.some(f=>f[0]==='tank'&&f[2]>=10))s.f.push(['tank',2,10,9]);
+  const dn=DENS[a];s.carsEst=dn?Math.round(s.gfa/dn*0.85+(L?60:big?20:2)):0;
+  s.cars=Math.min(L?2600:big?700:120,Math.max(s.cars,s.carsEst));
+  s.fpAll=s.b.reduce((t,b)=>t+b[1]*b[2],0);
+}
+
+/* derive each site's energy baseline and the default twin sizing */
+for(const s of SITES){
+  const A=ARCH[s.a];s.A=A;s.op=s.ops==='24/7'?'24/7':OPS[A.ops]?A.ops:'1-shift';if(s.ops==='2 shifts')s.op='2-shift';
+  const O=OPS[s.op];s.hours=s.ov.hours||O.h;
+  if(s.ov.thGWh!=null)s.thGWh=s.ov.thGWh;else if(s.ov.boilerMW)s.thGWh=s.ov.boilerMW*(s.ov.hours||O.h)*0.55/1000;else s.thGWh=A.th*s.gfa/1e6;
+  s.elGWh=s.ov.elGWh!=null?s.ov.elGWh:A.el*s.gfa/1e6;
+  s.T=s.ov.T||A.T;s.fuel=mainFuel(s);s.Tel=Math.max(45,...A.st.map(x=>x[1]).filter(t=>t>0&&t<=150));
+  const avg=s.thGWh*1000/s.hours, elig=avg*A.hp;s.avgMW=avg;
+  const hpOK=A.hp>0.05&&s.thGWh>0.02;
+  s.tw0={hp:hpOK?Math.max(0.05,Math.round(elig*0.5*20)/20):0,n:hpOK?clamp(Math.round(elig*3/PRICE.pcmMWh),elig>0.25?1:0,40):0,sens:1};
+  s.tw={...s.tw0};
+}
+
+/* ================= LAYOUT: districts, streets and plots ================= */
+const DIST=[
+  {id:'GW',name:'Gateway Business Park',ga:'P\u00e1irc Ghn\u00f3 an Gheata',x0:-1470,x1:-820,edge:34,dir:1,maxD:150},
+  {id:'SC',name:'Wafer Fab Campus',ga:'Campas na Sliseog',x0:-1560,x1:-640,edge:-34,dir:-1,maxD:760},
+  {id:'LS',name:'Life Sciences Park',ga:'P\u00e1irc na nEola\u00edochta\u00ed Beatha',x0:-560,x1:555,edge:-34,dir:-1,maxD:330},
+  {id:'FD',name:'Food Park',ga:'P\u00e1irc Bia',x0:-690,x1:555,edge:34,dir:1,maxD:260},
+  {id:'PT',name:'Port and Marine',ga:'An C\u00e9',x0:650,x1:1580,edge:34,dir:1,maxD:228,farFirst:true,order:['PT-01','PT-02','PT-04','PT-05','PT-03']},
+  {id:'EN',name:'Engineering and Plastics',ga:'Innealt\u00f3ireacht',x0:650,x1:1520,edge:-34,dir:-1,maxD:230},
+  {id:'MN',name:'Quarries and Cement',ga:'Na Cair\u00e9il',x0:640,x1:1560,edge:-470,dir:-1,maxD:620,conn:600},
+];
+const DISTBY=Object.fromEntries(DIST.map(d=>[d.id,d]));
+for(const s of SITES){if(s.custom)continue;if(s.d==='UT')s.d='GW';DISTBY[s.d].sites=(DISTBY[s.d].sites||[]).concat(s);}
+function featArea(f){const [t,a,b,c]=f;switch(t){case 'silo':return a*(b+3)*(b+3);case 'tank':return a*(b+3)*(b+3);case 'clar':return a*(b+4)*(b+4);case 'stack':return a*16;case 'lagoon':case 'pond':case 'yard':case 'gantry':case 'pit':return (a+8)*(b+8);
+  case 'ct':return a*150;case 'qcrane':return a*1200;case 'pile':return a*(b*2+4)**2;case 'kiln':return (a+10)*(b+10);case 'lpg':return a*90;case 'sub110':return 6000;default:return 0;}}
+for(const s of SITES){
+  const fa=s.f.reduce((a,f)=>a+featArea(f),0)+(s.tw.n?Math.ceil(s.tw.n/6)*6*30+60:0);
+  s.need=(s.fpAll||s.fp)/0.42+s.cars*37+fa*1.3+900;
+  s.plotA=clamp(s.area||s.need,s.need,Math.max(s.need*1.25,5000));
+  s.trimmed=s.area&&s.area>s.plotA*1.05;s.enlarged=s.area&&s.area<s.need;
+}
+const PLOTS=[];
+function plotDims(s,maxD){
+  const maxL=Math.max(...s.b.map(b=>Math.max(b[1],b[2])));
+  let d=Math.min(maxD,Math.sqrt(s.plotA/1.25));let w=s.plotA/d;
+  if(w<maxL+24){w=maxL+24;d=Math.max(s.plotA/w,Math.min(...s.b.map(b=>Math.min(b[1],b[2])))+40);}
+  return {w:Math.round(w),d:Math.round(d)};
+}
+const ROADW=9,SET=5,GAP=16;
+function packDistrict(D){
+  const list=D.order?D.order.map(r=>SITE[r]):D.sites.slice().sort((a,b)=>b.plotA-a.plotA);
+  const streets=[];let i=0;
+  while(i<list.length){
+    const st={near:[],far:[],cur:{near:D.x0+22,far:D.x0+22},dep:{near:0,far:0}};
+    while(i<list.length){
+      const s=list[i],dm=plotDims(s,D.maxD);
+      let sd=D.farFirst?(st.cur.far<=st.cur.near?'far':'near'):(st.cur.near<=st.cur.far?'near':'far');
+      if(st.cur[sd]+dm.w>D.x1){sd=sd==='near'?'far':'near';if(st.cur[sd]+dm.w>D.x1&&(st.near.length||st.far.length))break;}
+      st[sd].push({s,x:st.cur[sd],w:dm.w,d:dm.d});st.cur[sd]+=dm.w+GAP;st.dep[sd]=Math.max(st.dep[sd],dm.d);i++;
+    }
+    streets.push(st);
+  }
+  let zEdge=D.edge;D.streets=[];
+  for(const st of streets){
+    const zRoad=zEdge+D.dir*(st.dep.near+SET+ROADW/2);
+    for(const side of ['near','far'])for(const p of st[side]){
+      const sv=side==='far'?D.dir:-D.dir;const front=zRoad+sv*(ROADW/2+SET);
+      Object.assign(p,{front,sv,dist:D,zRoad});p.z0=Math.min(front,front+sv*p.d);p.z1=Math.max(front,front+sv*p.d);p.x0=p.x;p.x1=p.x+p.w;
+      p.s.plot=p;PLOTS.push(p);
+    }
+    const xEnd=Math.max(st.cur.near,st.cur.far)-GAP+14;
+    D.streets.push({z:zRoad,x1:xEnd});
+    zEdge=zRoad+D.dir*(ROADW/2+SET+st.dep.far+GAP+6);
+  }
+  D.z0=Math.min(D.edge,zEdge);D.z1=Math.max(D.edge,zEdge);
+}
+for(const D of DIST){if(D.id==='MN')D.edge=Math.min(D.edge,DISTBY.EN.z0-36);packDistrict(D);}
+// pads under every plot (quarries and cement keep their hill but flatten the works area)
+for(const p of PLOTS){p.pad=pad(p.x0,p.x1,p.z0,p.z1);zoneRect(p.x0,p.x1,p.z0,p.z1);}
+const SUB={x:603,z:96};pad(565,641,58,134);zoneRect(565,641,58,134);
+
+/* ---------- roads ---------- */
+const spine=addRoad('spine',[[-1700,-22],[-1300,-8],[-900,0],[-300,0],[300,0],[900,0],[1300,-6],[1700,-20]],11,'main',true);
+streetLights(spine,7.5,46);
+const STREETNAMES={GW:['B\u00f3thar an Gheata','Ascaill na nOibrithe','L\u00e1na na Ceardlainne'],SC:['Ascaill na Sliseog'],LS:['B\u00f3thar na Saotharlainne','Ascaill an Leighis','L\u00e1na na Cille'],FD:['B\u00f3thar an Bhainne','Ascaill an Bh\u00e1c\u00fais','L\u00e1na an Arbhair'],PT:['B\u00f3thar na C\u00e9','Sr\u00e1id na Long'],EN:['B\u00f3thar na Muilte','Ascaill na Cruach','L\u00e1na an Bh\u00edse'],MN:['B\u00f3thar na gCloch','Ascaill an Aoil']};
+const ROADNAMES=[['spine','Pearse Road',0.12]];
+for(const D of DIST){
+  const cx=D.conn??D.x0+8;const lastZ=D.streets[D.streets.length-1].z;
+  const startZ=D.id==='MN'?(D.dir<0?-6:6):(D.dir<0?-6:6);
+  const c=addRoad(D.id+'c',[[cx,startZ],[cx,(startZ+lastZ)/2],[cx,lastZ]],9,'estate');streetLights(c,5.5,40);
+  D.streets.forEach((st,k)=>{const P=addRoad(D.id+'s'+k,[[cx,st.z],[(cx+st.x1)/2,st.z+(k%2?2:-2)],[st.x1,st.z]],ROADW,'estate');streetLights(P,5.5,42);
+    ROADNAMES.push([P.name,STREETNAMES[D.id][k%STREETNAMES[D.id].length],0.45]);});
+}
+addRoad('quarryrd',[[1560,DISTBY.MN.streets[0].z],[1600,-300],[1700,-260]],7,'rural');
+addRoad('north',[[DISTBY.LS.x0+8,DISTBY.LS.z0-6],[-575,-1260],[-470,-1640]],6,'rural');
+addRoad('subIn',[[603,6],[603,58]],6,'estate');
+addRoad('portIn',[[DISTBY.PT.x0+8,DISTBY.PT.streets[0].z],[DISTBY.PT.x0+10,560],[705,598],[735,600]],10,'main');streetLights(roads.portIn,6,38);ROADNAMES.push(['portIn','B\u00f3thar an Chalafoirt',0.5]);
+
+/* ================= SITES: pack every plot, then build ================= */
+const SHED=['#8a9599','#6f8b7a','#9aa7b5','#b8b2a3','#5d7186','#a3a69a','#7d8e95','#c2c4bd','#8c8577','#5f7a6e'];
+const BLD=[],BOX2S=new Map(),ROOF2S=new Map();let packFails=0;const FAILS=[];
+function packPlot(p){
+  const s=p.s,C=2,nu=Math.max(4,Math.floor(p.w/C)),nv=Math.max(4,Math.floor(p.d/C));
+  const occ=new Uint8Array(nu*nv);let sat=null;
+  const build=()=>{sat=new Int32Array((nu+1)*(nv+1));for(let v=0;v<nv;v++){let row=0;for(let u=0;u<nu;u++){row+=occ[v*nu+u];sat[(v+1)*(nu+1)+u+1]=sat[v*(nu+1)+u+1]+row;}}};
+  const sum=(u0,v0,u1,v1)=>sat[v1*(nu+1)+u1]-sat[v0*(nu+1)+u1]-sat[v1*(nu+1)+u0]+sat[v0*(nu+1)+u0];
+  const mark=(u0,v0,u1,v1)=>{for(let v=Math.max(0,v0);v<Math.min(nv,v1);v++)for(let u=Math.max(0,u0);u<Math.min(nu,u1);u++)occ[v*nu+u]=1;build();};
+  build();
+  const M0=Math.min(p.w,p.d)<75?1:3,BG=Math.min(p.w,p.d)<75?2:Math.min(p.w,p.d)<160?9:13;
+  function place(w,d,pref,gap=3){
+    for(const [W,D] of [[w,d],[d,w]]){
+      const cw=Math.ceil(W/C),cd=Math.ceil(D/C),g=Math.ceil(gap/C);
+      if(cw+2*M0>nu||cd+2*M0>nv)continue;
+      const us=[],vs=[];for(let u=M0;u<=nu-M0-cw;u+=1)us.push(u);for(let v=M0;v<=nv-M0-cd;v+=1)vs.push(v);
+      if(pref==='back')vs.reverse();if(pref==='right'){us.reverse();vs.reverse();}
+      for(const v of vs)for(const u of us){
+        if(sum(Math.max(0,u-g),Math.max(0,v-g),Math.min(nu,u+cw+g),Math.min(nv,v+cd+g))===0){mark(u,v,u+cw,v+cd);return {u:u*C,v:v*C,w:cw*C,d:cd*C};}
+      }
+    }
+    packFails++;FAILS.push(s.ref+' '+Math.round(w)+'x'+Math.round(d)+' in '+p.w+'x'+p.d);return null;
+  }
+  const items=[];
+  // the big buildings sit to the back, car parks at the front, outdoor plant in the leftover yard
+  const order=s.b.map((b,i)=>({b,i,a:b[1]*b[2]})).sort((a,b)=>b.a-a.a);
+  for(const f of s.f)if(f[0]==='pit'){const r=place(f[1],f[2],'right',10);if(r)items.push({k:'pit',...r});}
+  for(const o of order){const b=o.b;const r=place(b[1],b[2],'back',b[0]==='mscp'?6:BG);if(r)items.push({k:'b',b,i:o.i,...r});}
+  for(const f of s.f){
+    const [t,a,b,c]=f;let r=null;
+    if(t==='silo'||t==='tank'){const per=Math.min(a,4);const rows=Math.ceil(a/per);r=place(per*(b+2)+2,rows*(b+2)+2,'right',3);if(r)items.push({k:t,n:a,dia:b,h:c,...r});}
+    else if(t==='clar'){const per=Math.min(a,3);r=place(per*(b+4),Math.ceil(a/per)*(b+4),'right',4);if(r)items.push({k:t,n:a,dia:b,...r});}
+    else if(t==='stack'){r=place(a*5+4,8,'right',2);if(r)items.push({k:t,n:a,h:b,...r});}
+    else if(t==='ct'){const per=Math.min(a,4);r=place(per*11+2,Math.ceil(a/per)*11+2,'right',3);if(r)items.push({k:t,n:a,...r});}
+    else if(t==='pit'){}
+    else if(t==='lagoon'||t==='pond'||t==='yard'||t==='gantry'){r=place(a,b,t==='yard'?'front':'right',t==='pit'?10:4);if(r)items.push({k:t,...r});}
+    else if(t==='qcrane'){r=place(a*36+10,46,'back',6);if(r)items.push({k:t,n:a,...r});}
+    else if(t==='pile'){const per=Math.min(a,4);r=place(per*(b*2+4),Math.ceil(a/per)*(b*2+4),'right',4);if(r)items.push({k:t,n:a,r:b,...r});}
+    else if(t==='kiln'){r=place(a+12,b+14,'back',4);if(r)items.push({k:t,L:a,dia:b,...r});}
+    else if(t==='lpg'){r=place(14,6*a+2,'right',3);if(r)items.push({k:t,n:a,...r});}
+    else if(t==='sub110'){r=place(80,64,'right',5);if(r)items.push({k:t,...r});}
+    else if(t==='pv')items.push({k:'pv',frac:a});
+  }
+  let left=s.cars,mx=160;while(left>0){const n=Math.min(left,mx);left-=n;const A=n*25;let r=null;for(const w of [Math.min(p.w-20,Math.max(30,Math.sqrt(A*2.4))),p.w-14,Math.sqrt(A),Math.max(12,A/(p.d-14))]){if(w<=0)continue;r=place(w,Math.max(6,A/w),'back',4);if(r)break;packFails--;FAILS.pop();}if(r)items.push({k:'car',n,...r});else if(n>12){left+=n;mx=Math.ceil(n/2);}else{packFails++;FAILS.push(s.ref+' car '+n);}}
+  if(s.tw.n>0||s.tw.hp>0){const n=s.tw.n,per=Math.min(Math.max(n,1),6),rows=Math.max(1,Math.ceil(n/per));const r=place(per*7.4+16,rows*3.6+6,'right',3);if(r)items.push({k:'retro',n,...r});else s.noRetroSpace=true;}
+  p.items=items;
+  // landscaping on whatever the plant and parking leave free
+  p.free=[];for(let v=4;v<nv-4;v+=7)for(let u=4;u<nu-4;u+=7)if(sum(u-2,v-2,u+3,v+3)===0)p.free.push([u*C,v*C]);
+}
+for(const p of PLOTS)packPlot(p);
+
+// local plot (u across, v deep from the street) to world
+const W=(p,u,v)=>[p.x0+u,p.front+p.sv*v];
+function rectW(p,it){const [xa,za]=W(p,it.u,it.v),[xb,zb]=W(p,it.u+it.w,it.v+it.d);return {x:(xa+xb)/2,z:(za+zb)/2,w:Math.abs(xb-xa),d:Math.abs(zb-za)};}
+function slab(x,z,w,d,color,y){slabs.push({x,z,w,d,y:y??H(x,z),color});}
+function winStrips(x,z,w,d,g,storeys,fh,c,litP=0.5){for(let s=0;s<storeys;s++){const y=g+s*fh+fh*0.55;for(const f of [1,-1]){windows.push({x,z:z+f*(d/2+0.06),y,w:w*0.86,h:fh*0.36,rot:0,c:R()<litP?'#ffcf86':'#2b333d'});windows.push({x:x+f*(w/2+0.06),z,y,w:d*0.8,h:fh*0.36,rot:Math.PI/2,c:R()<litP?'#ffcf86':'#2b333d'});}}}
+function addBuilding(p,it){
+  const s=p.s,[use,L,Wd,Hh,storeys,est,note]=it.b;const r=rectW(p,it);
+  const g=p.pad.h;const top=g+Hh;const base=g-1.2;
+  // footprint as given in the source; the packer may have turned it 90\u00b0
+  const bw=it.w>=it.d?Math.max(L,Wd):Math.min(L,Wd),bd=it.w>=it.d?Math.min(L,Wd):Math.max(L,Wd);
+  const rec={site:s,use,L,W:Wd,H:Hh,storeys,est,note,x:r.x,z:r.z,w:bw,d:bd,top};
+  let col;
+  switch(use){
+    case 'clean':col=pick(['#eef1f2','#e6ebec','#f2f2ef']);break;case 'fab':col='#eff1f1';break;case 'cold':col='#f3f4f1';break;
+    case 'office':case 'lab':case 'visitor':col=pick(['#d9dcd8','#c9cfd2','#e1ddd3','#bfc7c9']);break;case 'boiler':col='#9a5a44';break;
+    case 'dryer':col='#dfe2df';break;case 'kilnhouse':col='#b9b4a8';break;case 'mscp':col='#c9c6bd';break;case 'energy':col='#cdd2d2';break;case 'sub':col='#a9aea7';break;
+    default:col=s.a==='maturation'?'#a7a196':pick(SHED);
+  }
+  boxes.push({x:r.x,z:r.z,y:base,w:bw,d:bd,h:top-base,rot:0,color:col});BOX2S.set(boxes.length-1,s);
+  {const sm=Math.min(p.w,p.d)<75;slab(r.x,r.z,bw+(sm?10:13),bd+(sm?10:13),sm?'#b6b3a9':'#77797c',g+0.14);}
+  const pitched=['hall','wh','shed','boiler'].includes(use);
+  if(pitched){const rh=Math.min(3,bd*0.06+0.6);roofs.push({x:r.x,z:r.z,y:top,w:bw+0.6,d:bd+0.6,h:rh,rot:0,color:s.a==='maturation'?'#5c5f61':pick(['#8d9396','#7a8085','#6e7478','#9a9f9c'])});ROOF2S.set(roofs.length-1,s);rec.top=top+rh;
+    const nd=Math.max(1,Math.floor(bw/26));for(let k=0;k<nd;k++){const dx=r.x-bw/2+(k+0.5)*bw/nd;const fz=r.z+(p.sv>0?-1:1)*(bd/2+0.07);windows.push({x:dx,z:fz,y:g+2.6,w:Math.min(5,bw/nd*0.6),h:5,rot:0,c:'#5e6468'});}
+    if(Hh>7)winStrips(r.x,r.z,bw,bd,g+Hh-3.2,1,2.4,'',0.2);
+  } else {
+    boxes.push({x:r.x,z:r.z,y:top,w:bw+0.4,d:bd+0.4,h:0.8,rot:0,color:use==='mscp'?'#9c9890':'#77797b'});
+    if(use==='office'||use==='lab'||use==='visitor')winStrips(r.x,r.z,bw,bd,g,storeys,Hh/storeys,'',0.55);
+    if(use==='mscp'){for(let k=1;k<storeys;k++)boxes.push({x:r.x,z:r.z,y:g+k*(Hh/storeys)-0.4,w:bw+0.6,d:bd+0.6,h:0.5,rot:0,color:'#8a877f'});
+      for(let k=0;k<storeys;k++)windows.push({x:r.x,z:r.z+(bd/2+0.06),y:g+k*(Hh/storeys)+1.5,w:bw*0.94,h:1.8,rot:0,c:'#3a3f44'});}
+    if(use==='clean'||use==='fab'||use==='energy'){const n=Math.max(2,Math.round(bw*bd/1400));for(let k=0;k<n;k++){const ax=r.x+rand(-bw/2+6,bw/2-6),az=r.z+rand(-bd/2+5,bd/2-5);boxes.push({x:ax,z:az,y:top+0.8,w:rand(6,11),d:rand(3.5,5),h:rand(2.2,3.4),rot:0,color:'#c7ccce'});}
+      if(use==='fab'){for(let k=0;k<6;k++)cyl.push({x:r.x-bw/2+10+k*(bw-20)/5,z:r.z+bd/2-8,y:top+0.8,r:1.4,h:9,color:'#b7bcbd'});
+        for(let s2=0;s2<2;s2++)windows.push({x:r.x,z:r.z+(s2?1:-1)*(bd/2+0.06),y:g+Hh*0.62,w:bw*0.7,h:1.2,rot:0,c:'#9fb7c4'});}
+      if(use==='clean')for(const f of [1,-1])windows.push({x:r.x,z:r.z+f*(bd/2+0.06),y:g+Hh-2.4,w:bw*0.8,h:1.1,rot:0,c:'#8fb0c0'});}
+    if(use==='dryer'){windows.push({x:r.x,z:r.z+(bd/2+0.06),y:g+Hh*0.8,w:bw*0.3,h:Hh*0.14,rot:0,c:'#9aa6ad'});boxes.push({x:r.x+bw/4,z:r.z,y:top+0.8,w:bw*0.3,d:bd*0.4,h:5,rot:0,color:'#c9cccb'});}
+    if(use==='cold'){boxes.push({x:r.x+bw/2-4,z:r.z,y:top+0.8,w:6,d:Math.min(bd-2,10),h:1.6,rot:0,color:'#b8bec0'});}
+    if(use==='sub'){slab(r.x,r.z,bw+14,bd+14,'#9c9890',g+0.08);}
+  }
+  rec.i=BLD.length;BLD.push(rec);s.blds=(s.blds||[]).concat(rec);
+}
+const tankCol=['#c9c6bd','#d7d9d6','#b9bcb6','#e1e2de'];
+function addFeature(p,it){
+  const s=p.s,g=p.pad.h,r=it.u!==undefined?rectW(p,it):null;
+  switch(it.k){
+    case 'car':{slab(r.x,r.z,r.w,r.d,'#55595c',g+0.24);const rows=Math.max(1,Math.floor(r.d/6)),per=Math.max(1,Math.floor(r.w/2.8));let n=0;
+      for(let q=0;q<rows&&n<it.n;q++)for(let k=0;k<per&&n<it.n;k++){if(R()<0.82)cars.push({x:r.x-r.w/2+1.6+k*2.8,z:r.z-r.d/2+3+q*6,y:g+0.12,rot:0,color:pick(CARCOL)});n++;}
+      for(let k=0;k<Math.floor(r.w/30);k++)lampPosts.push({x:r.x-r.w/2+15+k*30,z:r.z,y:g,rot:0,tall:true,h:9});break;}
+    case 'silo':case 'tank':{const per=Math.min(it.n,4);for(let k=0;k<it.n;k++){const cx=r.x-r.w/2+1+(k%per+0.5)*(it.dia+2),cz=r.z-r.d/2+1+(Math.floor(k/per)+0.5)*(it.dia+2);
+        const col=it.k==='silo'?'#d9dcdc':pick(tankCol);cyl.push({x:cx,z:cz,y:g,r:it.dia/2,h:it.h,color:col});if(it.k==='silo')cones.push({x:cx,z:cz,y:g+it.h,r:it.dia/2,h:it.dia*0.35,color:'#c3c7c7'});}
+      slab(r.x,r.z,r.w,r.d,'#b5b2a8',g+0.06);break;}
+    case 'clar':{const per=Math.min(it.n,3);for(let k=0;k<it.n;k++){const cx=r.x-r.w/2+(k%per+0.5)*(it.dia+4),cz=r.z-r.d/2+(Math.floor(k/per)+0.5)*(it.dia+4);cyl.push({x:cx,z:cz,y:g,r:it.dia/2,h:3,color:'#c7c4ba'});waterDiscs.push({x:cx,z:cz,y:g+2.85,r:it.dia/2-0.5});}break;}
+    case 'stack':{for(let k=0;k<it.n;k++){const cx=r.x-r.w/2+2.5+k*5;cyl.push({x:cx,z:r.z,y:g,r:it.h>60?3.2:it.h>25?1.5:0.9,h:it.h,color:'#bfc2c1'});cyl.push({x:cx,z:r.z,y:g+it.h-2.5,r:(it.h>60?3.3:it.h>25?1.6:1),h:1.6,color:'#b3342a'});
+        if(it.h>40)beacons.push({x:cx,z:r.z,y:g+it.h+0.8});}break;}
+    case 'ct':{const per=Math.min(it.n,4);for(let k=0;k<it.n;k++){const cx=r.x-r.w/2+1+(k%per+0.5)*11,cz=r.z-r.d/2+1+(Math.floor(k/per)+0.5)*11;boxes.push({x:cx,z:cz,y:g,w:10,d:10,h:6.5,rot:0,color:'#aeb6b8'});cyl.push({x:cx,z:cz,y:g+6.5,r:3.6,h:1.6,color:'#8d9597'});}break;}
+    case 'lagoon':case 'pond':{slab(r.x,r.z,r.w+4,r.d+4,it.k==='pond'?'#7c9a5a':'#8a8676',g+0.02);waterRects.push({x:r.x,z:r.z,w:r.w,d:r.d,y:g+0.12});break;}
+    case 'yard':slab(r.x,r.z,r.w,r.d,'#aaa79e',g+0.19);break;
+    case 'gantry':{slab(r.x,r.z,r.w,r.d,'#a8a59c',g+0.05);const long=r.w>=r.d;for(const sgn of [-1,1])for(const e of [-1,1]){const lx=long?r.x+e*r.w/2*0.95:r.x+sgn*r.w/2,lz=long?r.z+sgn*r.d/2:r.z+e*r.d/2*0.95;boxes.push({x:lx,z:lz,y:g,w:0.8,d:0.8,h:9,rot:0,color:'#e2b229'});}
+      for(const sgn of [-1,1])boxes.push({x:long?r.x:r.x+sgn*r.w/2,z:long?r.z+sgn*r.d/2:r.z,y:g+9,w:long?r.w:1,d:long?1:r.d,h:1,rot:0,color:'#e2b229'});
+      boxes.push({x:r.x,z:r.z,y:g+9.4,w:long?1.6:r.w,d:long?r.d:1.6,h:1.4,rot:0,color:'#d29b1c'});break;}
+    case 'qcrane':{slab(r.x,r.z,r.w,r.d,'#a8a59c',g+0.05);for(let k=0;k<it.n;k++){const cx=r.x-r.w/2+20+k*36;
+        for(const a of [-1,1])for(const b of [-1,1])boxes.push({x:cx+a*7,z:r.z+b*12,y:g,w:1.6,d:1.6,h:42,rot:0,color:k%2?'#d23b2c':'#e2b229'});
+        for(const b of [-1,1])boxes.push({x:cx,z:r.z+b*12,y:g+40,w:16,d:1.8,h:2,rot:0,color:'#e2b229'});
+        boxes.push({x:cx,z:r.z,y:g+44,w:3,d:68,h:2.4,rot:0,color:k%2?'#e9e9e4':'#e2b229'});boxes.push({x:cx,z:r.z-10,y:g+46,w:4,d:8,h:5,rot:0,color:'#ecebe6'});
+        boxes.push({x:cx,z:r.z+6,y:g+46.4,w:1,d:1,h:16,rot:0,color:'#e2b229'});}break;}
+    case 'pile':{const per=Math.min(it.n,4);for(let k=0;k<it.n;k++){const cx=r.x-r.w/2+(k%per+0.5)*(it.r*2+4),cz=r.z-r.d/2+(Math.floor(k/per)+0.5)*(it.r*2+4);cones.push({x:cx,z:cz,y:g,r:it.r,h:it.r*0.62,color:pick(['#b8ab90','#a59d8c','#c9bfa5','#9a948a'])});}break;}
+    case 'pit':{PITS.push({x0:r.x-r.w/2,x1:r.x+r.w/2,z0:r.z-r.d/2,z1:r.z+r.d/2,depth:Math.min(28,Math.min(r.w,r.d)*0.14),bank:Math.min(r.w,r.d)*0.32});break;}
+    case 'kiln':{const long=r.w>=r.d;kilns.push({x:r.x,z:r.z,y:g+it.dia/2+4,L:it.L,r:it.dia/2,rotY:long?0:Math.PI/2});for(let k=-2;k<=2;k++)boxes.push({x:long?r.x+k*it.L/5:r.x,z:long?r.z:r.z+k*it.L/5,y:g,w:3,d:3,h:4,rot:0,color:'#9d9a93'});break;}
+    case 'lpg':{for(let k=0;k<it.n;k++)hcyl.push({x:r.x,z:r.z-r.d/2+3+k*6,y:g+1.8,r:1.5,L:11,color:'#f1f1ee'});break;}
+    case 'sub110':subYard(r.x,r.z,g,false);break;
+    case 'pv':{const big=(s.blds||[]).filter(b=>['hall','wh','clean','lab','office'].includes(b.use)).sort((a,b)=>b.w*b.d-a.w*a.d)[0];if(!big)break;
+      const rows=Math.max(1,Math.floor(big.d*it.frac/4.2));for(let q=0;q<rows;q++)for(let k=0;k<Math.floor((big.w-4)/2.2);k++)pvs.push({x:big.x-big.w/2+3+k*2.2,z:big.z-big.d/2+3+q*4.2,y:big.top+0.2,w:2,d:3.6,th:0.12,rot:0});break;}
+    case 'retro':{retroAt(p,it,r);break;}
+  }
+}
+const CARCOL=['#e6e6e6','#1c1c1e','#8a8f96','#b31f24','#1f3f73','#c9c9c9','#2f5d3a','#6e7378','#f2f2f2','#3c4046'];
+const waterDiscs=[],waterRects=[],beacons=[],kilns=[],hcyl=[];
+function retroAt(p,it,r){
+  const s=p.s,g=p.pad.h;s.retro={x:r.x,z:r.z,w:r.w,d:r.d};
+  slab(r.x,r.z,r.w,r.d,'#a4a9a6',g+0.07);
+  const per=Math.min(Math.max(it.n,1),6);
+  for(let k=0;k<it.n;k++){const cx=r.x-r.w/2+3+(k%per)*7.4+3.05,cz=r.z-r.d/2+3+Math.floor(k/per)*3.6+1.3;retro.boxes.push({x:cx,z:cz,y:g,w:6.06,d:2.44,h:2.6,color:'#e07a2a'});retro.boxes.push({x:cx-3.1,z:cz,y:g+0.3,w:0.15,d:2.2,h:2,color:'#f2f0ea'});}
+  if(s.tw.hp>0){const n=Math.max(1,Math.min(4,Math.ceil(s.tw.hp/2.5)));for(let k=0;k<n;k++){const hx=r.x+r.w/2-5.5,hz=r.z-r.d/2+3+k*(r.d-4)/Math.max(1,n);retro.boxes.push({x:hx,z:hz+1.4,y:g,w:9,d:2.8,h:3.2,color:'#2f6fd1'});retro.cyl.push({x:hx-2,z:hz+1.4,y:g+3.2,r:0.9,h:0.5,color:'#1d2f4f'});retro.cyl.push({x:hx+2,z:hz+1.4,y:g+3.2,r:0.9,h:0.5,color:'#1d2f4f'});}}
+}
+function subYard(x,z,g,zone){
+  slab(x,z,zone?76:72,zone?76:58,'#9c9890',g+0.06);
+  for(const tx of [-14,0,14]){boxes.push({x:x+tx,z:z-4,y:g,w:7,d:5,h:4.6,rot:0,color:'#7b877f'});}
+  for(const gx of [-24,0,24]){boxes.push({x:x+gx,z:z+14,y:g,w:0.5,d:0.5,h:14,rot:0,color:'#a2abae'});boxes.push({x:x+gx,z:z-20,y:g,w:0.5,d:0.5,h:14,rot:0,color:'#a2abae'});}
+  boxes.push({x,z:z+14,y:g+13.5,w:50,d:0.5,h:0.5,rot:0,color:'#a2abae'});boxes.push({x,z:z-20,y:g+13.5,w:50,d:0.5,h:0.5,rot:0,color:'#a2abae'});
+  boxes.push({x:x+26,z:z+22,y:g,w:14,d:8,h:4,rot:0,color:'#c9c3b5'});kiosks.push({x,z,type:'sub'});
+}
+for(const p of PLOTS){
+  const s=p.s;s.blds=[];
+  for(const it of p.items)if(it.k==='b')addBuilding(p,it);
+  for(const it of p.items)if(it.k!=='b')addFeature(p,it);
+  {const g=p.pad.h,small=Math.min(p.w,p.d)<75;const big=s.blds.slice().sort((a,b)=>b.w*b.d-a.w*a.d)[0];const dx=big?clamp(big.x,p.x0+12,p.x1-12):(p.x0+p.x1)/2;
+    if(big){const [,fz]=W(p,0,0);const zB=big.z-p.sv*big.d/2;slab(dx,(fz+zB)/2,9,Math.abs(zB-fz)+2,'#6f7275',g+0.17);}
+    if(!small){let u0=1e9,u1=-1e9,v0=1e9,v1=-1e9;for(const it of p.items)if(it.k==='b'||it.k==='silo'||it.k==='tank'||it.k==='ct'||it.k==='clar'){u0=Math.min(u0,it.u);u1=Math.max(u1,it.u+it.w);v0=Math.min(v0,it.v);v1=Math.max(v1,it.v+it.d);}
+      if(u1>u0){u0=Math.max(4,u0-10);u1=Math.min(p.w-4,u1+10);v0=Math.max(4,v0-10);v1=Math.min(p.d-4,v1+10);const RW=7;
+        const strip=(ua,va,ub,vb)=>{const [xa,za]=W(p,ua,va),[xb,zb]=W(p,ub,vb);slab((xa+xb)/2,(za+zb)/2,Math.max(RW,Math.abs(xb-xa)),Math.max(RW,Math.abs(zb-za)),'#6f7275',g+0.17);};
+        strip(u0,v0,u1,v0);strip(u0,v1,u1,v1);strip(u0,v0,u0,v1);strip(u1,v0,u1,v1);
+        if(p.w>260)strip((u0+u1)/2,v0,(u0+u1)/2,v1);if(p.d>260)strip(u0,(v0+v1)/2,u1,(v0+v1)/2);}}
+    // security fence round the plot, open at the gate
+    const FC='#3d5446',FH=small?1.8:2.4,ins=1.5;const fseg=(ua,va,ub,vb)=>{const [xa,za]=W(p,ua,va),[xb,zb]=W(p,ub,vb);const w=Math.abs(xb-xa),d=Math.abs(zb-za);if(w+d<1)return;boxes.push({x:(xa+xb)/2,z:(za+zb)/2,y:g,w:Math.max(w,0.15),d:Math.max(d,0.15),h:FH,rot:0,color:FC});};
+    const gu=dx-p.x0;fseg(ins,ins,Math.max(ins,gu-8),ins);fseg(Math.min(p.w-ins,gu+8),ins,p.w-ins,ins);fseg(ins,p.d-ins,p.w-ins,p.d-ins);fseg(ins,ins,ins,p.d-ins);fseg(p.w-ins,ins,p.w-ins,p.d-ins);
+    if(!small){const [bx,bz]=W(p,gu+9,ins+5);boxes.push({x:bx,z:bz,y:g,w:4,d:3,h:3,rot:0,color:'#e1ddd3'});const [ax,az]=W(p,gu,ins);boxes.push({x:ax,z:az,y:g+1,w:7,d:0.2,h:0.2,rot:0,color:'#e2b229'});}
+    s.gateX=dx;}
+  if(s.rack){const g=p.pad.h;const pb=s.blds.filter(b=>['hall','clean','dryer','boiler','energy','fab','kilnhouse','lab'].includes(b.use)).sort((a,b)=>b.w*b.d-a.w*a.d);const A0=pb[0];
+    for(const B of pb.slice(1,7)){rackSeg(A0.x,A0.z,B.x,A0.z,g);rackSeg(B.x,A0.z,B.x,B.z,g);}}
+  for(const [u,v] of p.free){if(R()<0.3){const [x,z]=W(p,u+rand(-3,3),v+rand(-3,3));broadleaf.push({x,z,y:p.pad.h,s:rand(3,5.5),c:pick(['#4b7a34','#5a8a3c','#628f43','#3f6b2e','#36602a'])});}}
+  // boundary planting along the sides and back of each plot
+  const step=11;for(let u=6;u<p.w-6;u+=step){const [x,z]=W(p,u,p.d-3);if(!nearRoad(x,z,4)&&R()<0.75)broadleaf.push({x,z,y:H(x,z),s:rand(2.6,4.4),c:pick(['#4b7a34','#5a8a3c','#628f43','#3f6b2e'])});}
+  for(const uu of [3,p.w-3])for(let v=10;v<p.d-6;v+=step){const [x,z]=W(p,uu,v);if(R()<0.6)broadleaf.push({x,z,y:H(x,z),s:rand(2.4,4),c:pick(['#4b7a34','#5a8a3c','#628f43','#3f6b2e'])});}
+  s.top=Math.max(...s.blds.map(b=>b.top),p.pad.h+8);s.cx=(p.x0+p.x1)/2;s.cz=(p.z0+p.z1)/2;
+}
+function rackSeg(x1,z1,x2,z2,g){const L=Math.hypot(x2-x1,z2-z1);if(L<4)return;const along=Math.abs(x2-x1)>Math.abs(z2-z1);
+  boxes.push({x:(x1+x2)/2,z:(z1+z2)/2,y:g+6.2,w:along?L:3.2,d:along?3.2:L,h:1.4,rot:0,color:'#a3a9aa'});
+  for(let t=0;t<=L;t+=9){const x=x1+(x2-x1)*t/L,z=z1+(z2-z1)*t/L;boxes.push({x,z,y:g,w:0.6,d:0.6,h:6.2,rot:0,color:'#8a9092'});}}
+subYard(SUB.x,SUB.z,PADS.find(q=>q.x0===565).h,true);
+
+/* ================= THE PORT, on reclaimed land in the bay =================
+   Truck gate and offices along the north edge, container blocks with RTGs, ship-to-shore cranes on the deep-water quay,
+   a logistics centre and empty-container depot to the west, a vehicle import compound and a ro-ro ferry berth to the east. */
+const cont=[],trailers=[];
+{
+  const P=SITE['PT-00'],g=3.4;P.blds=[];
+  const stone='#a69f92';
+  for(let x=RECL.x0;x<RECL.x1;x+=8)boxes.push({x:x+4,z:RECL.z1+1,y:-4,w:8.6,d:3,h:7.6,rot:0,color:stone});
+  for(const ex of [RECL.x0,RECL.x1]){const z0=shoreZ(ex)-4;for(let z=z0;z<RECL.z1;z+=8)boxes.push({x:ex,z:z+4,y:-4,w:3,d:8.6,h:7.6,rot:0,color:stone});}
+  for(let x=RECL.x0+20;x<RECL.x1;x+=22)cyl.push({x,z:RECL.z1-1.5,y:g,r:0.4,h:0.8,color:'#2b2b2b'});
+  slab((RECL.x0+RECL.x1)/2,760,RECL.x1-RECL.x0-8,400,'#a9a7a0',g+0.04);
+  slab(1030,925,520,60,'#bdbab2',g+0.1);                                   // quay apron
+  slab(1070,648,740,14,'#6f7275',g+0.12);                                  // terminal spine road
+  const pb=(i,x,z,color)=>{const b=PORT_B[i];const use=b[0],w=b[1],d=b[2],h=b[3];
+    boxes.push({x,z,y:g-0.6,w,d,h:h+0.6,rot:0,color});BOX2S.set(boxes.length-1,P);
+    if(use==='wh'||use==='hall'||use==='shed'){roofs.push({x,z,y:g+h,w:w+0.6,d:d+0.6,h:Math.min(2.6,d*0.05+0.5),rot:0,color:'#7a8085'});ROOF2S.set(roofs.length-1,P);}
+    else{boxes.push({x,z,y:g+h,w:w+0.4,d:d+0.4,h:0.7,rot:0,color:'#77797b'});winStrips(x,z,w,d,g,b[4],h/b[4],'',0.6);}
+    const rec={site:P,use,L:w,W:d,H:h,storeys:b[4],est:true,note:b[6],x,z,w,d,top:g+h+2};rec.i=BLD.length;BLD.push(rec);P.blds.push(rec);};
+  pb(5,742,612,'#d9dcd8');pb(2,800,612,'#cfd5d8');pb(4,860,612,'#8a9599');pb(6,1138,612,'#b8b2a3');pb(0,1300,612,'#9aa7b5');pb(3,1408,612,'#e1ddd3');pb(1,795,712,'#a3a69a');
+  for(let k=0;k<5;k++)boxes.push({x:742-8+k*4,z:600,y:g,w:0.5,d:0.5,h:6,rot:0,color:'#c7cbc8'});
+  // bulk berth silos beside the bulk store
+  for(let k=0;k<8;k++){const cx=1200+(k%4)*13,cz=600+Math.floor(k/4)*13;cyl.push({x:cx,z:cz,y:g,r:5.5,h:32,color:'#d9dcdc'});cones.push({x:cx,z:cz,y:g+32,r:5.5,h:3,color:'#c3c7c7'});}
+  boxes.push({x:1226,z:593,y:g+32,w:56,d:3,h:2.5,rot:0,color:'#b8bcbc'});
+  // container blocks with rubber-tyred gantries
+  const CC=['#b23a2e','#2f6b4f','#d9a43a','#5d7186','#c9c6bd','#1f3f73','#8a4b2a','#e07a2a','#3c6e8f','#7a2232','#e9e7e1','#2b4f7a','#4f7d4a','#a8a6a0'];
+  for(let bx=0;bx<2;bx++)for(let bz=0;bz<6;bz++){
+    const x0=912+bx*128,z0=672+bz*36;const reefer=bx===1&&bz<2;
+    for(let r=0;r<6;r++)for(let k=0;k<9;k++){const tiers=Math.floor(R()*4.4+(bz>3?0.6:0));for(let t=0;t<tiers;t++)cont.push({x:x0+k*12.9+6.1,z:z0+r*2.8+1.4,y:g+t*2.6,c:reefer?'#eceeec':pick(CC)});}
+    const rx=x0+(0.2+R()*0.6)*116;for(const a of [-1,1])for(const b of [0,1])boxes.push({x:rx+a*5,z:z0-3+b*23,y:g,w:1.2,d:1.2,h:21,rot:0,color:'#e2b229'});
+    for(const b of [0,1])boxes.push({x:rx,z:z0-3+b*23,y:g+20,w:12,d:1.4,h:1.6,rot:0,color:'#e2b229'});boxes.push({x:rx,z:z0+8.5,y:g+21,w:2,d:24,h:1.4,rot:0,color:'#e2b229'});boxes.push({x:rx-4,z:z0+8.5,y:g+21.5,w:3,d:4,h:3,rot:0,color:'#ecebe6'});
+    if(reefer)for(let k=0;k<4;k++)boxes.push({x:x0+k*36,z:z0+8,y:g,w:0.6,d:20,h:11,rot:0,color:'#9aa0a2'});
+  }
+  // empty-container depot west of the blocks, stacked high
+  for(let r=0;r<10;r++)for(let k=0;k<6;k++){const t=3+Math.floor(R()*3);for(let q=0;q<t;q++)cont.push({x:720+k*13+6,z:790+r*2.8,y:g+q*2.6,c:pick(['#b23a2e','#2b4f7a','#d9a43a','#5d7186','#a8a6a0'])});}
+  for(let r=0;r<5;r++)for(let k=0;k<14;k++)if(R()<0.75)trailers.push({x:812+k*3.4,z:800+r*15,y:g,c:pick(['#e9e7e1','#2b4f7a','#b23a2e','#5d7186'])});
+  // ship-to-shore cranes on the quay
+  for(let k=0;k<4;k++){const cx=930+k*68,col=k%2?'#3c78b5':'#2f6fd1';
+    for(const a of [-1,1])for(const zz of [905,935]){boxes.push({x:cx+a*9,z:zz,y:g,w:2.2,d:2.2,h:48,rot:0,color:col});}
+    for(const zz of [905,935])boxes.push({x:cx,z:zz,y:g+46,w:20,d:2.4,h:3,rot:0,color:col});
+    for(const a of [-1,1])boxes.push({x:cx+a*9,z:920,y:g+20,w:1.6,d:30,h:1.8,rot:0,color:col});
+    boxes.push({x:cx,z:930,y:g+50,w:4.5,d:150,h:3.4,rot:0,color:'#eef0ef'});boxes.push({x:cx,z:880,y:g+53,w:9,d:12,h:6,rot:0,color:'#eef0ef'});
+    for(const a of [-1,1])boxes.push({x:cx+a*1.8,z:908,y:g+53,w:1,d:1,h:20,rot:0,color:col});
+    beacons.push({x:cx,z:1003,y:g+54});}
+  // vehicle import compound: rows of new cars
+  slab(1238,800,130,300,'#8d8f8f',g+0.1);
+  for(let r=0;r<44;r++){if(r%6===5)continue;for(let k=0;k<46;k++)if(R()<0.9)cars.push({x:1178+k*2.6,z:656+r*6.4,y:g+0.2,rot:0,color:pick(['#f2f2f2','#e6e6e6','#1c1c1e','#8a8f96','#c9c9c9','#b31f24','#1f3f73','#3c4046'])});}
+  // ro-ro marshalling lanes, trailers and the linkspan
+  slab(1375,790,120,280,'#6f7275',g+0.12);for(let l=0;l<9;l++){slab(1322+l*12,790,0.3,270,'#e9e5da',g+0.2);for(let k=0;k<12;k++)if(R()<0.7)trailers.push({x:1328+l*12,z:665+k*20,y:g,rot:Math.PI/2,c:pick(['#e9e7e1','#2b4f7a','#b23a2e','#5d7186','#d9a43a'])});}
+  boxes.push({x:1462,z:760,y:g-1.5,w:30,d:16,h:1.5,rot:-0.06,color:'#8f8b84'});
+  for(let k=0;k<10;k++)lampPosts.push({x:900+k*55,z:k%2?660:860,y:g,rot:0,tall:true,h:30});
+  for(let k=0;k<5;k++)lampPosts.push({x:1180+k*60,z:k%2?680:900,y:g,rot:0,tall:true,h:30});
+  // a perimeter fence and the plot record the rest of the page expects
+  for(const [x,z,w,d] of [[1070,582,740,0.2],[RECL.x0+4,770,0.2,370],[RECL.x1-4,700,0.2,230]])boxes.push({x,z,y:g,w,d,h:2.6,rot:0,color:'#3d5446'});
+  P.plot={x0:RECL.x0,x1:RECL.x1,z0:585,z1:RECL.z1,w:RECL.x1-RECL.x0,d:RECL.z1-585,front:585,sv:1,pad:{h:g},items:[]};P.cx=1070;P.cz=770;P.top=g+60;
+}
+/* ---------- electricity: a 110 kV line from the north to the zone substation, MV feeders under the streets ---------- */
+function poleLine(pts,spacing,kind){
+  const curve=new THREE.CatmullRomCurve3(pts.map(([x,z])=>new THREE.Vector3(x,0,z)),false,'centripetal');
+  const n=Math.max(2,Math.round(curve.getLength()/spacing));const sp=curve.getSpacedPoints(n);
+  const spec={hv:{h:22,arm:8,wires:[-3.5,0,3.5],twin:true,r:0.32},mv:{h:10.5,arm:2.8,wires:[-1.1,0,1.1],r:0.18}}[kind];
+  const tops=[];
+  sp.forEach((p,i)=>{const a=sp[Math.max(0,i-1)],b=sp[Math.min(n,i+1)];let tx=b.x-a.x,tz=b.z-a.z;const l=Math.hypot(tx,tz)||1;tx/=l;tz/=l;const px=tz,pz=-tx,g=H(p.x,p.z);
+    if(spec.twin)for(const s of [-2.6,2.6])poles.push({x:p.x+px*s,z:p.z+pz*s,y:g-0.5,h:spec.h+0.5,r:spec.r});else poles.push({x:p.x,z:p.z,y:g-0.5,h:spec.h+0.5,r:spec.r});
+    arms.push({x:p.x,z:p.z,y:g+spec.h-0.35,len:spec.arm,rot:Math.atan2(-pz,px)});tops.push({x:p.x,z:p.z,g,px,pz});});
+  for(let i=1;i<tops.length;i++){const A=tops[i-1],B=tops[i];const sag=Math.hypot(B.x-A.x,B.z-A.z)*0.02;
+    for(const o of spec.wires){let prev=null;for(let s=0;s<=8;s++){const t=s/8;const x=A.x+A.px*o+(B.x+B.px*o-A.x-A.px*o)*t,z=A.z+A.pz*o+(B.z+B.pz*o-A.z-A.pz*o)*t,y=(A.g+spec.h)+(B.g-A.g)*t-sag*4*t*(1-t);if(prev)wirePts.push(prev[0],prev[1],prev[2],x,y,z);prev=[x,y,z];}}}
+}
+poleLine([[560,-1350],[575,-1000],[588,-640],[596,-300],[598,-60],[595,72]],150,'hv');
+poleLine([[-1700,-1100],[-1550,-1000],[-1150,-1060],[-700,-1100]],130,'hv');
+poleLine([[-610,-1035],[-600,-820],[-610,-300],[-620,-40],[-600,40],[0,60],[560,80]],95,'mv');
+
+/* ================= RENEWABLES ON THE HILLS =================
+   Six fixed-tilt solar fields on the south-facing slopes (tables tilted 30\u00b0 to face due south, the sun's bearing at noon),
+   and fifteen turbines along the ridge. */
+const SOLAR=[],turbines=[];let solarTables=0;
+{
+  const SF=[[-1560,-1270,-990,-850],[-1235,-945,-990,-850],[-910,-670,-990,-850],[-540,-250,-1215,-1075],[-215,75,-1215,-1075],[110,400,-1215,-1075]];
+  const TILT=0.52;  // positive tilt about x lifts the north edge, so the face looks south (+z), towards the sun
+  SF.forEach(([x0,x1,z0,z1],k)=>{
+    zoneRect(x0-6,x1+6,z0-6,z1+6);const f={x0,x1,z0,z1,n:0,i:k};
+    for(let z=z0+6;z<=z1-6;z+=9)for(let x=x0+6;x<=x1-6;x+=6.4){const g=H(x,z);pvs.push({x,z,y:g+1.6,w:6,d:3.4,th:TILT,rot:0});
+      for(const dx of [-2.2,2.2])boxes.push({x:x+dx,z,y:g,w:0.12,d:0.12,h:1.6,rot:0,color:'#8b9093'});f.n++;solarTables++;}
+    for(const [ix,iz] of [[x0+20,z1+3],[x1-20,z1+3]]){const g=H(ix,iz);boxes.push({x:ix,z:iz,y:g-0.2,w:12,d:3,h:3,rot:0,color:'#d1ccc0'});}
+    for(let i=0;i<=60;i++){const t=i/60;for(const [x,z] of [[x0-4+(x1-x0+8)*t,z0-4],[x0-4+(x1-x0+8)*t,z1+4],[x0-4,z0-4+(z1-z0+8)*t],[x1+4,z0-4+(z1-z0+8)*t]])boxes.push({x,z,y:H(x,z),w:0.12,d:0.12,h:2,rot:0,color:'#8b9093'});}
+    SOLAR.push(f);
+  });
+  // a collector substation for the solar and wind, and its MV line to the zone substation
+  pad(-660,-610,-1060,-1010);zoneRect(-660,-610,-1060,-1010);
+  // turbines on the ridge
+  const towerM=std('#eef0ef',{roughness:0.6}),bladeM=std('#f6f7f5',{roughness:0.5});
+  for(let i=0;i<15;i++){
+    const x=-1540+i*140+(i%2?20:-10),z=-1440+Math.sin(i*1.7)*45,g=H(x,z);zoneRect(x-20,x+20,z-20,z+20);
+    const grp=new THREE.Group();grp.position.set(x,g,z);grp.rotation.y=-Math.PI/4;
+    const tower=new THREE.Mesh(new THREE.CylinderGeometry(1.8,3,95,12),towerM);tower.position.y=47.5;tower.castShadow=true;grp.add(tower);
+    const nac=new THREE.Mesh(new THREE.BoxGeometry(4,4,11),towerM);nac.position.set(0,96,-1);nac.castShadow=true;grp.add(nac);
+    const rotor=new THREE.Group();rotor.position.set(0,96,5);rotor.add(new THREE.Mesh(new THREE.SphereGeometry(1.9,12,8),towerM));
+    for(let k=0;k<3;k++){const bl=new THREE.Mesh(new THREE.BoxGeometry(1.7,55,0.5),bladeM);bl.geometry.translate(0,27.5,0);bl.rotation.z=k*Math.PI*2/3;bl.castShadow=true;rotor.add(bl);}
+    rotor.rotation.z=R()*6;grp.add(rotor);
+    const bcn=new THREE.Mesh(new THREE.SphereGeometry(0.8,8,6),M.red);bcn.position.set(0,98.6,-2);grp.add(bcn);
+    scene.add(grp);turbines.push(rotor);
+    boxes.push({x:x+6,z:z+10,y:g-0.2,w:4,d:3,h:2.6,rot:0,color:'#c9c3b5'});
+  }
+  addRoad('ridge',[[-1560,-1395],[-1100,-1470],[-575,-1420],[0,-1470],[480,-1420]],5,'rural');
+  {const g=H(-635,-1035);boxes.push({x:-635,z:-1035,y:g-0.3,w:50,d:50,h:0.4,rot:0,color:'#9c9890'});for(const tx of [-645,-625]){boxes.push({x:tx,z:-1035,y:g,w:6,d:5,h:4.4,rot:0,color:'#7b877f'});}boxes.push({x:-635,z:-1018,y:g,w:16,d:7,h:4,rot:0,color:'#c9c3b5'});}
+}
+const solarMWp=solarTables*6*3.4*0.2/1000,windMW=15*4.2;
+function turbineSpeed(w){if(w<3||w>25)return 0;return Math.min(1,(w-3)/9)*1.5;}
+let turbineSpin=0;
+
+/* ---------- trees: hedgerows on the farmland round the zone, conifers on the hills ---------- */
+const FC=140;
+function field(x,z){const ix=Math.floor(x/FC),iz=Math.floor(z/FC);let d1=1e9,d2=1e9,id=0;
+  for(let i=-1;i<=1;i++)for(let j=-1;j<=1;j++){const a=ix+i,b=iz+j;const sx=(a+0.12+hash2(a,b)*0.76)*FC,sz=(b+0.12+hash2(b+31,a-17)*0.76)*FC;const d=Math.hypot(x-sx,(z-sz)*1.15);if(d<d1){d2=d1;d1=d;id=a*7919+b;}else if(d<d2)d2=d;}
+  return {edge:d2-d1,id};}
+{
+  let tries=0;
+  while(broadleaf.length<5200&&tries<90000){tries++;const x=rand(-1600,1600),z=rand(-1400,640);const f=field(x,z);if(f.edge>3)continue;
+    if(z>shoreZ(x)-10||inZone(x,z,14)||nearRoad(x,z,5))continue;const g=H(x,z);if(g<3||g>150)continue;
+    broadleaf.push({x,z,y:g,s:rand(3,6.5),c:pick(['#3f6b2e','#4b7a34','#5a8a3c','#36602a','#557f35'])});}
+  for(const [x0,x1,z0,z1] of [[-1500,-700,-1380,-1150],[-300,400,-1380,-1150]])for(let i=0;i<600;i++){const x=rand(x0,x1),z=rand(z0,z1);if(nearRoad(x,z,4)||inZone(x,z,8))continue;conifers.push({x,z,y:H(x,z),s:rand(5,8),c:pick(['#24432c','#2b4d31','#1f3b27'])});}
+}
+
+/* ---------- instanced meshes ---------- */
+const dummy=new THREE.Object3D(),col=new THREE.Color();
+function inst(geom,mat,items,set,opts={}){
+  if(!items.length)return null;
+  const m=new THREE.InstancedMesh(geom,mat,items.length);
+  items.forEach((it,i)=>{dummy.position.set(0,0,0);dummy.rotation.set(0,0,0);dummy.scale.set(1,1,1);set(dummy,it);dummy.updateMatrix();m.setMatrixAt(i,dummy.matrix);if(it.c||it.color){col.set(it.c||it.color);m.setColorAt(i,col);}});
+  m.instanceMatrix.needsUpdate=true;if(m.instanceColor)m.instanceColor.needsUpdate=true;
+  m.castShadow=opts.cast!==false;m.receiveShadow=opts.receive!==false;(opts.parent||scene).add(m);return m;
+}
+const boxG=new THREE.BoxGeometry(1,1,1);boxG.translate(0,0.5,0);const boxC=new THREE.BoxGeometry(1,1,1);
+function prism(){const A=[-.5,0,.5],B=[.5,0,.5],C=[.5,1,0],D=[-.5,1,0],E=[.5,0,-.5],F=[-.5,0,-.5];const t=[A,B,C,A,C,D,E,F,D,E,D,C,F,A,D,B,E,C].flat();const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(t,3));g.computeVertexNormals();return g;}
+const cylG=new THREE.CylinderGeometry(1,1,1,24);cylG.translate(0,0.5,0);
+const coneG=new THREE.ConeGeometry(1,1,24);coneG.translate(0,0.5,0);
+// PADS must be final before anything samples the terrain height for drawing (pits were added while building plots)
+for(const it of slabs)it.y=it.y;
+const boxMesh=inst(boxG,M.inst,boxes,(d,b)=>{d.position.set(b.x,b.y,b.z);d.rotation.y=b.rot;d.scale.set(b.w,b.h,b.d);});
+const roofMesh=inst(prism(),M.roof,roofs,(d,r)=>{d.position.set(r.x,r.y,r.z);d.rotation.y=r.rot;d.scale.set(r.w,r.h,r.d);});
+inst(boxG,M.inst,slabs,(d,s)=>{d.position.set(s.x,s.y-0.25,s.z);d.scale.set(s.w,0.4,s.d);},{cast:false});
+inst(boxC,M.win,windows,(d,w)=>{d.position.set(w.x,w.y,w.z);d.rotation.y=w.rot;d.scale.set(w.w,w.h,0.12);},{cast:false});
+inst(boxC,M.pv,pvs,(d,p)=>{d.position.set(p.x,p.y,p.z);d.rotation.set(p.th,p.rot,0,'YXZ');d.scale.set(p.w,0.12,p.d);});
+inst(cylG,M.metal,cyl,(d,c)=>{d.position.set(c.x,c.y,c.z);d.scale.set(c.r,c.h,c.r);});
+inst(coneG,M.metal,cones,(d,c)=>{d.position.set(c.x,c.y,c.z);d.scale.set(c.r,c.h,c.r);});
+{const hg=new THREE.CylinderGeometry(1,1,1,16);hg.rotateZ(Math.PI/2);inst(hg,M.metal,hcyl,(d,c)=>{d.position.set(c.x,c.y,c.z);d.scale.set(c.L,c.r,c.r);});}
+{const kg=new THREE.CylinderGeometry(1,1,1,20);kg.rotateZ(Math.PI/2);inst(kg,std('#8f8b84',{roughness:0.6,metalness:0.3}),kilns,(d,k)=>{d.position.set(k.x,k.y,k.z);d.rotation.set(0,k.rotY,0.04);d.scale.set(k.L,k.r,k.r);});}
+const carBody=new THREE.BoxGeometry(1.85,0.8,4.3);carBody.translate(0,0.55,0);
+const carCab=new THREE.BoxGeometry(1.6,0.62,2.3);carCab.translate(0,1.25,-0.15);const cabMat=std('#2a3038');
+inst(boxG,std('#ffffff',{roughness:0.7,metalness:0.15}),cont,(d,c)=>{d.position.set(c.x,c.y,c.z);d.scale.set(12.2,2.55,2.44);});
+{const tg=new THREE.BoxGeometry(2.5,3.6,13.6);tg.translate(0,2.2,0);inst(tg,M.inst,trailers,(d,t)=>{d.position.set(t.x,t.y,t.z);d.rotation.y=t.rot||0;});}
+inst(carBody,M.inst,cars,(d,c)=>{d.position.set(c.x,c.y,c.z);d.rotation.y=c.rot;});
+inst(carCab,cabMat,cars,(d,c)=>{d.position.set(c.x,c.y,c.z);d.rotation.y=c.rot;});
+const canopy=new THREE.IcosahedronGeometry(1,0);canopy.translate(0,1.6,0);
+const trunk=new THREE.CylinderGeometry(0.12,0.18,1,5);trunk.translate(0,0.5,0);
+const cone=new THREE.ConeGeometry(1,2.6,6);cone.translate(0,1.7,0);
+inst(canopy,M.leaf,broadleaf,(d,t)=>{d.position.set(t.x,t.y,t.z);d.scale.set(t.s,t.s*1.05,t.s);d.rotation.y=t.x;});
+inst(trunk,M.wood,broadleaf,(d,t)=>{d.position.set(t.x,t.y-0.3,t.z);d.scale.set(t.s*0.6,t.s*1.2,t.s*0.6);},{cast:false});
+inst(cone,M.conifer,conifers,(d,t)=>{d.position.set(t.x,t.y,t.z);d.scale.set(t.s*0.55,t.s*1.5,t.s*0.55);});
+const poleG=new THREE.CylinderGeometry(0.75,1,1,6);poleG.translate(0,0.5,0);
+inst(poleG,std('#8e8f8a'),poles,(d,p)=>{d.position.set(p.x,p.y,p.z);d.scale.set(p.r,p.h,p.r);});
+inst(boxC,std('#8e8f8a'),arms,(d,a)=>{d.position.set(a.x,a.y,a.z);d.rotation.y=a.rot;d.scale.set(a.len,0.3,0.3);},{cast:false});
+const lampPole=new THREE.CylinderGeometry(0.08,0.11,1,5);lampPole.translate(0,0.5,0);
+inst(lampPole,std('#5d6265'),lampPosts,(d,l)=>{d.position.set(l.x,l.y,l.z);d.scale.set(1,l.h||7,1);},{cast:false});
+inst(boxC,M.lamp,lampPosts,(d,l)=>{d.position.set(l.x,l.y+(l.h||7),l.z);d.rotation.y=l.rot||0;d.scale.set(l.tall?1.6:0.45,0.2,l.tall?0.6:1);},{cast:false});
+{const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(wirePts,3));scene.add(new THREE.LineSegments(g,M.wire));}
+inst(new THREE.SphereGeometry(0.7,8,6),M.red,beacons,(d,b)=>{d.position.set(b.x,b.y,b.z);},{cast:false});
+{const dg=new THREE.CircleGeometry(1,24);dg.rotateX(-Math.PI/2);inst(dg,M.water,waterDiscs,(d,c)=>{d.position.set(c.x,c.y,c.z);d.scale.set(c.r,1,c.r);},{cast:false});}
+inst(boxC,M.water,waterRects,(d,c)=>{d.position.set(c.x,c.y,c.z);d.scale.set(c.w,0.1,c.d);},{cast:false});
+const retroLayer=new THREE.Group();scene.add(retroLayer);
+inst(boxG,std('#ffffff',{roughness:0.6,metalness:0.2}),retro.boxes,(d,b)=>{d.position.set(b.x,b.y,b.z);d.scale.set(b.w,b.h,b.d);},{parent:retroLayer});
+inst(cylG,std('#ffffff'),retro.cyl,(d,c)=>{d.position.set(c.x,c.y,c.z);d.scale.set(c.r,c.h,c.r);},{parent:retroLayer});
+
+/* a cargo ship on the quay and a tug in the bay */
+const boats=[];
+function hull(len,beam,ht,color){const s=new THREE.Shape();s.moveTo(-beam/2,-len/2);s.lineTo(beam/2,-len/2);s.lineTo(beam/2,len*0.25);s.quadraticCurveTo(beam/2,len*0.44,0,len/2);s.quadraticCurveTo(-beam/2,len*0.44,-beam/2,len*0.25);s.closePath();
+  const g=new THREE.ExtrudeGeometry(s,{depth:ht,bevelEnabled:false});g.rotateX(-Math.PI/2);return new THREE.Mesh(g,std(color));}
+{
+  const ship=new THREE.Group();const h=hull(230,32,16,'#2b3f55');h.position.y=-6;ship.add(h);
+  const bridge=new THREE.Mesh(new THREE.BoxGeometry(30,22,12),std('#f2f1ec'));bridge.position.set(0,20,-88);ship.add(bridge);
+  const CCS=['#b23a2e','#2f6b4f','#d9a43a','#5d7186','#1f3f73','#8a4b2a','#e07a2a','#3c6e8f','#e9e7e1'];
+  for(let k=0;k<12;k++)for(let r=0;r<10;r++){const t=1+Math.floor(R()*4);const c=new THREE.Mesh(new THREE.BoxGeometry(2.44,2.6*t,12.2),std(pick(CCS)));c.position.set(-12+r*2.6,10+1.3*t,-70+k*13.2);ship.add(c);}
+  ship.traverse(o=>{if(o.isMesh)o.castShadow=true;});ship.position.set(1030,0,987);ship.rotation.y=Math.PI/2;scene.add(ship);boats.push({grp:ship,ph:0,amp:0.06});
+  const ferry=new THREE.Group();const fh=hull(186,28,14,'#f4f4f0');fh.position.y=-5;ferry.add(fh);
+  for(let k=0;k<3;k++){const d=new THREE.Mesh(new THREE.BoxGeometry(24-k*3,4,120-k*25),std(k===2?'#1f3f73':'#f4f4f0'));d.position.set(0,11+k*4,-10-k*6);ferry.add(d);}
+  const fun=new THREE.Mesh(new THREE.BoxGeometry(6,10,8),std('#1f3f73'));fun.position.set(0,26,-30);ferry.add(fun);
+  ferry.traverse(o=>{if(o.isMesh)o.castShadow=true;});ferry.position.set(1494,0,790);ferry.rotation.y=Math.PI;scene.add(ferry);boats.push({grp:ferry,ph:1,amp:0.07});
+  const tug=new THREE.Group();const th=hull(22,8,3,'#c2412d');th.position.y=-1;tug.add(th);const wh=new THREE.Mesh(new THREE.BoxGeometry(5,4,6),std('#f2f1ec'));wh.position.set(0,4,0);tug.add(wh);
+  tug.position.set(1300,0,1030);tug.rotation.y=0.6;scene.add(tug);boats.push({grp:tug,ph:2,amp:0.18});
+}
+
+/* ---------- overlays: the network ---------- */
+const gridLayer=new THREE.Group();gridLayer.visible=false;scene.add(gridLayer);
+{
+  const mvM=new THREE.MeshBasicMaterial({color:'#f08a2b',depthWrite:false,transparent:true,opacity:0.95});
+  for(const P of Object.values(roads))if(P.kind!=='rural')gridLayer.add(new THREE.Mesh(ribbon(P.sp,1.4,0.2,false,P.width/2-1.4),mvM));
+  const tx=[];for(const s of SITES)if(s.plot){const p=s.plot;const [x,z]=W(p,4,2);tx.push({x,z,y:p.pad.h,big:s.size==='L'});}
+  const ringG=new THREE.RingGeometry(2.4,3.4,32);ringG.rotateX(-Math.PI/2);
+  const rings=new THREE.InstancedMesh(ringG,new THREE.MeshBasicMaterial({color:'#f08a2b',transparent:true,opacity:0.9,depthWrite:false,side:THREE.DoubleSide}),tx.length+1);
+  const bcn=new THREE.InstancedMesh(new THREE.ConeGeometry(2.2,5,4),new THREE.MeshBasicMaterial({color:'#f08a2b'}),tx.length+1);
+  [...tx,{x:SUB.x,z:SUB.z,y:PADS.find(q=>q.x0===565).h,sub:true}].forEach((k,i)=>{const s=k.sub?9:k.big?3:2;dummy.position.set(k.x,k.y+0.8,k.z);dummy.rotation.set(0,0,0);dummy.scale.set(s,1,s);dummy.updateMatrix();rings.setMatrixAt(i,dummy.matrix);
+    dummy.position.set(k.x,k.y+(k.sub?34:12),k.z);dummy.rotation.set(Math.PI,0,0);const b=k.sub?3:1;dummy.scale.set(b,b,b);dummy.updateMatrix();bcn.setMatrixAt(i,dummy.matrix);});
+  gridLayer.add(rings,bcn);
+}
+
+/* ---------- terrain mesh ---------- */
+const terrainMat=new THREE.MeshStandardMaterial({vertexColors:true,flatShading:true,roughness:1});
+{
+  const TW=3400,TD=2700,TZ=-300;
+  const g=new THREE.PlaneGeometry(TW,TD,400,320);g.rotateX(-Math.PI/2);
+  const pos=g.attributes.position;const cols=new Float32Array(pos.count*3);
+  const GRASS=['#6f9a45','#7fa84f','#88b05a','#5f8c3f','#93b765','#7a9e4a','#8aa956','#6c9440'].map(c=>new THREE.Color(c));
+  const TILL=['#b89a68','#c8b07a','#a8876a','#c7b88a','#9e8a5e'].map(c=>new THREE.Color(c));
+  const hedge=new THREE.Color('#4a6b32'),sand=new THREE.Color('#d6c69c'),mud=new THREE.Color('#7e7a62'),heath=new THREE.Color('#8b8e57'),site=new THREE.Color('#8fae66'),rock=new THREE.Color('#aaa497');
+  const c=new THREE.Color();
+  for(let i=0;i<pos.count;i++){
+    const x=pos.getX(i),z=pos.getZ(i)+TZ;const h=H(x,z);pos.setXYZ(i,x,h,z);
+    if(inRecl(x,z))c.set('#a8a69f');
+    else if(h<0.6)c.copy(mud);
+    else if(z>shoreZ(x)+25)c.copy(GRASS[3]).lerp(heath,0.25);
+    else if(h<3.2&&z>shoreZ(x)-16)c.copy(sand).lerp(mud,0.3);
+    else{
+      const f=field(x,z);const hv=hash2(f.id,3.7);
+      c.copy(hv<0.2?TILL[Math.floor(hash2(f.id,9.1)*TILL.length)]:GRASS[Math.floor(hash2(f.id,1.3)*GRASS.length)]);
+      if(f.edge<6)c.lerp(hedge,0.55);
+      c.lerp(heath,smooth(80,150,h)*0.6);
+      if(inZone(x,z,2)){c.copy(site).lerp(GRASS[2],hash2(Math.floor(x/23),Math.floor(z/23))*0.35);}else if(nearRoad(x,z,8))c.lerp(site,0.6);
+      for(const q of PITS)if(x>q.x0&&x<q.x1&&z>q.z0&&z<q.z1){c.copy(rock).lerp(sand,hash2(Math.floor(x/9),Math.floor(z/9))*0.3);break;}
+    }
+    cols[i*3]=c.r;cols[i*3+1]=c.g;cols[i*3+2]=c.b;
+  }
+  g.setAttribute('color',new THREE.BufferAttribute(cols,3));g.computeVertexNormals();
+  const t=new THREE.Mesh(g,terrainMat);t.receiveShadow=true;scene.add(t);
+}
+const water=new THREE.Mesh(new THREE.PlaneGeometry(7000,4400,1,1),M.water);water.rotation.x=-Math.PI/2;water.position.set(0,0,2600);scene.add(water);
+const water2=new THREE.Mesh(new THREE.PlaneGeometry(7000,900),M.water);water2.rotation.x=-Math.PI/2;water2.position.set(0,0,900);scene.add(water2);
+
+/* the way back to Baile Nua: a floating arrow over Pearse Road at the west edge */
+const arrowGroup=new THREE.Group();scene.add(arrowGroup);
+{
+  const s=new THREE.Shape();s.moveTo(0,0);s.lineTo(14,10);s.lineTo(14,4);s.lineTo(34,4);s.lineTo(34,-4);s.lineTo(14,-4);s.lineTo(14,-10);s.closePath();
+  const g=new THREE.ExtrudeGeometry(s,{depth:3,bevelEnabled:false});g.translate(0,0,-1.5);
+  const m=new THREE.Mesh(g,new THREE.MeshStandardMaterial({color:'#d9752b',emissive:'#d9752b',emissiveIntensity:0.35,roughness:0.5}));
+  m.position.set(-1585,H(-1585,-18)+26,-18);m.castShadow=true;arrowGroup.add(m);arrowGroup.userData.mesh=m;
+}
+
+/* ---------- moving traffic: cars and lorries on the spine and the estate roads ---------- */
+const movers=[];const routes=Object.keys(roads).filter(n=>roads[n].len>120);
+for(let i=0;i<140;i++){const r=i%3===0?'spine':routes[i%routes.length];movers.push({r,u:R(),v:(roads[r].len>700?13:7)/roads[r].len*(0.8+R()*0.4),dir:R()<0.5?1:-1,color:pick(CARCOL),truck:R()<0.32});}
+const lorryG=new THREE.BoxGeometry(2.5,3.6,12);lorryG.translate(0,2.2,0);
+const mvBody=new THREE.InstancedMesh(carBody,M.inst,movers.length),mvCab=new THREE.InstancedMesh(carCab,cabMat,movers.length),mvLorry=new THREE.InstancedMesh(lorryG,std('#e9e7e1'),movers.length);
+movers.forEach((m,i)=>{col.set(m.color);mvBody.setColorAt(i,col);});mvBody.castShadow=true;mvLorry.castShadow=true;scene.add(mvBody,mvCab,mvLorry);
+const tmpP=new THREE.Vector3(),tmpT=new THREE.Vector3();
+
+/* ---------- sky, clouds, rain and snow (as in Baile Nua) ---------- */
+const skyU={top:{value:new THREE.Color()},bottom:{value:new THREE.Color()}};
+const sky=new THREE.Mesh(new THREE.SphereGeometry(9000,32,16),new THREE.ShaderMaterial({uniforms:skyU,side:THREE.BackSide,depthWrite:false,fog:false,
+  vertexShader:'varying vec3 vW; void main(){ vec4 w=modelMatrix*vec4(position,1.0); vW=w.xyz-cameraPosition; gl_Position=projectionMatrix*viewMatrix*w; }',
+  fragmentShader:'uniform vec3 top; uniform vec3 bottom; varying vec3 vW; void main(){ float h=normalize(vW).y; float t=pow(clamp(h,0.0,1.0),0.55); gl_FragColor=vec4(mix(bottom,top,t),1.0); \n#include <tonemapping_fragment>\n#include <colorspace_fragment>\n }'}));
+scene.add(sky);
+scene.fog=new THREE.Fog('#cfe3ef',2200,7000);
+const hemi=new THREE.HemisphereLight('#cfe6ff','#4c5a3a',1.1);scene.add(hemi);
+const sun=new THREE.DirectionalLight('#fff1dc',3);sun.castShadow=true;
+sun.shadow.mapSize.set(isSmall?2048:4096,isSmall?2048:4096);
+const sc=sun.shadow.camera;sc.left=-700;sc.right=700;sc.top=700;sc.bottom=-700;sc.near=10;sc.far=5000;
+sun.shadow.bias=-0.0005;sun.shadow.normalBias=0.8;scene.add(sun,sun.target);
+const cloudMat=new THREE.MeshLambertMaterial({color:'#ffffff',transparent:true,opacity:0.92,flatShading:true});
+const CLOUDS=60,PUFF=6;const cloudData=[];
+const cloudMesh=new THREE.InstancedMesh(new THREE.IcosahedronGeometry(1,1),cloudMat,CLOUDS*PUFF);
+for(let c=0;c<CLOUDS;c++){const cx=rand(-3000,3000),cz=rand(-3200,1800),cy=rand(720,980),sz=rand(60,140);for(let p=0;p<PUFF;p++)cloudData.push({c,ox:rand(-1.4,1.4)*sz,oy:rand(-0.2,0.3)*sz,oz:rand(-0.8,0.8)*sz,s:sz*rand(0.5,0.9),cx,cy,cz});}
+scene.add(cloudMesh);
+const RAIN_N=9000,rainPos=new Float32Array(RAIN_N*6),rainSeed=new Float32Array(RAIN_N*3);
+for(let i=0;i<RAIN_N;i++){rainSeed[i*3]=R();rainSeed[i*3+1]=R();rainSeed[i*3+2]=R();}
+const rainGeo=new THREE.BufferGeometry();rainGeo.setAttribute('position',new THREE.BufferAttribute(rainPos,3));
+const rain=new THREE.LineSegments(rainGeo,new THREE.LineBasicMaterial({color:'#b9c7d3',transparent:true,opacity:0.55}));rain.frustumCulled=false;rain.visible=false;scene.add(rain);
+const SNOW_N=7000,snowPos=new Float32Array(SNOW_N*3);
+const snowGeo=new THREE.BufferGeometry();snowGeo.setAttribute('position',new THREE.BufferAttribute(snowPos,3));
+const flake=(()=>{const c=document.createElement('canvas');c.width=c.height=32;const x=c.getContext('2d');const g=x.createRadialGradient(16,16,0,16,16,16);g.addColorStop(0,'rgba(255,255,255,1)');g.addColorStop(0.5,'rgba(255,255,255,0.8)');g.addColorStop(1,'rgba(255,255,255,0)');x.fillStyle=g;x.fillRect(0,0,32,32);return new THREE.CanvasTexture(c);})();
+const snow=new THREE.Points(snowGeo,new THREE.PointsMaterial({color:'#ffffff',size:2.2,map:flake,transparent:true,depthWrite:false,opacity:0.95}));snow.frustumCulled=false;snow.visible=false;scene.add(snow);
+// steam from the plants that burn fuel, thicker on cold days
+const steamSrc=[];for(const s of SITES){if(s.fuel==='elec'||!s.thGWh||s.thGWh<0.3)continue;const st=(s.plot.items||[]).find(i=>i.k==='stack');const p=s.plot;
+  if(st){const r=rectW(p,st);steamSrc.push({x:r.x-r.w/2+2.5,z:r.z,y:p.pad.h+st.h,s:Math.min(1,0.25+s.thGWh/30)});}
+  else{const b=s.blds.find(b=>b.use==='boiler')||s.blds[0];steamSrc.push({x:b.x,z:b.z,y:b.top+1,s:Math.min(0.7,0.2+s.thGWh/40)});}}
+const PUFFS=10;const steam=new THREE.InstancedMesh(new THREE.IcosahedronGeometry(1,1),new THREE.MeshLambertMaterial({color:'#ffffff',transparent:true,opacity:0.55,flatShading:true,depthWrite:false}),Math.max(1,steamSrc.length*PUFFS));steam.frustumCulled=false;scene.add(steam);
+
+/* ---------- time of day, time of year and weather ---------- */
+const MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+const WX={sunny:{label:'Sunny',cloud:0.12,wind:[3,7],rain:0,snow:0,fog:0},cloudy:{label:'Cloudy',cloud:0.8,wind:[4,9],rain:0,snow:0,fog:0.1},windy:{label:'Windy',cloud:0.45,wind:[13,19],rain:0,snow:0,fog:0},
+  rain:{label:'Rain',cloud:0.92,wind:[6,12],rain:0.55,snow:0,fog:0.25},storm:{label:'Storm',cloud:1,wind:[26,31],rain:1,snow:0,fog:0.35,lightning:true},snow:{label:'Snow',cloud:0.88,wind:[2,6],rain:0,snow:1,fog:0.3},fog:{label:'Fog',cloud:0.65,wind:[0,3],rain:0,snow:0,fog:1}};
+const ENV={t:10.5,month:3,wx:'windy',wind:15,lightning:0};
+const LAT=51.7*Math.PI/180;
+function sunPos(month,t){const doy=[15,46,74,105,135,166,196,227,258,288,319,349][month-1];const decl=23.44*Math.PI/180*Math.sin(2*Math.PI*(doy-81)/365);const noon=12+34/60+((month>=4&&month<=10)?1:0);const h=(t-noon)*15*Math.PI/180;
+  const e=Math.asin(Math.sin(LAT)*Math.sin(decl)+Math.cos(LAT)*Math.cos(decl)*Math.cos(h));const A=Math.atan2(Math.sin(h),Math.cos(h)*Math.sin(LAT)-Math.tan(decl)*Math.cos(LAT))+Math.PI;
+  const h0=Math.acos(Math.max(-1,Math.min(1,-Math.tan(LAT)*Math.tan(decl))))*180/Math.PI/15;
+  return {e,dir:new THREE.Vector3(Math.cos(e)*Math.sin(A),Math.max(Math.sin(e),0.03),-Math.cos(e)*Math.cos(A)).normalize(),rise:noon-h0,set:noon+h0};}
+const C=h=>new THREE.Color(h);
+const PAL={dayTop:C('#4c8fd3'),dayBot:C('#d3e6f0'),goldTop:C('#6f98cf'),goldBot:C('#f7d2ab'),nightTop:C('#0a1430'),nightBot:C('#1d2944'),greyTop:C('#7f8a94'),greyBot:C('#b3bbc0'),stormTop:C('#3c434b'),stormBot:C('#6c747b'),
+  sunDay:C('#fff4e2'),sunGold:C('#ffae6a'),moon:C('#9fb6ff'),hemiDay:C('#d6eaff'),hemiNight:C('#30406a'),waterDay:C('#2f6e8d'),waterNight:C('#0c2232'),waterGrey:C('#4b6470'),winDay:C('#38414c'),winNight:C('#ffffff')};
+const LEAF=['#a08a74','#a8927a','#c9c8a0','#e6f0c8','#ffffff','#ffffff','#ffffff','#f6f2d0','#f2e2a8','#f2ad66','#c58a5c','#a08a74'].map(C);
+const FIELDC=['#c9c6ae','#cfcbb0','#dcdcb8','#eef2d2','#ffffff','#ffffff','#fff8de','#fff0cc','#f3ecc8','#e6dcb6','#d6d0b4','#c9c6ae'].map(C);
+const sunDir=new THREE.Vector3();let nightF=0;
+function fmt(h){h=((h%24)+24)%24;return String(Math.floor(h)).padStart(2,'0')+':'+String(Math.floor((h%1)*60)).padStart(2,'0');}
+function trafficLevel(){const t=ENV.t;const rush=Math.exp(-((t-7.6)**2)/1.0)+Math.exp(-((t-17.2)**2)/1.4)+0.5*Math.exp(-((t-22.1)**2)/0.3)+0.5*Math.exp(-((t-6.1)**2)/0.3);
+  let f=0.12+0.5*smooth(6,8,t)*(1-smooth(19,23,t))+0.5*rush;if(ENV.wx==='snow')f*=0.4;else if(ENV.wx==='storm')f*=0.6;return Math.max(0,Math.min(1,f));}
+function applyEnv(){
+  const Wx=WX[ENV.wx],s=sunPos(ENV.month,ENV.t);
+  const day=smooth(-0.1,0.12,s.e);nightF=1-day;const gold=day*(1-smooth(0.06,0.42,s.e));const cl=Wx.cloud;
+  sunDir.copy(s.dir).lerp(new THREE.Vector3(-0.35,0.85,0.4).normalize(),nightF).normalize();
+  sun.color.copy(PAL.sunDay).lerp(PAL.sunGold,gold*(1-cl)).lerp(PAL.moon,nightF);sun.intensity=(3.1*day+0.35*nightF)*(1-0.8*cl);
+  hemi.intensity=(0.45+0.85*day)*(1-0.2*cl)+ENV.lightning*4;hemi.color.copy(PAL.hemiDay).lerp(PAL.hemiNight,nightF);
+  const clearTop=PAL.dayTop.clone().lerp(PAL.goldTop,gold),clearBot=PAL.dayBot.clone().lerp(PAL.goldBot,gold);
+  const greyT=ENV.wx==='storm'?PAL.stormTop:PAL.greyTop,greyB=ENV.wx==='storm'?PAL.stormBot:PAL.greyBot;
+  skyU.top.value.copy(clearTop).lerp(greyT,cl*0.85).lerp(PAL.nightTop,nightF);skyU.bottom.value.copy(clearBot).lerp(greyB,cl*0.8).lerp(PAL.nightBot,nightF);
+  if(ENV.lightning>0){skyU.top.value.lerp(C('#e8ecff'),ENV.lightning);skyU.bottom.value.lerp(C('#e8ecff'),ENV.lightning);}
+  scene.fog.color.copy(skyU.bottom.value);scene.fog.near=2200*(1-0.9*Wx.fog)-600*Wx.rain;scene.fog.far=7000-4200*Wx.rain*0.6-6000*Wx.fog+600;
+  M.water.color.copy(PAL.waterDay).lerp(PAL.waterGrey,cl*0.7).lerp(PAL.waterNight,nightF);M.water.roughness=0.15+Math.min(0.6,ENV.wind/40);
+  M.win.color.copy(PAL.winDay).lerp(PAL.winNight,smooth(0.25,0.85,Math.max(nightF,cl*0.5)));
+  M.lamp.emissiveIntensity=3*smooth(0.35,0.75,Math.max(nightF,Wx.fog*0.6));renderer.toneMappingExposure=1.0+0.25*nightF;
+  const mi=ENV.month-1;M.leaf.color.copy(LEAF[mi]);terrainMat.color.copy(FIELDC[mi]);
+  const sn=Wx.snow*(0.08+0.92*day);terrainMat.emissive.set('#ffffff');terrainMat.emissiveIntensity=0.28*sn;M.roof.emissive.set('#ffffff');M.roof.emissiveIntensity=0.5*sn;M.leaf.emissive.set('#ffffff');M.leaf.emissiveIntensity=0.15*sn;M.conifer.emissive.set('#ffffff');M.conifer.emissiveIntensity=0.12*sn;
+  cloudMat.color.copy(ENV.wx==='storm'?C('#6d747c'):cl>0.7?C('#c9cfd4'):C('#ffffff')).multiplyScalar(0.25+0.75*day);
+  rain.visible=Wx.rain>0;rain.material.opacity=0.25+0.4*Wx.rain;snow.visible=Wx.snow>0;
+  document.getElementById('clock').textContent=fmt(ENV.t);document.getElementById('monthLabel').textContent=MONTHS[mi].slice(0,3);
+  document.getElementById('cond').textContent=`${MONTHS[mi]} \u00b7 ${fmt(ENV.t)} \u00b7 ${Wx.label} \u00b7 Wind ${ENV.wind} m/s. ${priceNote()}`;
+  document.getElementById('chip').textContent=`${MONTHS[mi].slice(0,3)} ${fmt(ENV.t)} \u00b7 ${Wx.label} \u00b7 \u20ac${Math.round(dayPrice()[nowS()])}/MWh`;
+  document.querySelectorAll('.wxbtn').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.wx===ENV.wx)));
+}
+function setWeather(k,keepWind){ENV.wx=k;if(!keepWind){const [a,b]=WX[k].wind;ENV.wind=Math.round(rand(a,b));}SIMKEY='';applyEnv();}
+
+/* ================= OPTIFEM SIMULATION (96 quarter-hours: TES \u2192 PCM \u2192 HTHP \u2192 DISPATCH \u2192 FIN \u2192 CO2) ================= */
+const MT=[6.3,6.4,7.6,9.2,11.8,14.4,16.0,15.8,14.0,11.3,8.3,6.8];
+const nowS=()=>Math.min(95,Math.max(0,Math.floor(ENV.t*4)));
+let PRICEKEY='',PRICE96=null,EF96=null;
+function dayPrice(){
+  const k=ENV.month+'|'+ENV.wx+'|'+ENV.wind;if(k===PRICEKEY)return PRICE96;PRICEKEY=k;
+  const p=new Float32Array(96),ef=new Float32Array(96);const windy=ENV.wind>=12&&ENV.wind<=25,summer=ENV.month>=4&&ENV.month<=9;
+  for(let s=0;s<96;s++){const t=s/4+0.125;let v=t<7?95:t<17?150:t<19?265:t<23?150:105;let e=0.30;
+    if(windy){v*=t<7||t>=23?0.25:0.62;e=t<7||t>=23?0.09:0.16;}
+    if(ENV.wx==='sunny'&&summer&&t>=11&&t<16){v*=0.55;e*=0.75;}
+    if(ENV.month<=2||ENV.month===12)v*=1.12;if(ENV.wx==='storm'){v*=0.5;e=0.12;}
+    p[s]=v;ef[s]=e;}
+  PRICE96=p;EF96=ef;return p;
+}
+function priceNote(){const p=dayPrice();const lo=Math.min(...p);return ENV.wind>=12&&ENV.wind<=25?`Wind curtailment overnight: power from \u20ac${Math.round(lo)}/MWh, the window PCM stores charge in.`:`Cheapest power today \u20ac${Math.round(lo)}/MWh, peak \u20ac${Math.round(Math.max(...p))}/MWh.`;}
+function shapeOf(s){const f=OPS[s.op].f;const a=new Float32Array(96);let m=0;for(let k=0;k<96;k++){a[k]=f(k/4+0.125);m+=a[k];}m/=96;
+  const season=1+0.18*Math.cos((ENV.month-1)/12*6.283);for(let k=0;k<96;k++)a[k]=a[k]/m*season;return a;}
+function simulate(s,tw){
+  const A=s.A,p=dayPrice(),ef=EF96,sh=shapeOf(s),o={q:new Float32Array(96),hp:new Float32Array(96),dis:new Float32Array(96),bk:new Float32Array(96),soc:new Float32Array(96),pel:new Float32Array(96),el:new Float32Array(96),price:p};
+  const F=FUEL[s.fuel],avg=s.thGWh*1000/(OPS[s.op].days*24);
+  const Tsink=s.Tel+273.15+5,Tsrc=(A.waste?40:MT[ENV.month-1])+273.15-5;const cop=clamp(PRICE.eta*Tsink/Math.max(8,Tsink-Tsrc),1.6,4.5);
+  const Emax=tw.n*PRICE.pcmMWh,Pc=tw.n*PRICE.pcmMW;let E=Emax*0.5;const srt=[...p].sort((a,b)=>a-b),lo=srt[28],hi=srt[67];
+  const sens=tw.sens;const pm=p.reduce((a,b)=>a+b,0)/96;
+  let cBase=0,cNew=0,coBase=0,coNew=0,shift=0,hpHeat=0,qSum=0,pelMax=0,elec=0;const dt=0.25;
+  const elAvg=s.elGWh*1000/(OPS[s.op].days*24);
+  for(let k=0;k<96;k++){
+    const pr=pm+(p[k]-pm)*sens;const q=avg*sh[k];const e=q*A.hp*(tw.hp>0?1:0);let hpq=0,dis=0,ch=0,eh=0,rem=e;
+    if(tw.hp>0){
+      if(p[k]<=lo){hpq=Math.min(tw.hp,e);rem=e-hpq;const room=Math.max(0,(Emax-E)/dt);const chHp=Math.min(tw.hp-hpq,Pc,room);ch=chHp;hpq+=chHp;
+        if(pr<(s.fuel==='elec'?1e9:F.p/F.eta)){eh=Math.min(Pc-chHp,room-chHp);if(eh<0)eh=0;}E+=(ch+eh)*dt*0.97;}
+      else if(p[k]>=hi){dis=Math.min(rem,Pc,E/dt);E-=dis*dt;rem-=dis;const h2=Math.min(tw.hp,rem);hpq=h2;rem-=h2;}
+      else{hpq=Math.min(tw.hp,rem);rem-=hpq;}
+    }
+    const bk=rem+(q-e);const pel=hpq/cop+eh;const fuelIn=bk/F.eta,fuelBase=q/F.eta;
+    const fp=s.fuel==='elec'?pr:F.p;const fef=s.fuel==='elec'?ef[k]:F.ef;
+    cBase+=fuelBase*fp*dt;cNew+=(fuelIn*fp+pel*pr)*dt;coBase+=fuelBase*fef*dt;coNew+=(fuelIn*fef+pel*ef[k])*dt;
+    shift+=dis*dt;hpHeat+=(hpq-ch)*dt+dis*dt;qSum+=q*dt;pelMax=Math.max(pelMax,pel);
+    const elk=elAvg*(0.55+0.45*sh[k]);elec+=elk*dt;
+    o.q[k]=q;o.hp[k]=hpq-ch;o.dis[k]=dis;o.bk[k]=bk;o.soc[k]=E;o.pel[k]=pel;o.el[k]=elk+pel+(s.fuel==='elec'?fuelIn:0);
+  }
+  const days=OPS[s.op].days,capex=tw.hp*PRICE.hthpCapex+tw.n*PRICE.pcmCapex;const save=(cBase-cNew)*days;
+  Object.assign(o,{cop,days,capex,save,payback:save>0?capex/save:Infinity,co2Base:coBase*days,co2New:coNew*days,co2Save:(coBase-coNew)*days,shift,hpShare:qSum?hpHeat/qSum:0,pelMax,qDay:qSum,cBase:cBase*days,cNew:cNew*days,avg,elDay:elec});
+  return o;
+}
+let SIMKEY='';const SIM={};
+function ensureSims(){const k=ENV.month+'|'+ENV.wx+'|'+ENV.wind;if(k===SIMKEY)return;SIMKEY=k;for(const s of SITES){SIM[s.ref]=simulate(s,s.tw);}}
+ensureSims();
+
+/* ---------- places ---------- */
+const Z=(d)=>{const D=DISTBY[d];return {x:(D.x0+D.x1)/2,z:(D.z0+D.z1)/2};};
+const tot=SITES.reduce((a,s)=>{a.gfa+=s.gfa;a.th+=s.thGWh;a.el+=s.elGWh;a.hp+=s.tw.hp;a.n+=s.tw.n;a[s.size]++;return a;},{gfa:0,th:0,el:0,hp:0,n:0,S:0,M:0,L:0});
+const ZONES=[{id:'overview',name:'Whole zone',group:'Overview',view:{t:[40,10,-230],o:[360,560,1180]}}];
+const DTEXT={
+  GW:'Small advance units and workshops just off Pearse Road: print, joinery, CNC, chemicals, a test lab and a micro bakery, with the zone water treatment works at the back.',
+  SC:'A wafer-fab campus with five fabs, energy centres, water tanks and multi-storey car parks. The largest electricity user in the zone, and its own 110 kV connection.',
+  LS:'Cleanroom and GMP sites round a landscaped park: biosensors, sterile fill-finish, biologics, catheters, moulding, an API spray dryer and a chip design centre.',
+  FD:'Dairy powders, milk crumb, cooked meats, bacon, sauces, a bakery, chocolate, a craft distillery and a marine extracts plant. The steam users INNOV8HEAT targets first.',
+  PT:'The quay: heavy crane fabrication beside deep water, cask maturation stores and three seafood processors with cold stores and smokehouses.',
+  EN:'Toolmaking, sheet metal with a paint line, plastics extrusion and moulding, steel fabrication, timber and electronics.',
+  MN:'Cement works with a rotary kiln, a sand and gravel pit, a limestone quarry with an asphalt plant and a precast yard, cut into the ridge.'};
+for(const D of DIST){const c=Z(D.id);const list=SITES.filter(s=>s.d===D.id);const span=Math.max(D.x1-D.x0,D.z1-D.z0);
+  ZONES.push({id:D.id,name:D.name,ga:D.ga,group:'Districts',x:c.x,z:c.z,lift:60,view:{t:[c.x,15,c.z],o:[span*0.35,span*0.55,span*0.75]},text:DTEXT[D.id],
+    facts:[list.length+' site'+(list.length>1?'s':''),Math.round(list.reduce((a,s)=>a+s.gfa,0)).toLocaleString('en-IE')+' m\u00b2 floor area',list.reduce((a,s)=>a+s.thGWh,0).toFixed(1)+' GWh heat a year']});}
+ZONES.push({id:'solar',name:'Solar farm',ga:'Feirm ghr\u00e9ine',group:'Energy',x:-700,z:-1030,lift:50,view:{t:[-650,40,-1000],o:[420,360,620]},text:'Six fixed-tilt fields on the south-facing slopes behind the zone. Every table faces due south at 30\u00b0, the best fixed angle at this latitude. A collector substation feeds the zone substation over an MV pole line.',facts:[solarTables.toLocaleString('en-IE')+' panel tables','About '+Math.round(solarMWp)+' MWp','Faces due south, 30\u00b0 tilt']});
+ZONES.push({id:'wind',name:'Wind farm',ga:'Feirm ghaoithe',group:'Energy',x:-560,z:-1440,lift:130,view:{t:[-560,120,-1430],o:[700,380,950]},text:'Fifteen turbines along the ridge. They turn faster as the wind rises and stop above 25 m/s. On windy nights this is the curtailed power the PCM stores in the twins charge from.',facts:['15 turbines','About '+windMW.toFixed(0)+' MW','Cut-out at 25 m/s']});
+ZONES.push({id:'sub',name:'Zone substation',group:'Energy',x:SUB.x,z:SUB.z,lift:40,view:{t:[SUB.x,15,SUB.z],o:[110,90,150]},text:'110 kV / MV substation fed by an overhead line from the north. The heat pumps and PCM stores in the twins add flexible load here, which can soak up curtailed wind at night.',facts:['110 kV / MV','Fed from the north','Flexible HTHP load']});
+ZONES.push({id:'port',name:'Port of Baile Nua',ga:'Calafort an Bhaile Nua',group:'Districts',x:1070,z:760,lift:70,view:{t:[1080,10,780],o:[260,300,420]},text:'A deep-water port on reclaimed land: four ship-to-shore cranes over the container quay, stacked blocks worked by gantries, an empty-container depot, a bulk berth with grain silos, a vehicle import compound and a ro-ro ferry berth.',facts:['4 ship-to-shore cranes','About '+Math.round(cont.length/100)*100+' containers in the yard','Vehicle compound and ferry berth']});
+const ROADTAGS=ROADNAMES;
+
+/* ---------- UI ---------- */
+const esc=s=>String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+const zonesEl=document.getElementById('zones');
+for(const g of ['Overview','Districts','Energy']){const lab=document.createElement('div');lab.className='group-label';lab.textContent=g;zonesEl.appendChild(lab);
+  const row=document.createElement('div');row.className='zone-list';zonesEl.appendChild(row);
+  for(const z of ZONES.filter(z=>z.group===g)){const b=document.createElement('button');b.className='zbtn';b.type='button';b.textContent=z.name;b.dataset.zone=z.id;b.setAttribute('aria-pressed','false');b.addEventListener('click',()=>select(z.id));row.appendChild(b);}}
+{const lab=document.createElement('div');lab.className='group-label';lab.textContent='Next door';zonesEl.appendChild(lab);const row=document.createElement('div');row.className='zone-list';
+  row.innerHTML=`<a class="zbtn" href="${BN_URL}" style="text-decoration:none">\u2190 Baile Nua town</a>`;zonesEl.appendChild(row);}
+const labelsEl=document.getElementById('labels');
+const tags=ZONES.filter(z=>z.x!==undefined).map(z=>{const b=document.createElement('button');b.className='tag';b.type='button';b.textContent=z.name;b.addEventListener('click',()=>select(z.id));labelsEl.appendChild(b);return {z,el:b,p:new THREE.Vector3(z.x,H(z.x,z.z)+z.lift,z.z)};});
+const roadTags=ROADTAGS.map(([n,label,f])=>{const P=roads[n];if(!P)return null;const m=pathAt(P,P.len*f);const el=document.createElement('span');el.className='road';el.textContent=label+(n==='spine'?' \u00b7 to Baile Nua':'');labelsEl.appendChild(el);return {el,p:new THREE.Vector3(m.x,H(m.x,m.z)+2,m.z)};}).filter(Boolean);
+const SIZECOL={S:'var(--ev)',M:'var(--accent)',L:'var(--hp)'};
+const stags=SITES.filter(s=>!s.custom).map(s=>{const b=document.createElement('button');b.type='button';b.className='stag';b.innerHTML=`<i style="background:${SIZECOL[s.size]}"></i>${esc(s.name)}`;b.addEventListener('click',()=>openSite(s,'overview',true));labelsEl.appendChild(b);return {s,el:b,p:new THREE.Vector3(s.cx,s.top+6,s.cz)};});
+const goTag=document.createElement('a');goTag.className='gotag';goTag.href=BN_URL;goTag.textContent='\u2190 Baile Nua';labelsEl.appendChild(goTag);
+const goP=new THREE.Vector3(-1570,H(-1585,-18)+44,-18);
+const fN=v=>Math.round(v).toLocaleString('en-IE');
+const statList=[[SITES.length,'Sites'],[BLD.length,'Buildings'],[fN(tot.gfa),'Floor area m\u00b2'],[`${tot.S} \u00b7 ${tot.M} \u00b7 ${tot.L}`,'S \u00b7 M \u00b7 L twins'],[fN(tot.th),'Heat GWh/yr'],[tot.hp.toFixed(1),'HTHP MW'],[tot.n,'PCM containers'],[Math.round(solarMWp),'Solar MWp'],[15,'Turbines']];
+const statHTML=statList.map(([v,l])=>`<div class="stat"><b>${typeof v==='number'?v.toLocaleString('en-IE'):v}</b><span>${l}</span></div>`).join('');
+document.getElementById('stats').innerHTML=statHTML;document.getElementById('statsInline').innerHTML=statHTML;
+const legend=document.getElementById('legend');
+function updateLegend(){const parts=[];if(gridLayer.visible)parts.push('<span><i style="background:var(--buoy)"></i>MV feeders and site transformers</span>');
+  if(retroLayer.visible)parts.push('<span><i style="background:#e07a2a"></i>PCM container (5 MWh)</span><span><i style="background:#2f6fd1"></i>HTHP unit</span>');
+  parts.push('<span><i style="background:var(--ev)"></i>Small twin</span><span><i style="background:var(--accent)"></i>Medium</span><span><i style="background:var(--hp)"></i>Large</span>');legend.innerHTML=parts.join('');}
+document.getElementById('tLabels').addEventListener('change',e=>{labelsEl.hidden=!e.target.checked;});
+let showSites=true;document.getElementById('tSites').addEventListener('change',e=>{showSites=e.target.checked;});
+document.getElementById('tGrid').addEventListener('change',e=>{gridLayer.visible=e.target.checked;M.wire.color.set(e.target.checked?'#f08a2b':'#2b2b2b');M.wire.opacity=e.target.checked?1:0.75;updateLegend();});
+document.getElementById('tRetro').addEventListener('change',e=>{retroLayer.visible=e.target.checked;updateLegend();});
+const timeEl=document.getElementById('time'),monthEl=document.getElementById('month');
+timeEl.addEventListener('input',()=>{ENV.t=parseFloat(timeEl.value);applyEnv();});
+monthEl.addEventListener('input',()=>{ENV.month=parseInt(monthEl.value,10);SIMKEY='';if(ENV.wx==='snow'&&ENV.month>=4&&ENV.month<=10)setWeather('cloudy');else applyEnv();});
+const wxEl=document.getElementById('wx');
+for(const [k,w] of Object.entries(WX)){const b=document.createElement('button');b.type='button';b.className='zbtn wxbtn';b.dataset.wx=k;b.textContent=w.label;b.addEventListener('click',()=>setWeather(k));wxEl.appendChild(b);}
+let playing=false;const playBtn=document.getElementById('play');
+playBtn.addEventListener('click',()=>{playing=!playing;playBtn.textContent=playing?'Pause':'Play';playBtn.setAttribute('aria-pressed',String(playing));});
+const WXODDS={winter:{sunny:2,cloudy:4,windy:2,rain:4,storm:2,snow:1,fog:1},spring:{sunny:3,cloudy:4,windy:2,rain:3,storm:0.5,snow:0.2,fog:1},summer:{sunny:6,cloudy:3,windy:1,rain:2,storm:0.2,snow:0,fog:0.6},autumn:{sunny:2,cloudy:4,windy:2,rain:4,storm:1.5,snow:0,fog:1.2}};
+function randomMoment(){ENV.month=1+Math.floor(Math.random()*12);ENV.t=Math.round(Math.random()*24*4)/4;
+  const season=[12,1,2].includes(ENV.month)?'winter':ENV.month<=5?'spring':ENV.month<=8?'summer':'autumn';
+  const o=WXODDS[season];let r=Math.random()*Object.values(o).reduce((a,b)=>a+b,0);let k='cloudy';for(const [kk,v] of Object.entries(o)){r-=v;if(r<=0){k=kk;break;}}
+  timeEl.value=ENV.t;monthEl.value=ENV.month;setWeather(k);}
+document.getElementById('random').addEventListener('click',randomMoment);
+const panel=document.getElementById('panel'),menuBtn=document.getElementById('menuBtn'),card=document.getElementById('card');
+if(isSmall)panel.classList.add('closed');
+menuBtn.addEventListener('click',()=>{const open=panel.classList.toggle('closed')===false;menuBtn.setAttribute('aria-expanded',String(open));card.classList.toggle('panel-open',open);});
+document.getElementById('cardClose').addEventListener('click',()=>{card.hidden=true;setPressed(null);});
+let fly=null;
+function setPressed(id){document.querySelectorAll('.zbtn[data-zone]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.zone===id)));tags.forEach(t=>t.el.classList.toggle('on',t.z.id===id));}
+function select(id){
+  const z=ZONES.find(q=>q.id===id);if(!z)return;setPressed(id);
+  const t=new THREE.Vector3(...z.view.t),o=new THREE.Vector3(...z.view.o);const p=t.clone().add(o);
+  if(reduceMotion){controls.target.copy(t);camera.position.copy(p);}else fly={t0:performance.now(),dur:1700,fromT:controls.target.clone(),toT:t,fromP:camera.position.clone(),toP:p};
+  if(z.text){document.getElementById('cardGa').textContent=z.ga||'';document.getElementById('cardTitle').textContent=z.name;document.getElementById('cardText').textContent=z.text;
+    document.getElementById('cardFacts').innerHTML=(z.facts||[]).map(f=>`<li>${f}</li>`).join('');
+    const list=SITES.filter(s=>s.d===id);
+    document.getElementById('cardExtra').innerHTML=list.length?`<div class="tblwrap" style="max-height:180px;overflow-y:auto;margin-top:10px"><table class="tbl"><tbody>${list.map(s=>`<tr class="click" data-open-s="${s.ref}"><td><span class="sz ${s.size}">${s.size}</span></td><td>${esc(s.name)}</td><td class="n">${fN(s.gfa)} m\u00b2</td></tr>`).join('')}</tbody></table></div>`:'';
+    card.hidden=false;if(!drawer.hidden)closeDrawer();
+    if(isSmall){panel.classList.add('closed');menuBtn.setAttribute('aria-expanded','false');card.classList.remove('panel-open');}}
+  else card.hidden=true;
+}
+
+/* ---------- picking ---------- */
+const ray=new THREE.Raycaster(),ndc=new THREE.Vector2();let downXY=null;
+canvas.addEventListener('pointerdown',e=>{downXY=[e.clientX,e.clientY];});
+canvas.addEventListener('pointerup',e=>{if(!downXY)return;const moved=Math.hypot(e.clientX-downXY[0],e.clientY-downXY[1]);downXY=null;if(moved<6)pickAt(e.clientX,e.clientY);});
+function pickAt(x,y){
+  const r=canvas.getBoundingClientRect();ndc.set(((x-r.left)/r.width)*2-1,-((y-r.top)/r.height)*2+1);ray.setFromCamera(ndc,camera);
+  const hits=ray.intersectObjects([boxMesh,roofMesh,arrowGroup.userData.mesh],false);if(!hits.length)return;
+  for(const h of hits){if(h.distance>hits[0].distance+30)break;
+    if(h.object===arrowGroup.userData.mesh){location.href=BN_URL;return;}
+    const s=h.object===boxMesh?BOX2S.get(h.instanceId):ROOF2S.get(h.instanceId);if(s){openSite(s);return;}}
+}
+function flyTo(x,y,z,o=[90,80,120]){const toT=new THREE.Vector3(x,y,z),toP=toT.clone().add(new THREE.Vector3(...o));
+  if(reduceMotion){controls.target.copy(toT);camera.position.copy(toP);}else fly={t0:performance.now(),dur:1400,fromT:controls.target.clone(),toT,fromP:camera.position.clone(),toP};}
+const selGroup=new THREE.Group();selGroup.visible=false;scene.add(selGroup);
+const selRing=new THREE.Mesh(new THREE.RingGeometry(1,1.05,64),new THREE.MeshBasicMaterial({color:'#e0662a',side:THREE.DoubleSide,transparent:true,opacity:0.95,depthWrite:false}));selRing.rotation.x=-Math.PI/2;
+const selPin=new THREE.Mesh(new THREE.OctahedronGeometry(3,0),new THREE.MeshBasicMaterial({color:'#e0662a'}));selGroup.add(selRing,selPin);
+function markSel(s){const p=s.plot;const r=Math.hypot(p.w,p.d)/2+6;selGroup.visible=true;selRing.position.set(s.cx,p.pad.h+1,s.cz);selRing.scale.set(r,r,r);selPin.userData.base=s.top+14;selPin.position.set(s.cx,s.top+14,s.cz);}
+
+/* ---------- HTML helpers and the chart (as in BNIT) ---------- */
+const kv=rows=>'<dl class="kv">'+rows.filter(Boolean).map(([k,v])=>`<dt>${k}</dt><dd>${v}</dd>`).join('')+'</dl>';
+const tile=(k,l)=>`<div class="tile"><b data-k="${k}">\u2013</b><span>${l}</span></div>`;
+const sec=(h,inner,extra='')=>`<section class="sec"${extra}><h4>${h}</h4>${inner}</section>`;
+const pill=(t,c='ok')=>`<span class="pill ${c}"><i></i>${t}</span>`;
+const legendHTML=items=>'<div class="clegend">'+items.map(([v,l,dash])=>`<span><i class="${dash?'dash':''}" style="background:var(${v})"></i>${l}</span>`).join('')+'</div>';
+function css(v){return getComputedStyle(document.documentElement).getPropertyValue(v).trim();}
+function niceStep(r){const p=Math.pow(10,Math.floor(Math.log10(r||1)));const f=r/p;return (f<=1?1:f<=2?2:f<=5?5:10)*p;}
+const fmtN=v=>Math.abs(v)>=100?Math.round(v).toString():Math.abs(v)>=10?v.toFixed(0):(Math.abs(v)<1e-9?'0':v.toFixed(1));
+function drawChart(cv,list,opt={}){
+  if(!cv)return;const dpr=Math.min(2,window.devicePixelRatio||1);const Wc=cv.clientWidth,Hh=cv.clientHeight;if(!Wc||!Hh)return;
+  if(cv.width!==Math.round(Wc*dpr)||cv.height!==Math.round(Hh*dpr)){cv.width=Math.round(Wc*dpr);cv.height=Math.round(Hh*dpr);}
+  const x=cv.getContext('2d');x.setTransform(dpr,0,0,dpr,0,0);x.clearRect(0,0,Wc,Hh);
+  const L=40,Rp=8,T=16,B=20,pw=Wc-L-Rp,ph=Hh-T-B;
+  let mn=0,mx=0;for(const s of list)for(const v of s.d){if(v<mn)mn=v;if(v>mx)mx=v;}
+  if(mx-mn<(opt.minSpan||0.4))mx=mn+(opt.minSpan||0.4);const st=niceStep((mx-mn)/3);mn=Math.floor(mn/st+1e-9)*st;mx=Math.ceil(mx/st-1e-9)*st;if(mx<=0)mx=st;
+  const X=i=>L+pw*i/96,Y=v=>T+ph*(1-(v-mn)/(mx-mn));
+  const ink=css('--muted'),line=css('--line');x.font='10px '+css('--f-mono');x.lineWidth=1;
+  if(opt.bands){x.fillStyle=css('--ev');x.globalAlpha=0.12;for(const [a,b] of opt.bands)x.fillRect(X(a),T,X(b)-X(a),ph);x.globalAlpha=1;}
+  for(let v=mn;v<=mx+st*0.01;v+=st){x.strokeStyle=line;x.beginPath();x.moveTo(L,Y(v));x.lineTo(Wc-Rp,Y(v));x.stroke();x.fillStyle=ink;x.textAlign='right';x.textBaseline='middle';x.fillText(fmtN(v),L-5,Y(v));}
+  x.fillStyle=ink;x.textBaseline='top';for(const h of [0,6,12,18,24]){x.textAlign=h===0?'left':h===24?'right':'center';x.fillText(String(h).padStart(2,'0')+':00',X(h*4),T+ph+5);}
+  x.textAlign='left';x.textBaseline='top';x.fillText(opt.unit||'MW',2,0);
+  for(const s of list){x.strokeStyle=css(s.c);x.lineWidth=s.w||1.7;x.setLineDash(s.dash?[4,3]:[]);x.beginPath();for(let i=0;i<96;i++){const px=X(i+0.5),py=Y(s.d[i]);i?x.lineTo(px,py):x.moveTo(px,py);}x.stroke();
+    if(s.fill){x.setLineDash([]);x.lineTo(X(95.5),Y(Math.max(mn,0)));x.lineTo(X(0.5),Y(Math.max(mn,0)));x.closePath();x.fillStyle=css(s.c);x.globalAlpha=0.14;x.fill();x.globalAlpha=1;}}
+  x.setLineDash([]);const nx=X(ENV.t*4);x.strokeStyle=css('--ink');x.globalAlpha=0.7;x.beginPath();x.moveTo(nx,T);x.lineTo(nx,T+ph);x.stroke();x.globalAlpha=1;
+  const s0=list[list.length-1],si=nowS();x.fillStyle=css(s0.c);x.beginPath();x.arc(X(si+0.5),Y(s0.d[si]),3.2,0,7);x.fill();
+}
+function setK(root,vals){for(const [k,v] of Object.entries(vals)){root.querySelectorAll(`[data-k="${k}"]`).forEach(el=>{el.textContent=v;});}}
+const f1=x=>(Math.abs(x)<0.05?0:x).toFixed(1),f2=x=>(Math.abs(x)<0.005?0:x).toFixed(2);
+const mw=v=>v>=10?v.toFixed(0)+' MW':v>=1?v.toFixed(1)+' MW':Math.round(v*1000)+' kW';
+const eur=v=>Math.abs(v)>=1e6?'\u20ac'+(v/1e6).toFixed(1)+'m':'\u20ac'+Math.round(v/1000)+'k';
+const lowBands=()=>{const p=dayPrice();const srt=[...p].sort((a,b)=>a-b),lo=srt[28];const b=[];let st=-1;for(let k=0;k<=96;k++){const on=k<96&&p[k]<=lo;if(on&&st<0)st=k;if(!on&&st>=0){b.push([st,k]);st=-1;}}return b;};
+
+/* ---------- the site drawer ---------- */
+const drawer=document.getElementById('drawer'),dwBody=document.getElementById('dwBody'),dwTabs=document.getElementById('dwTabs');
+let CUR=null;
+function closeDrawer(){drawer.hidden=true;CUR=null;selGroup.visible=false;}
+document.getElementById('dwClose').addEventListener('click',closeDrawer);
+function setTabs(list,cur){dwTabs.innerHTML=list.map(([k,l])=>`<button type="button" class="tab" role="tab" data-tab="${k}" aria-selected="${k===cur}">${l}</button>`).join('');}
+function openSite(s,tab='overview',fly2=false){
+  CUR={s,tab};
+  document.getElementById('dwEyebrow').innerHTML=`<span class="sz ${s.size}">${s.size}</span> ${esc(s.A.sec)} \u00b7 ${s.ref}`;
+  document.getElementById('dwTitle').textContent=s.name;
+  document.getElementById('dwSub').textContent=`${s.A.n} \u00b7 ${DISTBY[s.d].name} \u00b7 ${s.size==='S'?'Small':s.size==='M'?'Medium':'Large'} optiFEM twin`;
+  setTabs([['overview','Overview'],['bld','Buildings'],['twin','optiFEM twin'],['trace','Trace']],tab);
+  renderTab();drawer.hidden=false;card.hidden=true;markSel(s);if(fly2){const span=Math.max(s.plot.w,s.plot.d);flyTo(s.cx,s.top*0.4,s.cz,[span*0.45,span*0.5+60,span*0.7+80]);}
+}
+drawer.addEventListener('click',e=>{const t=e.target.closest('[data-tab]');if(t&&CUR){CUR.tab=t.dataset.tab;dwTabs.querySelectorAll('.tab').forEach(x=>x.setAttribute('aria-selected',String(x.dataset.tab===CUR.tab)));renderTab();}
+  const rs=e.target.closest('[data-reset]');if(rs&&CUR){CUR.s.tw={...CUR.s.tw0};SIM[CUR.s.ref]=simulate(CUR.s,CUR.s.tw);renderTab();}});
+document.addEventListener('click',e=>{const r=e.target.closest('[data-open-s]');if(r){closeOps();openSite(SITE[r.dataset.openS],'overview',true);}});
+function renderTab(){
+  if(!CUR)return;const s=CUR.s,t=CUR.tab;
+  dwBody.innerHTML=t==='overview'?tabOverview(s):t==='bld'?tabBld(s):t==='twin'?tabTwin(s):tabTrace(s);dwBody.scrollTop=0;
+  if(t==='twin'){for(const id of ['slN','slHp','slSens'])dwBody.querySelector('#'+id).addEventListener('input',onSlide);}
+  update();
+}
+const dimTxt=b=>`${f1(b.L)} \u00d7 ${f1(b.W)} m`;
+function tabOverview(s){const site=s.area?fN(s.area)+' m\u00b2 ('+(s.area/1e4).toFixed(2)+' ha)':'Not stated';
+  return `<div class="tiles">${tile('q','Heat now')}${tile('el','Electricity now')}${tile('gfa','Floor area')}${tile('cop','HTHP COP')}</div>
+  <section class="sec"><canvas class="chart" id="cv1" role="img" aria-label="Today's heat demand and electricity for this site"></canvas>${legendHTML([['--muted','Heat demand'],['--hp','Heat from HTHP and PCM'],['--pv','Site electricity']])}</section>
+  ${sec('Site',kv([['Reference',`<span class="mono">${s.ref}</span>`],['Activity',esc(s.note)],['Archetype',esc(s.A.n)],['Sector',esc(s.A.sec)],['Site area on file',site],
+    ['Drawn plot',fN(s.plot.w*s.plot.d)+' m\u00b2'+(s.trimmed?' <span class="dim">(landscape margin trimmed)</span>':s.enlarged?' <span class="dim">(enlarged to fit parking)</span>':'')],
+    ['Floor area',fN(s.gfa)+' m\u00b2 in '+s.b.length+' building'+(s.b.length>1?'s':'')],['Footprint',fN(s.fp)+' m\u00b2'],['Tallest',Math.max(...s.b.map(b=>b[3])).toFixed(1)+' m'],
+    ['Operating pattern',s.op+(s.emp?` \u00b7 ${s.emp} staff`:'')],['Fuels',esc((s.fuels||[]).join(', '))],['Main heat source',FUEL[s.fuel].n],['Data confidence',s.conf]]))}
+  <div class="btn-row"><button type="button" class="btn primary" data-tab="twin">Open optiFEM twin</button></div>`;}
+function tabBld(s){
+  const rows=s.b.map(b=>`<tr><td>${esc(b[0]==='wh'?'warehouse':b[0]==='mscp'?'car park building':b[0]==='kilnhouse'?'preheater tower':b[0])}</td><td class="n">${f1(b[1])} \u00d7 ${f1(b[2])}</td><td class="n">${f1(b[3])}</td><td class="n">${b[4]}</td><td class="n">${fN(b[1]*b[2])}</td><td>${s.nFile!=null&&s.b.indexOf(b)>=s.nFile?'<span class="dim">typical</span>':b[5]?'<span class="dim">est.</span>':'stated'}</td></tr><tr><td colspan="6" class="dim" style="border-bottom:1px solid var(--line);padding-top:0">${esc(b[6])}</td></tr>`).join('');
+  const FN={silo:'Silos',tank:'Tanks',clar:'Open circular tanks',stack:'Stacks',ct:'Cooling cells',lagoon:'Lagoon',pond:'Attenuation pond',yard:'Open yard',gantry:'Gantry crane',qcrane:'Crane structures in assembly',pile:'Stockpiles',pit:'Extraction pit',kiln:'Rotary kiln',lpg:'LPG vessels',sub110:'110 kV compound',pv:'Rooftop PV'};
+  const fl=s.f.map(f=>{const [t,a,b,c]=f;const d=t==='silo'||t==='tank'?`${a} \u00d7 ${b} m dia, ${c} m high`:t==='clar'?`${a} \u00d7 ${b} m dia`:t==='stack'?`${a} \u00d7 ${b} m high`:t==='ct'?`${a} cells`:t==='pile'?`${a} piles`:t==='kiln'?`${a} m long, ${b} m dia`:t==='lpg'?`${a}`:t==='pv'?`${Math.round(a*100)}% of the main roof`:(b?`${a} \u00d7 ${b} m`:`${a}`);return `<li>${FN[t]||t}: ${d}</li>`;}).join('');
+  return `${sec('Buildings',`<div class="tblwrap"><table class="tbl"><thead><tr><th>Use</th><th class="n">L \u00d7 W m</th><th class="n">Height m</th><th class="n">Storeys</th><th class="n">Footprint m\u00b2</th><th>Size</th></tr></thead><tbody>${rows}</tbody></table></div><p class="note">\u201cStated\u201d dimensions come from the planning drawings or forms; \u201cest.\u201d were scaled off a drawing. \u201cTypical\u201d rows are the gatehouse, utilities, stores and similar buildings a site of this size and type normally has, added because planning extracts rarely list them.</p>`)}
+  ${sec('Outdoor plant and yard',`<ul class="plain">${fl||'<li>None recorded</li>'}<li>Car parking: about ${fN(s.cars)} spaces${s.carsFile!=null&&s.cars>s.carsFile?` (${s.carsFile} shown in the file, the rest scaled from floor area and typical staffing)`:''}</li><li>Security fence, gatehouse and private service roads round the working area</li></ul>`)}`;}
+function stagePill(T){return T<=150?pill('HTHP today','ok'):T<=200?pill('HTHP emerging','warn'):pill('Not HTHP','no');}
+function tabTwin(s){const A=s.A,tw=s.tw;const hpOK=s.tw0.hp>0;
+  const maxHp=Math.max(0.5,Math.ceil(s.avgMW*A.hp*1.6*10)/10);
+  return `<div class="engines">${['TES','PCM','HTHP','DISPATCH','THERM','FIN','CO2','GRID','SCENARIO','TRACE'].map(e=>`<span>optiFEM-${e}</span>`).join('')}</div>
+  ${sec('Process chain',`<div class="stages">${A.st.map(([n,T])=>`<div class="stage"><span>${esc(n)}</span><span class="t">${T} \u00b0C</span>${T<=0?pill('Cooling','no'):stagePill(T)}</div>`).join('')}</div>
+    <p class="note">${Math.round(A.hp*100)}% of this archetype's heat is at or below 150 \u00b0C, the range today's high-temperature heat pumps reach.</p>`)}
+  ${hpOK?'':`<p class="note"><b>No HTHP case.</b> This site's heat is too hot, too small or not process heat, so the twin keeps the baseline. You can still try sizes below.</p>`}
+  ${sec('Scenario',`<div class="sl"><label for="slN">PCM containers</label><input type="range" id="slN" min="0" max="40" step="1" value="${tw.n}"><output data-k="oN">${tw.n}</output></div>
+    <div class="sl"><label for="slHp">HTHP heat output</label><input type="range" id="slHp" min="0" max="${maxHp}" step="${maxHp>4?0.1:0.05}" value="${tw.hp}"><output data-k="oHp">${mw(tw.hp)}</output></div>
+    <div class="sl"><label for="slSens">Price sensitivity</label><input type="range" id="slSens" min="0.5" max="2" step="0.1" value="${tw.sens}"><output data-k="oS">${tw.sens.toFixed(1)}\u00d7</output></div>
+    <div class="btn-row"><button type="button" class="btn" data-reset="1">Reset to twin sizing</button></div>`)}
+  <div class="tiles wide">${tile('tcop','COP')}${tile('tshare','Heat by HTHP')}${tile('tshift','Shifted / day')}${tile('tco2','CO\u2082 saved / yr')}${tile('tsave','Saving / yr')}${tile('tpay','Payback')}</div>
+  <section class="sec"><h4>Today, dispatched by optiFEM-DISPATCH</h4><canvas class="chart tall" id="cv2" role="img" aria-label="Heat demand met by the heat pump, the PCM store and the backup boiler today"></canvas>${legendHTML([['--muted','Heat demand'],['--hp','HTHP'],['--edge','PCM discharge'],['--ink','Backup boiler',1]])}<p class="note">Green bands mark the cheapest third of today's prices, when the store charges.</p></section>
+  <section class="sec"><h4>PCM state of charge</h4><canvas class="chart" id="cv3" role="img" aria-label="Energy stored in the PCM containers through today"></canvas>${legendHTML([['--edge','Stored heat (MWh)']])}</section>
+  ${sec('Grid',kv([['Peak electric draw','<span data-k="tpel">\u2013</span> <span class="dim">(HTHP and PCM charging)</span>'],['Zone substation','110 kV / MV, beside Pearse Road'],['CAPEX','<span data-k="tcap">\u2013</span>']]))}`;}
+function tabTrace(s){const o=SIM[s.ref],A=s.A,F=FUEL[s.fuel];
+  const Tsink=s.Tel+5,Tsrc=(A.waste?40:MT[ENV.month-1])-5;
+  return `${sec('How this twin was built',`<p class="note" style="margin-top:0">A screening estimate at archetype level. The heat and electricity baselines are archetype intensities times this site's floor area${s.ov.thGWh!=null||s.ov.boilerMW?', overridden here by plant ratings in the source':''}. Nothing below is measured; replace it with metered data before use.</p>`)}
+  ${sec('Baseline',`<div class="eq">Q_heat = ${A.th} kWh/m\u00b2\u00b7yr \u00d7 ${fN(s.gfa)} m\u00b2 = ${s.thGWh.toFixed(2)} GWh/yr</div>${s.ov.boilerMW?`<div class="eq">Q_heat = ${s.ov.boilerMW} MW \u00d7 ${s.ov.hours||OPS[s.op].h} h \u00d7 0.55 load = ${s.thGWh.toFixed(2)} GWh/yr</div>`:''}
+    <div class="eq">E_elec = ${A.el} kWh/m\u00b2\u00b7yr \u00d7 ${fN(s.gfa)} m\u00b2 = ${s.elGWh.toFixed(2)} GWh/yr</div><div class="eq">Q\u0304 = ${s.thGWh.toFixed(2)} GWh \u00f7 ${fN(s.hours)} h = ${mw(s.avgMW)} average while running</div>`)}
+  ${sec('Twin sizing',`<div class="eq">HTHP = 0.5 \u00d7 Q\u0304 \u00d7 share \u2264150 \u00b0C = 0.5 \u00d7 ${f2(s.avgMW)} \u00d7 ${A.hp} = ${mw(s.tw0.hp)}</div><div class="eq">PCM = round(3 h \u00d7 Q\u0304 \u00d7 share \u00f7 5 MWh) = ${s.tw0.n} containers (${s.tw0.n*5} MWh)</div>`)}
+  ${sec('Physics',`<p class="note" style="margin:0 0 4px">The heat pump delivers the hottest stage it can serve (${s.Tel} \u00b0C) from ${A.waste?'process waste heat at about 40 \u00b0C':'outdoor air'}.</p><div class="eq">COP = \u03b7 \u00b7 T_hot / (T_hot \u2212 T_cold) = 0.45 \u00d7 ${(Tsink+273.15).toFixed(0)} / (${(Tsink+273.15).toFixed(0)} \u2212 ${(Tsrc+273.15).toFixed(0)}) = ${o.cop.toFixed(2)}</div>
+    <div class="eq">E_PCM(t+1) = E_PCM(t) + 0.97\u00b7Q_charge(t) \u2212 Q_discharge(t), 0 \u2264 E \u2264 ${s.tw.n*5} MWh</div><div class="eq">Q_d(t) = Q_HP(t) + Q_PCM(t) + Q_backup(t)</div>
+    <div class="eq">Charge when price \u2264 P30 of today (spare HTHP first, then a ${PRICE.pcmMW} MW electric element per container when power is cheaper than the boiler), discharge when price \u2265 P70</div>`)}
+  ${sec('Money and carbon',`<div class="eq">Payback = CAPEX \u00f7 annual saving = ${eur(o.capex)} \u00f7 ${eur(o.save)} = ${isFinite(o.payback)?o.payback.toFixed(1)+' yr':'none'}</div><div class="eq">CO\u2082 = \u03a3 fuel \u00d7 EF_fuel + \u03a3 P_elec \u00d7 EF_grid(t)</div>
+    <table class="tbl"><tbody><tr><td>Backup fuel</td><td>${F.n}</td><td class="n">\u20ac${F.p}/MWh \u00b7 ${F.ef} t/MWh \u00b7 \u03b7 ${F.eta}</td></tr><tr><td>Grid factor</td><td>by hour</td><td class="n">0.09\u20130.30 t/MWh</td></tr>
+    <tr><td>HTHP cost</td><td>installed</td><td class="n">\u20ac800k per MW heat</td></tr><tr><td>PCM container</td><td>5 MWh, 1 MW</td><td class="n">\u20ac200k each</td></tr><tr><td>Operating days</td><td>${s.op}</td><td class="n">${OPS[s.op].days}</td></tr></tbody></table>
+    <p class="note">The year is today's day repeated over the operating days, so the month and weather you pick change the annual figures.</p>`)}
+  ${sec('Evidence',kv([['Source class',s.ref.startsWith('FD-01')||s.ref==='LS-03'||s.ref==='LS-09'||s.ref==='EN-10'||s.ref==='UT-01'?'Published project description':'Planning application file'],['Dimensions',`${s.b.filter(b=>!b[5]).length} stated, ${s.b.filter(b=>b[5]).length} estimated`],['Confidence',s.conf],['Name','Invented; the real operator is not shown'],s.sizeNote?['Size class',s.sizeNote]:null]))}`;}
+function onSlide(e){const s=CUR.s;const v=parseFloat(e.target.value);if(e.target.id==='slN')s.tw.n=v;if(e.target.id==='slHp')s.tw.hp=v;if(e.target.id==='slSens')s.tw.sens=v;
+  SIM[s.ref]=simulate(s,s.tw);setK(dwBody,{oN:String(s.tw.n),oHp:mw(s.tw.hp),oS:s.tw.sens.toFixed(1)+'\u00d7'});update();}
+function update(){
+  if(!CUR||drawer.hidden)return;const s=CUR.s,o=SIM[s.ref],k=nowS();
+  if(CUR.tab==='overview'){setK(dwBody,{q:mw(o.q[k]),el:mw(o.el[k]),gfa:fN(s.gfa)+' m\u00b2',cop:s.tw.hp>0?o.cop.toFixed(2):'\u2013'});
+    drawChart(dwBody.querySelector('#cv1'),[{d:o.q,c:'--muted',w:1.4},{d:o.el,c:'--pv',w:1.4},{d:o.hp.map((v,i)=>v+o.dis[i]),c:'--hp',w:2,fill:true}]);}
+  if(CUR.tab==='twin'){setK(dwBody,{tcop:o.cop.toFixed(2),tshare:Math.round(o.hpShare*100)+'%',tshift:f1(o.shift)+' MWh',tco2:fN(Math.max(0,o.co2Save))+' t',tsave:eur(o.save),tpay:isFinite(o.payback)&&o.payback<99?o.payback.toFixed(1)+' yr':'\u2013',tpel:mw(o.pelMax),tcap:eur(o.capex)});
+    drawChart(dwBody.querySelector('#cv2'),[{d:o.q,c:'--muted',w:1.3},{d:o.bk,c:'--ink',w:1.2,dash:true},{d:o.dis,c:'--edge',w:1.7},{d:o.hp,c:'--hp',w:2,fill:true}],{bands:lowBands()});
+    drawChart(dwBody.querySelector('#cv3'),[{d:o.soc,c:'--edge',w:2,fill:true}],{unit:'MWh',minSpan:1});}
+}
+
+/* ---------- the zone register ---------- */
+const ops=document.getElementById('ops');let SORT={k:'th',dir:-1};
+function closeOps(){ops.hidden=true;}
+function regRows(){const cols={ref:s=>s.ref,name:s=>s.name,size:s=>'SML'.indexOf(s.size),gfa:s=>s.gfa,th:s=>s.thGWh,el:s=>s.elGWh,hp:s=>s.tw.hp,n:s=>s.tw.n,co2:s=>SIM[s.ref].co2Save,pay:s=>{const p=SIM[s.ref].payback;return isFinite(p)?p:999;}};
+  const f=cols[SORT.k];return SITES.slice().sort((a,b)=>{const x=f(a),y=f(b);return (x<y?-1:x>y?1:0)*SORT.dir;});}
+function openReg(){ensureSims();const sumCo2=SITES.reduce((a,s)=>a+Math.max(0,SIM[s.ref].co2Save),0),sumSave=SITES.reduce((a,s)=>a+Math.max(0,SIM[s.ref].save),0);
+  const th=(k,l,n)=>`<th class="sort${n?' n':''}" data-sort="${k}"${SORT.k===k?` aria-sort="${SORT.dir>0?'ascending':'descending'}"`:''}>${l}${SORT.k===k?(SORT.dir>0?' \u2191':' \u2193'):''}</th>`;
+  ops.innerHTML=`<button class="close" type="button" aria-label="Close" data-close-ops="1">\u00d7</button><div class="dw-eyebrow">optiFEM \u00b7 INNOV8HEAT</div><h2 class="ops-h">Zone register</h2>
+  <p class="dw-sub">Every site's twin under ${MONTHS[ENV.month-1]} ${WX[ENV.wx].label.toLowerCase()} prices. Click a row to open the site; click a heading to sort.</p>
+  <div class="reg-sum" style="margin-top:12px"><div class="tile"><b>${SITES.length}</b><span>Sites</span></div><div class="tile"><b>${fN(tot.th)}</b><span>Heat GWh/yr</span></div><div class="tile"><b>${fN(tot.el)}</b><span>Electricity GWh/yr</span></div>
+  <div class="tile"><b>${tot.hp.toFixed(1)} MW</b><span>HTHP sized</span></div><div class="tile"><b>${fN(sumCo2)} t</b><span>CO\u2082 saved / yr</span></div><div class="tile"><b>${eur(sumSave)}</b><span>Saving / yr</span></div></div>
+  <div class="ops-one"><div class="tblwrap"><table class="tbl"><thead><tr>${th('ref','Ref')}${th('name','Site')}${th('size','Twin')}${th('gfa','Floor m\u00b2',1)}${th('th','Heat GWh',1)}${th('el','Elec GWh',1)}${th('hp','HTHP',1)}${th('n','PCM',1)}${th('co2','CO\u2082 t/yr',1)}${th('pay','Payback',1)}</tr></thead><tbody>
+  ${regRows().map(s=>{const o=SIM[s.ref];return `<tr class="click" data-open-s="${s.ref}"><td class="mono">${s.ref}</td><td>${esc(s.name)}<br><span class="dim">${esc(s.A.n)}</span></td><td><span class="sz ${s.size}">${s.size}</span></td><td class="n">${fN(s.gfa)}</td><td class="n">${s.thGWh.toFixed(1)}</td><td class="n">${s.elGWh.toFixed(1)}</td><td class="n">${s.tw.hp?mw(s.tw.hp):'\u2013'}</td><td class="n">${s.tw.n||'\u2013'}</td><td class="n">${fN(Math.max(0,o.co2Save))}</td><td class="n">${isFinite(o.payback)&&o.payback<99?o.payback.toFixed(1)+' yr':'\u2013'}</td></tr>`;}).join('')}
+  </tbody></table></div><p class="note">Screening estimates from archetype intensities and floor areas, sized with the optiFEM rules shown in each site's Trace tab. Not validated against metered data.</p></div>`;
+  ops.hidden=false;}
+ops.addEventListener('click',e=>{const h=e.target.closest('[data-sort]');if(h){const k=h.dataset.sort;SORT=SORT.k===k?{k,dir:-SORT.dir}:{k,dir:k==='name'||k==='ref'?1:-1};openReg();}
+  if(e.target.closest('[data-close-ops]'))closeOps();});
+document.getElementById('openReg').addEventListener('click',openReg);
+document.addEventListener('keydown',e=>{if(e.key!=='Escape')return;if(!ops.hidden)closeOps();else if(!drawer.hidden)closeDrawer();});
+const liveEl=document.getElementById('izLive');
+function updatePanel(){ensureSims();const k=nowS();let q=0,pel=0,soc=0;for(const s of SITES){const o=SIM[s.ref];q+=o.q[k];pel+=o.pel[k];soc+=o.soc[k];}
+  setK(liveEl,{lheat:mw(q),lhp:mw(pel),lpcm:fN(soc)+' MWh'});}
+setInterval(()=>{ensureSims();update();updatePanel();},600);updatePanel();
+window.__iz={view:(t,o)=>{fly=null;controls.target.set(...t);camera.position.set(t[0]+o[0],t[1]+o[1],t[2]+o[2]);controls.update();},SITES,PLOTS,BLD,SIM,DIST,packFails:()=>FAILS,openSite,openReg};
+
+/* ---------- loop ---------- */
+function resize(){const w=window.innerWidth,h=window.innerHeight;renderer.setSize(w,h,false);camera.aspect=w/h;
+  if(w>=760)camera.setViewOffset(w,h,-Math.min(170,w*0.12),0,w,h);else camera.clearViewOffset();camera.updateProjectionMatrix();}
+window.addEventListener('resize',resize);resize();
+const ov=ZONES[0].view;controls.target.set(...ov.t);camera.position.set(ov.t[0]+ov.o[0],ov.t[1]+ov.o[1],ov.t[2]+ov.o[2]);
+if(isSmall){camera.position.set(ov.t[0]+ov.o[0]*1.4,ov.t[1]+ov.o[1]*1.4,ov.t[2]+ov.o[2]*1.4);}
+timeEl.value=ENV.t;monthEl.value=ENV.month;setWeather(ENV.wx,true);setPressed('overview');updateLegend();
+if(location.hash.length>1){const h=location.hash.slice(1);if(SITE[h])openSite(SITE[h],'twin',true);else if(DISTBY[h])select(h);}
+const needle=document.getElementById('needle');
+const clock=new THREE.Clock();const v3=new THREE.Vector3();
+let flashT=0,nextFlash=3;
+function frame(){
+  const dt=Math.min(clock.getDelta(),0.1),T=clock.elapsedTime;const Wx=WX[ENV.wx];
+  if(fly){const k=Math.min(1,(performance.now()-fly.t0)/fly.dur);const e=k<0.5?4*k*k*k:1-Math.pow(-2*k+2,3)/2;controls.target.lerpVectors(fly.fromT,fly.toT,e);camera.position.lerpVectors(fly.fromP,fly.toP,e);if(k>=1)fly=null;}
+  if(playing){ENV.t=(ENV.t+dt*0.8)%24;timeEl.value=ENV.t;applyEnv();}
+  controls.update();
+  if(Wx.lightning&&!reduceMotion){nextFlash-=dt;if(nextFlash<=0){flashT=0.18;nextFlash=rand(2,7);}}
+  if(flashT>0){flashT-=dt;ENV.lightning=flashT>0.1||flashT<0.05?0.9:0.2;applyEnv();if(flashT<=0){ENV.lightning=0;applyEnv();}}
+  const sea=1+ENV.wind/8;for(const b of boats){b.grp.position.y=Math.sin(T*1.2*Math.min(2,sea)+b.ph)*b.amp*sea;}
+  M.red.color.set((nightF>0.4||Wx.fog>0.5)&&Math.floor(T*1.2)%2===0?'#ff2a1a':'#401010');
+  turbineSpin+=(turbineSpeed(ENV.wind)-turbineSpin)*Math.min(1,dt*0.6);if(!reduceMotion)for(const r of turbines)r.rotation.z+=dt*turbineSpin;
+  arrowGroup.userData.mesh.position.y=H(-1585,-18)+26+(reduceMotion?0:Math.sin(T*1.6)*1.5);
+  // steam plumes: rise, spread, drift downwind; heavier when it is cold
+  {const cold=clamp((14-MT[ENV.month-1])/8,0.25,1)*(ENV.wx==='rain'||ENV.wx==='fog'?1.2:1);let i=0;const k=nowS();
+    for(const p of steamSrc){for(let j=0;j<PUFFS;j++){const ph=((T*0.07+j/PUFFS+p.x*0.001)%1);const sz=(2.5+ph*11)*p.s*cold;const jx=Math.sin(j*12.9+p.z)*ph*6,jz=Math.cos(j*7.3+p.x)*ph*6;
+      dummy.position.set(p.x+ph*ENV.wind*3.5+jx,p.y+ph*34*p.s,p.z-ph*ENV.wind*2.5+jz);dummy.rotation.set(0,j,0);dummy.scale.setScalar(Math.max(0.01,sz*(1-ph*0.4)));dummy.updateMatrix();steam.setMatrixAt(i++,dummy.matrix);}}
+    steam.count=i;steam.instanceMatrix.needsUpdate=true;steam.material.opacity=0.42*(1-nightF*0.6);}
+  const active=Math.round(movers.length*trafficLevel());mvBody.count=active;mvCab.count=active;mvLorry.count=active;
+  const slow=ENV.wx==='snow'?0.45:ENV.wx==='storm'||ENV.wx==='fog'?0.7:1;
+  for(let i=0;i<active;i++){const m=movers[i];if(!reduceMotion){m.u+=m.v*dt*m.dir*slow;if(m.u>1)m.u-=1;if(m.u<0)m.u+=1;}
+    const c=roads[m.r].curve;c.getPointAt(m.u,tmpP);c.getTangentAt(m.u,tmpT);const tx=tmpT.x*m.dir,tz=tmpT.z*m.dir;const x=tmpP.x+tz*2.2,z=tmpP.z-tx*2.2;
+    dummy.position.set(x,Math.max(H(x,z),3.3)+0.35,z);dummy.rotation.set(0,Math.atan2(tx,tz),0);dummy.scale.set(1,1,1);dummy.updateMatrix();
+    if(m.truck){mvLorry.setMatrixAt(i,dummy.matrix);dummy.scale.set(1.3,1.3,1.3);dummy.updateMatrix();mvBody.setMatrixAt(i,dummy.matrix);dummy.scale.set(0.001,0.001,0.001);dummy.updateMatrix();mvCab.setMatrixAt(i,dummy.matrix);}
+    else{mvBody.setMatrixAt(i,dummy.matrix);mvCab.setMatrixAt(i,dummy.matrix);dummy.scale.set(0.001,0.001,0.001);dummy.updateMatrix();mvLorry.setMatrixAt(i,dummy.matrix);}}
+  mvBody.instanceMatrix.needsUpdate=true;mvCab.instanceMatrix.needsUpdate=true;mvLorry.instanceMatrix.needsUpdate=true;
+  const drift=ENV.wind*dt*3;const shown=Math.round(CLOUDS*Math.min(1,Wx.cloud*1.1));let ci=0;
+  for(let i=0;i<cloudData.length;i++){const p=cloudData[i];if(p.c>=shown)continue;p.cx+=drift*0.7;p.cz-=drift*0.7;if(p.cx>3200)p.cx-=6400;if(p.cz<-3400)p.cz+=5400;
+    const dark=ENV.wx==='storm'?0.65:1;dummy.position.set(p.cx+p.ox,p.cy+p.oy-(Wx.cloud>0.85?140:0),p.cz+p.oz);dummy.rotation.set(0,0,0);dummy.scale.set(p.s,p.s*0.55*dark,p.s);dummy.updateMatrix();cloudMesh.setMatrixAt(ci++,dummy.matrix);}
+  cloudMesh.count=ci;cloudMesh.instanceMatrix.needsUpdate=true;
+  const ctr=v3.copy(camera.position).lerp(controls.target,0.3);
+  if(rain.visible){const n=Math.round(RAIN_N*Wx.rain),fall=(T*(ENV.wx==='storm'?0.9:0.6))%1,wx=ENV.wind*0.04;
+    for(let i=0;i<RAIN_N;i++){const o=i*6;if(i>=n){rainPos[o+1]=rainPos[o+4]=-1e4;continue;}const fy=((rainSeed[i*3+1]-fall*3)%1+1)%1;const x=ctr.x+(rainSeed[i*3]-0.5)*700,z=ctr.z+(rainSeed[i*3+2]-0.5)*700,y=ctr.y-260+fy*520;
+      rainPos[o]=x;rainPos[o+1]=y;rainPos[o+2]=z;rainPos[o+3]=x+wx*6;rainPos[o+4]=y+7;rainPos[o+5]=z-wx*6;}rainGeo.attributes.position.needsUpdate=true;}
+  if(snow.visible){const fall=(T*0.05)%1;for(let i=0;i<SNOW_N;i++){const fy=((rainSeed[i*3+1]-fall)%1+1)%1;snowPos[i*3]=ctr.x+(rainSeed[i*3]-0.5)*600+Math.sin(T+i)*3;snowPos[i*3+1]=ctr.y-220+fy*440;snowPos[i*3+2]=ctr.z+(rainSeed[i*3+2]-0.5)*600+Math.cos(T*0.7+i)*3;}snowGeo.attributes.position.needsUpdate=true;}
+  sun.target.position.copy(controls.target);sun.position.copy(controls.target).addScaledVector(sunDir,2200);sun.target.updateMatrixWorld();
+  const dist=camera.position.distanceTo(controls.target);const ext=Math.min(1500,Math.max(260,dist*0.75));
+  if(Math.abs(sc.right-ext)>20){sc.left=-ext;sc.right=ext;sc.top=ext;sc.bottom=-ext;sc.updateProjectionMatrix();}
+  if(selGroup.visible){selPin.position.y=selPin.userData.base+Math.sin(T*2.4)*1.2;selPin.rotation.y+=dt*1.5;}
+  const w=window.innerWidth,h=window.innerHeight;
+  const proj=(el,p,dy,lim=1.08)=>{v3.copy(p).project(camera);const vis=v3.z<1&&Math.abs(v3.x)<lim&&Math.abs(v3.y)<lim;if(!vis){el.style.display='none';return;}el.style.display='';el.style.transform=`translate(${(v3.x*0.5+0.5)*w}px,${(-v3.y*0.5+0.5)*h}px) translate(-50%,${dy})`;};
+  if(!labelsEl.hidden){
+    for(const t of tags)proj(t.el,t.p,'-100%) translateY(-12px');
+    for(const t of roadTags){if(dist>1500){t.el.style.display='none';continue;}proj(t.el,t.p,'-50%',1);}
+    for(const t of stags){if(!showSites||dist>760||camera.position.distanceTo(t.p)>900){t.el.style.display='none';continue;}proj(t.el,t.p,'-100%) translateY(-6px',1.02);}
+    proj(goTag,goP,'-100%',1.02);
+  }
+  const fx=controls.target.x-camera.position.x,fz=controls.target.z-camera.position.z;needle.style.transform=`rotate(${-Math.atan2(fx,-fz)}rad)`;
+  renderer.render(scene,camera);requestAnimationFrame(frame);
+}
+document.getElementById('loading').remove();
+requestAnimationFrame(frame);
+
+</script>
+
+</body></html>

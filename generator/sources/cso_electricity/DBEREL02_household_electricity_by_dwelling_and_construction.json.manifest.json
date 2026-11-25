@@ -1,0 +1,19 @@
+{
+  "bytes": 4547,
+  "encoding": "utf-8",
+  "http_status": 200,
+  "intended_use": "calibration",
+  "key": "cso.electricity.dbere102_by_dwelling_construction",
+  "licence": "CC-BY 4.0 (CSO Open Data; https://www.cso.ie/en/aboutus/termsandconditions/)",
+  "model_development_exposure": "none",
+  "note": "Raw input, read-only after download. Excluded from git; this manifest is committed in its place.",
+  "publisher": "Central Statistics Office (Ireland), from matched BER and ESB Networks meter data",
+  "relpath": "cso_electricity/DBEREL02_household_electricity_by_dwelling_and_construction.json",
+  "retrieved_at": "2026-10-08",
+  "retrieved_at_utc": "2026-10-08T22:48:04Z",
+  "sha256": "9b03f68ba15b9d1488bef44fb8d6e974a638669d55c14321b3d149e16d294967",
+  "substitute_flag": null,
+  "title": "Household Electricity Consumption by type of dwelling, period of construction and year (DBEREL02)",
+  "url": "https://ws.cso.ie/public/api.restful/PxStat.Data.Cube_API.ReadDataset/DBEREL02/JSON-stat/2.0/en",
+  "used_for": "The held-out half of the device-layer check. DBEREL01 (dwelling x BER) is what the trigger rates were tuned against, so it cannot also measure whether they generalise. DBEREL02 crosses dwelling type with PERIOD OF CONSTRUCTION instead, a dimension the tuning never saw, and D02 already carries year_built_band, so it scores the same homes on an axis that was not fitted. Exposure stays 'none' and must stay 'none'."
+}

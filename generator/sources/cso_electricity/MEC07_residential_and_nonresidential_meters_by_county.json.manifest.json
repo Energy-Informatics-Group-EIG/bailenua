@@ -1,0 +1,19 @@
+{
+  "bytes": 10849,
+  "encoding": "utf-8",
+  "http_status": 200,
+  "intended_use": "calibration",
+  "key": "cso.electricity.mec07_meters_by_county",
+  "licence": "CC-BY 4.0 (CSO Open Data; https://www.cso.ie/en/aboutus/termsandconditions/)",
+  "model_development_exposure": "none",
+  "note": "Raw input, read-only after download. Excluded from git; this manifest is committed in its place.",
+  "publisher": "Central Statistics Office (Ireland), from ESB Networks",
+  "relpath": "cso_electricity/MEC07_residential_and_nonresidential_meters_by_county.json",
+  "retrieved_at": "2026-10-08",
+  "retrieved_at_utc": "2026-10-08T22:49:18Z",
+  "sha256": "416f7db8540bfd826210f9a23c47477d7aca48784042b8eb12e6d4c1bd62c88a",
+  "substitute_flag": null,
+  "title": "Residential and Non-Residential Electricity Meters by county and year (MEC07)",
+  "url": "https://ws.cso.ie/public/api.restful/PxStat.Data.Cube_API.ReadDataset/MEC07/JSON-stat/2.0/en",
+  "used_for": "The denominator that makes MEC03 usable, and the geographically matched aggregate target: MEC03's Co. Cork residential GWh divided by MEC07's Co. Cork residential meter count is mean annual kWh per residential meter in Cobh's own county for 2022. Design 6.4 keys the observable layer to the PREMISES (meter point), so a per-meter figure is the one that compares to what the model emits - a per-household figure would not, because a vacant dwelling still has a meter."
+}

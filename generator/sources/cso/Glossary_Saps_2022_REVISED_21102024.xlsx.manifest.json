@@ -1,0 +1,19 @@
+{
+  "bytes": 35052,
+  "encoding": "utf-8",
+  "http_status": 200,
+  "intended_use": "reference",
+  "key": "cso.saps2022.glossary",
+  "licence": "CC-BY 4.0 (CSO Open Data; https://www.cso.ie/en/aboutus/termsandconditions/)",
+  "model_development_exposure": "none",
+  "note": "Raw input, read-only after download. Excluded from git; this manifest is committed in its place.",
+  "publisher": "Central Statistics Office (Ireland)",
+  "relpath": "cso/Glossary_Saps_2022_REVISED_21102024.xlsx",
+  "retrieved_at": "2026-10-08",
+  "retrieved_at_utc": "2026-10-08T19:42:48Z",
+  "sha256": "014a3c74a538bfc41fd4f522d3dd6b355c01e5b192fdb76d40f52086cc042b5d",
+  "substitute_flag": null,
+  "title": "Census 2022 SAPS glossary (column name to field description)",
+  "url": "https://www.cso.ie/en/media/csoie/census/census2022/Glossary_Saps_2022_REVISED_21102024.xlsx",
+  "used_for": "Decoding the 795 SAPS columns into the 48 themed tables. Required so that no marginal is assembled from a column guessed by its name."
+}

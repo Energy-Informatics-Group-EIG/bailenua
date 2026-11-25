@@ -1,0 +1,19 @@
+{
+  "bytes": 11035,
+  "encoding": "utf-8",
+  "http_status": 200,
+  "intended_use": "calibration",
+  "key": "cso.vitalstats.vsa49_marriage_rates_by_age",
+  "licence": "CC-BY 4.0 (CSO Open Data; https://www.cso.ie/en/aboutus/termsandconditions/)",
+  "model_development_exposure": "none",
+  "note": "Raw input, read-only after download. Excluded from git; this manifest is committed in its place.",
+  "publisher": "Central Statistics Office (Ireland)",
+  "relpath": "cso_vitalstats/VSA49_marriage_rates_by_single_year_of_age.json",
+  "retrieved_at": "2026-10-09",
+  "retrieved_at_utc": "2026-10-09T10:51:46Z",
+  "sha256": "d2492e7609590e6b4dad397f0bc2aba43e559610cf51082db30d9198083b8223",
+  "substitute_flag": null,
+  "title": "VSA49: marriage rates per 1,000 males and per 1,000 females by single year of age",
+  "url": "https://ws.cso.ie/public/api.restful/PxStat.Data.Cube_API.ReadDataset/VSA49/JSON-stat/2.0/en",
+  "used_for": "WP5 / week 2 step 5: the union-formation transition rate in the ten-year life course, which design 5.3 leaves as a declared assumption. U30."
+}

@@ -1,0 +1,135 @@
+# Public-figure exclusion list (R27, risk K12, design 5.2 step 6).
+#
+# "Reject any full-name combination that matches a public-figure list."
+#
+# PURPOSE AND SCOPE
+# This list exists so that no synthetic resident of Baile Nua shares a full name
+# with a widely recognisable public figure. It is a NAME-COLLISION filter, not a
+# claim about anybody: the only thing a synthetic person could share with a real
+# one here is a string.
+#
+# WHAT IS IN IT
+# Names of serving and recent holders of prominent Irish public office, and
+# figures whose names are strong enough that the coincidence would be noticed in
+# a dataset about an Irish town. Entries are matched case- and accent-insensitively
+# (see names.normalise_name), so "Sile Ni Bhriain" and "Síle Ní Bhriain" are the
+# same entry.
+#
+# WHAT IS DELIBERATELY NOT IN IT
+# Private individuals. Adding a private person's name here would be the opposite
+# of protective: the list is committed to the repository, so it must contain only
+# names that are already public.
+#
+# COVERAGE IS PARTIAL AND IS REPORTED AS SUCH (ISSUES.md I-015)
+# No authoritative machine-readable public-figure register for Ireland was found.
+# The real protection against resembling a real Cobh resident is therefore NOT
+# this list but the three structural measures:
+#   * no address in Baile Nua corresponds to a real address;
+#   * surnames are drawn uniformly rather than at real frequencies, so the name
+#     distribution does not match the real town's (see I-014);
+#   * every record carries synthetic = true (D05.synthetic).
+# The generator counts and reports how many candidates this list rejected, so its
+# contribution is measured rather than assumed.
+#
+# --- Heads of state and government, and party leaders -----------------------
+Michael D Higgins
+Michael D. Higgins
+Mary Robinson
+Mary McAleese
+Catherine Connolly
+Micheal Martin
+Micheál Martin
+Simon Harris
+Leo Varadkar
+Mary Lou McDonald
+Enda Kenny
+Bertie Ahern
+Brian Cowen
+Pascal Donohoe
+Paschal Donohoe
+Jack Chambers
+Helen McEntee
+Darragh O'Brien
+Eamon Ryan
+Roderic O'Gorman
+Holly Cairns
+Ivana Bacik
+Mary Harney
+John Bruton
+Albert Reynolds
+Charles Haughey
+Garret FitzGerald
+Jack Lynch
+Liam Cosgrave
+Eamon de Valera
+Sean Lemass
+Seán Lemass
+# --- Cork and Cobh public representatives (office holders, publicly listed) -
+Simon Coveney
+Micheal McGrath
+Michael McGrath
+Padraig O'Sullivan
+Colm Burke
+Sean Sherlock
+Seán Sherlock
+Michael Collins
+Christopher O'Sullivan
+James O'Connor
+# --- Figures whose names are strongly recognisable in an Irish dataset ------
+Roy Keane
+Sonia O'Sullivan
+Katie Taylor
+Rory McIlroy
+Paul O'Connell
+Brian O'Driscoll
+Johnny Sexton
+Robbie Keane
+Jack Charlton
+Seamus Heaney
+Maeve Binchy
+Roddy Doyle
+Colm Toibin
+Colm Tóibín
+Sally Rooney
+Anne Enright
+John Banville
+Edna O'Brien
+Samuel Beckett
+James Joyce
+William Butler Yeats
+Oscar Wilde
+Bram Stoker
+Bob Geldof
+Sinead O'Connor
+Sinéad O'Connor
+Hozier
+Enya
+Van Morrison
+Phil Lynott
+Christy Moore
+Liam Neeson
+Colin Farrell
+Cillian Murphy
+Saoirse Ronan
+Barry Keoghan
+Paul Mescal
+Brendan Gleeson
+Domhnall Gleeson
+Maureen O'Hara
+Graham Norton
+Ryan Tubridy
+Miriam O'Callaghan
+Joe Duffy
+Pat Kenny
+Mary Kennedy
+Marty Whelan
+Michael O'Leary
+Denis O'Brien
+Tony O'Reilly
+Dermot Desmond
+JP McManus
+Padraig Harrington
+Shane Lowry
+Kellie Harrington
+Rhasidat Adeleke
+Mack Hansen

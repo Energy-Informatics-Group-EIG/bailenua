@@ -1,0 +1,14 @@
+[Unit]
+Description=Baile Nua v1: watch tick, watchdog, per-year verify/upload, end-of-run auto-stop guard
+
+[Service]
+Type=oneshot
+User=ubuntu
+Group=ubuntu
+Nice=10
+ExecStart=/home/ubuntu/hrsd_occupants/ops/watch_tick.sh
+ExecStart=/home/ubuntu/hrsd_occupants/ops/watchdog.sh
+ExecStart=/home/ubuntu/hrsd_occupants/ops/post_year.sh
+ExecStart=/home/ubuntu/hrsd_occupants/ops/end_guard.sh tick
+StandardOutput=append:/home/ubuntu/hrsd_occupants/ops/logs/ops.out
+StandardError=append:/home/ubuntu/hrsd_occupants/ops/logs/ops.err

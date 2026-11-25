@@ -1,0 +1,11 @@
+[Unit]
+Description=Baile Nua v1 morning report (status/MORNING.md)
+
+[Service]
+Type=oneshot
+User=ubuntu
+Group=ubuntu
+ExecStart=/home/ubuntu/hrsd_occupants/ops/morning.sh
+ExecStart=/home/ubuntu/hrsd_occupants/ops/morning_email.sh
+StandardOutput=append:/home/ubuntu/hrsd_occupants/ops/logs/morning.out
+StandardError=append:/home/ubuntu/hrsd_occupants/ops/logs/morning.err

@@ -1,0 +1,1483 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style>
+<title>RD-Fusion Twin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,500;7..72,700&family=Atkinson+Hyperlegible:wght@400;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+</head><body>
+<style>
+/* Layout: a full-bleed harbour scene; quiet chart-room panels float over it (brand top-left, explore panel left, place card bottom-right, counts bottom-left). */
+:root {
+  --bg: #cddfe6;
+  --ink: #15242c;
+  --muted: #56666e;
+  --panel: rgba(248, 247, 242, 0.88);
+  --panel-solid: #f8f7f2;
+  --line: rgba(21, 36, 44, 0.13);
+  --accent: #1d6a86;      /* harbour water */
+  --accent-ink: #ffffff;
+  --buoy: #d9752b;        /* channel buoy orange: the grid overlay */
+  --pv: #2f6fd1;
+  --hp: #e0662a;
+  --ev: #1f9d6b;
+  --para: #0f8a80;       /* PARA//EL, in every building */
+  --edge: #6a4bc4;       /* EdgeWare, one per co-op */
+  --flexus: #a8700a;     /* FLEXUS Ltd */
+  --ok: #1f8a4c;
+  --term-bg: #0d1a1f;
+  --term-fg: #cfe9e4;
+  --term-dim: #7f9c98;
+  --term-ps: #5fe0d3;
+  --f-display: "Literata", Georgia, "Times New Roman", serif;
+  --f-body: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --shadow: 0 6px 24px rgba(16, 32, 40, 0.14);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0c171c;
+    --ink: #e6eef0;
+    --muted: #9fb1b8;
+    --panel: rgba(14, 24, 30, 0.84);
+    --panel-solid: #0e181e;
+    --line: rgba(230, 238, 240, 0.14);
+    --accent: #6cb6d1;
+    --accent-ink: #0c171c;
+    --buoy: #f0a05a;
+    --pv: #79a8f2;
+    --hp: #f39463;
+    --ev: #5fd0a2;
+    --para: #4fd1c5;
+    --edge: #b39af5;
+    --flexus: #f2c14e;
+    --ok: #5fd08a;
+    --term-bg: #071114;
+    --shadow: 0 6px 24px rgba(0, 0, 0, 0.4);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0c171c;
+  --ink: #e6eef0;
+  --muted: #9fb1b8;
+  --panel: rgba(14, 24, 30, 0.84);
+  --panel-solid: #0e181e;
+  --line: rgba(230, 238, 240, 0.14);
+  --accent: #6cb6d1;
+  --accent-ink: #0c171c;
+  --buoy: #f0a05a;
+  --pv: #79a8f2;
+  --hp: #f39463;
+  --ev: #5fd0a2;
+  --para: #4fd1c5;
+  --edge: #b39af5;
+  --flexus: #f2c14e;
+  --ok: #5fd08a;
+  --term-bg: #071114;
+  --shadow: 0 6px 24px rgba(0, 0, 0, 0.4);
+  color-scheme: dark;
+}
+html, body { height: 100%; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--f-body);
+  font-size: 14px;
+  line-height: 1.45;
+  overflow: hidden;
+}
+#scene { position: fixed; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; outline: none; }
+.glass {
+  background: var(--panel);
+  -webkit-backdrop-filter: blur(10px) saturate(1.2);
+  backdrop-filter: blur(10px) saturate(1.2);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+}
+.brand {
+  position: fixed;
+  top: calc(16px + env(safe-area-inset-top, 0px));
+  left: 16px;
+  padding: 12px 16px 12px;
+  max-width: 300px;
+}
+.brand h1 {
+  margin: 0;
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: 28px;
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+.brand p { margin: 4px 0 0; color: var(--muted); font-size: 13px; }
+.brand .note { margin-top: 8px; font-size: 12px; }
+.panel {
+  position: fixed;
+  left: 16px;
+  top: calc(140px + env(safe-area-inset-top, 0px));
+  width: 300px;
+  max-height: calc(100% - 156px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+  overflow-y: auto;
+  padding: 14px 16px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.panel h2 {
+  margin: 0 0 8px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.group-label { font-size: 12px; color: var(--muted); margin: 8px 0 4px; }
+.zone-list { display: flex; flex-wrap: wrap; gap: 6px; }
+.zbtn, .btn {
+  font: inherit;
+  font-size: 13px;
+  color: var(--ink);
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 4px 10px;
+  cursor: pointer;
+}
+.zbtn:hover, .btn:hover { border-color: var(--accent); }
+.zbtn[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.zbtn:focus-visible, .btn:focus-visible, .toggle input:focus-visible + span, input[type=range]:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.toggles { display: flex; flex-direction: column; gap: 8px; }
+.toggle { display: flex; align-items: flex-start; gap: 10px; cursor: pointer; }
+.toggle input { position: absolute; opacity: 0; pointer-events: none; }
+.toggle .sw {
+  flex: none;
+  width: 32px; height: 18px; border-radius: 999px;
+  background: var(--line);
+  position: relative;
+  margin-top: 1px;
+  transition: background .2s;
+}
+.toggle .sw::after {
+  content: ""; position: absolute; top: 2px; left: 2px; width: 14px; height: 14px; border-radius: 50%;
+  background: var(--panel-solid); box-shadow: 0 1px 2px rgba(0,0,0,.25); transition: transform .2s;
+}
+.toggle input:checked + .sw { background: var(--accent); }
+.toggle input:checked + .sw::after { transform: translateX(14px); }
+.toggle .t { display: flex; flex-direction: column; }
+.toggle .t small { color: var(--muted); font-size: 12px; }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 12px; margin-top: 2px; font-size: 12px; color: var(--muted); }
+.legend i { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 5px; vertical-align: 0; }
+.time-row { display: flex; align-items: center; gap: 10px; }
+.time-row input[type=range] { flex: 1; min-width: 0; accent-color: var(--accent); }
+.clock { font-family: var(--f-mono); font-variant-numeric: tabular-nums; font-size: 13px; min-width: 44px; text-align: right; }
+.stats {
+  position: fixed;
+  left: 332px;
+  top: calc(16px + env(safe-area-inset-top, 0px));
+  display: flex;
+  gap: 0;
+  padding: 8px 6px;
+  max-width: calc(100% - 332px - 84px);
+  overflow-x: auto;
+}
+.stat { padding: 0 12px; border-left: 1px solid var(--line); white-space: nowrap; }
+.stat:first-child { border-left: 0; }
+.stat b { display: block; font-family: var(--f-mono); font-weight: 500; font-size: 16px; font-variant-numeric: tabular-nums; }
+.stat span { font-size: 11px; color: var(--muted); letter-spacing: 0.03em; }
+.card {
+  position: fixed;
+  right: 16px;
+  bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+  width: 348px;
+  max-width: calc(100% - 32px);
+  padding: 14px 16px 16px;
+}
+.card .ga { font-family: var(--f-display); font-style: italic; color: var(--muted); font-size: 13px; }
+.card h3 { margin: 0 0 2px; font-family: var(--f-display); font-weight: 700; font-size: 21px; line-height: 1.15; text-wrap: balance; }
+.card p { margin: 8px 0 0; }
+.card .facts { margin: 10px 0 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 6px; }
+.card .facts li { font-size: 12px; border: 1px solid var(--line); border-radius: 6px; padding: 2px 8px; }
+.card .close { position: absolute; top: 8px; right: 8px; border: 0; background: transparent; color: var(--muted); font-size: 20px; line-height: 1; cursor: pointer; padding: 4px 8px; border-radius: 6px; }
+.card .close:hover { color: var(--ink); }
+.compass {
+  position: fixed;
+  top: calc(16px + env(safe-area-inset-top, 0px));
+  right: 16px;
+  width: 52px; height: 52px; border-radius: 50%;
+  display: grid; place-items: center;
+}
+.compass .needle { width: 26px; height: 26px; transition: transform .05s linear; }
+.labels { position: fixed; inset: 0; pointer-events: none; overflow: hidden; }
+.tag {
+  position: absolute; left: 0; top: 0;
+  pointer-events: auto;
+  font: inherit; font-size: 12px; font-weight: 700;
+  color: var(--ink);
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 3px 9px;
+  white-space: nowrap;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,.12);
+  will-change: transform;
+}
+.tag::after { content: ""; position: absolute; left: 50%; top: 100%; width: 1px; height: 12px; background: var(--ink); opacity: .35; }
+.tag.on { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.tag:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.menu-btn { display: none; }
+.loading {
+  position: fixed; inset: 0; display: grid; place-items: center; pointer-events: none;
+  font-family: var(--f-display); font-size: 18px; color: var(--muted);
+}
+.err { position: fixed; inset: auto 16px 16px 16px; padding: 12px 14px; }
+.stats-inline { display: none; }
+@media (max-width: 760px) {
+  .brand { right: 84px; max-width: none; padding: 10px 12px; }
+  .brand h1 { font-size: 22px; }
+  .brand .note { display: none; }
+  .stats { display: none; }
+  .menu-btn {
+    display: block;
+    position: fixed; left: 16px; bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+    font: inherit; font-weight: 700; padding: 10px 16px; border-radius: 999px; cursor: pointer;
+    color: var(--ink);
+  }
+  .panel {
+    top: auto;
+    bottom: calc(68px + env(safe-area-inset-bottom, 0px));
+    right: 16px; width: auto;
+    max-height: 58%;
+  }
+  .panel.closed { display: none; }
+  .stats-inline { display: flex; flex-wrap: wrap; gap: 8px 0; }
+  .stats-inline .stat { flex: 1 1 33%; }
+  .card { bottom: calc(68px + env(safe-area-inset-bottom, 0px)); width: auto; left: 16px; }
+  .card.panel-open { display: none; }
+  .tag { font-size: 11px; padding: 2px 7px; }
+}
+.road { position:absolute; left:0; top:0; pointer-events:none; font-family: var(--f-display); font-style: italic; font-size: 12px; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,.75), 0 0 6px rgba(0,0,0,.45); white-space: nowrap; will-change: transform; }
+.ctl { display: grid; grid-template-columns: 52px 1fr 48px; align-items: center; gap: 8px; margin-bottom: 6px; }
+.ctl label { font-size: 12px; color: var(--muted); }
+.ctl input[type=range] { min-width: 0; accent-color: var(--accent); }
+.wx { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 10px; }
+.btn-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.cond { margin: 10px 0 0; font-size: 12px; color: var(--muted); }
+.chip { position: fixed; top: calc(24px + env(safe-area-inset-top, 0px)); right: 84px; padding: 6px 12px; font-size: 12px; font-family: var(--f-mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+@media (max-width: 1180px) { .chip { top: calc(84px + env(safe-area-inset-top, 0px)); right: 16px; } }
+@media (max-width: 760px) { .chip { top: calc(80px + env(safe-area-inset-top, 0px)); right: 16px; left: auto; } }
+@media (prefers-reduced-motion: reduce) {
+  .toggle .sw, .toggle .sw::after { transition: none; }
+}
+/* ---------- BNIT-FLEXUS additions ---------- */
+.drawer[hidden], .ops[hidden], .card[hidden] { display: none !important; }
+.brand h1 .sep { color: var(--para); }
+.panel .small { margin: 6px 0 8px; font-size: 12px; color: var(--muted); }
+.flowkey { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; font-size: 12px; font-weight: 700; }
+.flowkey .fk { border: 1.5px solid currentColor; border-radius: 6px; padding: 2px 7px; }
+.fk.para, .ch.para, .node.para { color: var(--para); }
+.fk.edge, .ch.edge, .node.edge { color: var(--edge); }
+.fk.flexus, .ch.flexus, .node.flexus { color: var(--flexus); }
+.flowkey .arr, .chain .arr { color: var(--muted); font-weight: 400; }
+.live { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin: 10px 0; }
+.live div { border: 1px solid var(--line); border-radius: 8px; padding: 5px 7px; min-width: 0; }
+.live b { display: block; font-family: var(--f-mono); font-weight: 500; font-size: 13px; font-variant-numeric: tabular-nums; }
+.live span { font-size: 11px; color: var(--muted); }
+.coopline { font-size: 13px; margin: 10px 0 8px; }
+.etag { position: absolute; left: 0; top: 0; pointer-events: auto; font: inherit; font-size: 11px; font-weight: 700; color: var(--edge); background: var(--panel); border: 1px solid var(--edge); border-radius: 6px; padding: 2px 7px; white-space: nowrap; cursor: pointer; will-change: transform; display: inline-flex; align-items: center; gap: 5px; }
+.etag i { width: 7px; height: 7px; background: currentColor; transform: rotate(45deg); }
+.etag:focus-visible { outline: 2px solid var(--edge); outline-offset: 2px; }
+.drawer { position: fixed; right: 16px; top: calc(84px + env(safe-area-inset-top, 0px)); bottom: calc(16px + env(safe-area-inset-bottom, 0px)); width: 470px; max-width: calc(100% - 32px); display: flex; flex-direction: column; padding: 14px 16px 0; z-index: 6; }
+.drawer .close, .ops .close { position: absolute; top: 8px; right: 8px; border: 0; background: transparent; color: var(--muted); font-size: 22px; line-height: 1; cursor: pointer; padding: 4px 8px; border-radius: 6px; }
+.drawer .close:hover, .ops .close:hover { color: var(--ink); }
+.dw-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: var(--muted); padding-right: 32px; }
+.drawer h3 { font-family: var(--f-display); font-weight: 700; font-size: 22px; line-height: 1.15; margin: 3px 0 0; padding-right: 30px; text-wrap: balance; }
+.dw-sub { color: var(--muted); font-size: 13px; margin-top: 2px; }
+.chain { display: flex; align-items: center; gap: 5px; flex-wrap: wrap; margin: 10px 0 8px; }
+.ch { font: inherit; font-size: 12px; font-weight: 700; background: transparent; border: 1px solid var(--line); border-radius: 6px; padding: 3px 8px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+.ch i { width: 8px; height: 8px; border-radius: 2px; background: currentColor; }
+.ch.here { border-color: currentColor; box-shadow: inset 0 0 0 1px currentColor; }
+.ch:hover { border-color: currentColor; }
+.tabs { display: flex; gap: 2px; border-bottom: 1px solid var(--line); overflow-x: auto; flex: none; scrollbar-width: none; }
+.tab { font: inherit; font-size: 13px; background: none; border: 0; border-bottom: 2px solid transparent; padding: 8px 10px; color: var(--muted); cursor: pointer; white-space: nowrap; }
+.tab[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--para); font-weight: 700; }
+.tab:focus-visible, .ch:focus-visible, .ew-card:focus-visible, .linkbtn:focus-visible, .chipbtn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.dw-body { flex: 1; overflow-y: auto; padding: 12px 2px 16px 0; min-height: 0; }
+.dw-body.termmode { display: flex; flex-direction: column; }
+.sec { margin-bottom: 16px; }
+.sec h4 { margin: 0 0 6px; font-size: 11px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: var(--muted); }
+.kv { display: grid; grid-template-columns: minmax(110px, auto) 1fr; gap: 4px 14px; font-size: 13px; margin: 0; }
+.kv dt { color: var(--muted); }
+.kv dd { margin: 0; min-width: 0; overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
+.mono { font-family: var(--f-mono); font-size: 12px; }
+.dim { color: var(--muted); }
+.tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin-bottom: 12px; }
+.tiles.wide { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+.tile { border: 1px solid var(--line); border-radius: 8px; padding: 6px 8px; min-width: 0; }
+.tile b { display: block; font-family: var(--f-mono); font-weight: 500; font-size: 15px; font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tile span { font-size: 11px; color: var(--muted); }
+.chart { width: 100%; height: 150px; display: block; }
+.chart.tall { height: 190px; }
+.clegend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 11px; color: var(--muted); margin-top: 4px; }
+.clegend i { display: inline-block; width: 14px; height: 3px; border-radius: 2px; margin-right: 5px; vertical-align: 3px; }
+.clegend i.dash { background-image: repeating-linear-gradient(90deg, currentColor 0 4px, transparent 4px 7px) !important; }
+.linkbtn { font: inherit; color: var(--edge); background: none; border: 0; padding: 0; cursor: pointer; text-decoration: underline; text-underline-offset: 2px; font-weight: 700; }
+.pill { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 700; border-radius: 999px; padding: 1px 8px; border: 1px solid currentColor; white-space: nowrap; }
+.pill i { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.pill.ok { color: var(--ok); }
+.pill.off { color: var(--muted); }
+.svcs { display: flex; flex-direction: column; gap: 4px; }
+.svc { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.4fr) auto; gap: 8px; align-items: center; font-size: 12px; border-bottom: 1px solid var(--line); padding: 3px 0; }
+.svc .mono { overflow-wrap: anywhere; }
+.svc .d { color: var(--muted); }
+.tbl { width: 100%; border-collapse: collapse; font-size: 12px; }
+.tbl th, .tbl td { text-align: left; padding: 5px 6px; border-bottom: 1px solid var(--line); vertical-align: top; }
+.tbl th { font-size: 11px; color: var(--muted); font-weight: 700; }
+.tbl .n { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; font-family: var(--f-mono); }
+.tblwrap { overflow-x: auto; }
+tr.click { cursor: pointer; }
+tr.click:hover td { background: var(--line); }
+.pipe { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; font-size: 11px; }
+.pipe span { border: 1px solid var(--line); border-radius: 5px; padding: 2px 6px; }
+.pipe span:last-child { color: var(--edge); border-color: var(--edge); font-weight: 700; }
+.pipe i { color: var(--muted); font-style: normal; }
+.asset { border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; margin-bottom: 8px; }
+.asset header { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.asset h5 { margin: 0; font-size: 14px; }
+.asset .model { margin: 3px 0 0; font-size: 12.5px; }
+.asset .iface { margin: 2px 0 8px; color: var(--muted); font-size: 11.5px; overflow-wrap: anywhere; }
+.afields { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+.afields div { min-width: 0; }
+.afields span { display: block; font-size: 11px; color: var(--muted); }
+.afields b { font-family: var(--f-mono); font-weight: 500; font-size: 13px; font-variant-numeric: tabular-nums; }
+.rdbox b { font-family: var(--f-mono); font-weight: 500; font-size: 18px; color: var(--para); }
+.rdbox p { margin: 4px 0 0; font-size: 12.5px; color: var(--muted); }
+.nilm { list-style: none; margin: 0; padding: 0; font-size: 12.5px; }
+.nilm li { display: grid; grid-template-columns: 52px 1fr auto; gap: 8px; padding: 3px 0; border-bottom: 1px solid var(--line); }
+.privacy { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
+.privacy > div { border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; font-size: 12px; }
+.privacy > div:first-child { border-color: var(--para); }
+.privacy ul { margin: 4px 0 0; padding-left: 16px; }
+.field { display: block; font-size: 12px; color: var(--muted); margin-bottom: 4px; }
+select { font: inherit; font-size: 13px; color: var(--ink); background: var(--panel-solid); border: 1px solid var(--line); border-radius: 6px; padding: 5px 8px; max-width: 100%; }
+select:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.hint { font-size: 12px; color: var(--muted); margin: 6px 0 0; }
+pre.json { background: var(--term-bg); color: var(--term-fg); border-radius: 8px; padding: 10px; font-family: var(--f-mono); font-size: 11.5px; overflow-x: auto; margin: 6px 0 0; }
+ul.plain { margin: 0; padding-left: 18px; font-size: 13px; }
+ul.plain li { margin-bottom: 3px; }
+.termchips { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 8px; }
+.chipbtn { font-size: 11px; color: var(--ink); background: transparent; border: 1px solid var(--line); border-radius: 6px; padding: 3px 7px; cursor: pointer; }
+.chipbtn:hover { border-color: var(--para); }
+.termhost { flex: 1; min-height: 0; display: flex; }
+.term { flex: 1; min-height: 340px; background: var(--term-bg); color: var(--term-fg); font-family: var(--f-mono); font-size: 12px; line-height: 1.5; border-radius: 8px; padding: 10px 12px; overflow-y: auto; cursor: text; }
+.term-out > div { white-space: pre-wrap; word-break: break-word; }
+.term-out .dim { color: var(--term-dim); }
+.term-out .cmd { color: #ffffff; }
+.term-line { display: flex; gap: 7px; }
+.term-ps { color: var(--term-ps); white-space: nowrap; }
+.term-in { flex: 1; min-width: 0; background: transparent; border: 0; outline: 0; color: #ffffff; font: inherit; caret-color: var(--term-ps); padding: 0; }
+.ops { position: fixed; top: calc(16px + env(safe-area-inset-top, 0px)); bottom: calc(16px + env(safe-area-inset-bottom, 0px)); left: 16px; right: 16px; z-index: 8; display: flex; flex-direction: column; padding: 16px 18px 0; background: var(--panel-solid); }
+.ops-h { font-family: var(--f-display); font-weight: 700; font-size: 26px; margin: 2px 0 0; text-wrap: balance; }
+.arch { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 13px; margin: 10px 0 12px; }
+.arch .node { border: 1.5px solid currentColor; border-radius: 8px; padding: 3px 10px; font-weight: 700; }
+.arch .node.dso { color: var(--muted); }
+.arch i { color: var(--muted); font-style: normal; }
+.ops-grid { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: 18px; flex: 1; min-height: 0; overflow-y: auto; padding-bottom: 16px; }
+.ops-col { min-width: 0; }
+.ew-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 8px; }
+.ew-card { font: inherit; color: inherit; text-align: left; background: transparent; border: 1px solid var(--line); border-left: 3px solid var(--edge); border-radius: 8px; padding: 8px 10px; cursor: pointer; display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.ew-card:hover { border-color: var(--edge); }
+.ewh { display: flex; justify-content: space-between; gap: 6px; align-items: center; font-size: 13px; }
+.ewh b { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ewv { display: grid; grid-template-columns: 1fr 1fr; gap: 1px 8px; font-size: 11.5px; color: var(--muted); }
+.ewv b { color: var(--ink); font-family: var(--f-mono); font-weight: 500; font-variant-numeric: tabular-nums; }
+.drform { display: grid; grid-template-columns: auto 1fr; gap: 6px 10px; align-items: center; font-size: 13px; margin-bottom: 10px; }
+.drform label { color: var(--muted); }
+.drstat { font-size: 13px; margin-top: 10px; }
+.drstat p { margin: 0 0 4px; }
+.log { font-size: 12px; max-height: 300px; overflow-y: auto; border: 1px solid var(--line); border-radius: 8px; padding: 6px 8px; }
+.lg { display: grid; grid-template-columns: 44px 1fr; gap: 6px; padding: 3px 0; border-bottom: 1px solid var(--line); border-left: 3px solid transparent; padding-left: 6px; }
+.lg.ew { border-left-color: var(--edge); }
+.lg.para { border-left-color: var(--para); }
+.lg.fx { border-left-color: var(--flexus); }
+/* ---------- v2: detail loader, role and request log ---------- */
+.lodchip { position: fixed; left: 50%; bottom: calc(18px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); padding: 6px 12px; font-size: 12px; font-family: var(--f-mono); z-index: 6; }
+.lodchip[hidden], [hidden] { display: none !important; }
+.rolesel { width: 100%; font: inherit; font-size: 13px; padding: 7px 9px; border-radius: 9px; border: 1px solid var(--line); background: var(--panel-solid); color: var(--ink); }
+.reqlog { list-style: none; margin: 6px 0 0; padding: 0; font-family: var(--f-mono); font-size: 11px; color: var(--muted); max-height: 112px; overflow: auto; }
+.reqlog li { display: flex; gap: 6px; padding: 2px 0; border-top: 1px solid var(--line); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.reqlog .st { font-weight: 700; min-width: 26px; } .reqlog .s200 { color: var(--ok); } .reqlog .s403 { color: #c0392b; }
+.denied { padding: 18px 4px; } .denied b { font-family: var(--f-mono); font-size: 22px; color: #c0392b; display: block; margin-bottom: 6px; }
+.truthbadge { margin: 6px 0 0; padding: 6px 8px; border-radius: 8px; font-size: 12px; background: rgba(217,117,43,.12); border: 1px solid rgba(217,117,43,.35); }
+
+/* ---------- v3: date and events ---------- */
+.datein { flex: 1; min-width: 0; font: inherit; font-size: 13px; padding: 4px 6px; border-radius: 8px; border: 1px solid var(--line); background: var(--panel-solid); color: var(--ink); }
+.evlist { display: flex; flex-wrap: wrap; gap: 6px; }
+.evgrp { width: 100%; font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); margin-top: 6px; }
+.evbtn { display: flex; flex-direction: column; align-items: flex-start; text-align: left; }
+.evbtn small { font-size: 10.5px; color: var(--muted); font-weight: 400; }
+.evbtn[aria-pressed="true"] { outline: 2px solid var(--accent); }
+
+/* ---------- link to the Baile Nua Industrial Zone ---------- */
+.gotag { position: absolute; left: 0; top: 0; pointer-events: auto; font: inherit; font-size: 13px; font-weight: 700; color: var(--accent-ink); background: var(--buoy); border: 0; border-radius: 999px; padding: 5px 12px; white-space: nowrap; cursor: pointer; text-decoration: none; box-shadow: 0 2px 10px rgba(0,0,0,.2); will-change: transform; }
+.gotag:focus-visible, a.zbtn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+a.zbtn { text-decoration: none; display: inline-block; }
+@media (max-width: 1100px) { .tiles.wide { grid-template-columns: repeat(3, minmax(0, 1fr)); } .ops-grid { grid-template-columns: 1fr; } }
+@media (max-width: 760px) {
+  .drawer { top: auto; left: 16px; right: 16px; width: auto; height: 74%; }
+  .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .tiles.wide { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .privacy { grid-template-columns: 1fr; }
+  .afields { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .svc { grid-template-columns: 1fr auto; } .svc .d { display: none; }
+  .ops { padding: 14px 14px 0; }
+  .etag { font-size: 10px; }
+}
+</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<style>
+/* ---------- RD-Fusion twin additions ---------- */
+:root { --gt: #b0413e; --sp: #8a8f94; }
+#map { position: fixed; inset: 0; z-index: 0; background: var(--bg); }
+.leaflet-container { font-family: var(--f-body); }
+.brand, .panel, .drawer, .stats, .chip, .compass, .menu-btn { z-index: 600; }
+.brand h1 .sep { color: var(--para); }
+.flowkey { display:flex; align-items:center; gap:6px; flex-wrap:wrap; font-size:12px; margin:4px 0 6px; }
+.fk { border:1.5px solid currentColor; border-radius:7px; padding:2px 8px; font-weight:700; }
+.fk.para { color: var(--para); } .fk.edge { color: var(--edge); } .fk.flexus { color: var(--flexus); }
+.flowkey .arr { color: var(--muted); }
+.zone-list { display:flex; flex-wrap:wrap; gap:6px; }
+.zbtn { font: inherit; font-size: 13px; color: var(--ink); background: transparent; border: 1px solid var(--line); border-radius: 999px; padding: 4px 10px; cursor: pointer; }
+.btn { font: inherit; font-size: 13px; font-weight:700; color: var(--ink); background: transparent; border: 1px solid var(--line); border-radius: 999px; padding: 6px 12px; cursor: pointer; }
+.btn[disabled] { opacity: .5; cursor: default; }
+.panel { top: calc(178px + env(safe-area-inset-top, 0px)); max-height: calc(100% - 194px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)); }
+.panel section { margin-bottom: 14px; }
+.panel h2 { font-size: 11px; letter-spacing: .09em; text-transform: uppercase; color: var(--muted); margin: 4px 0 8px; }
+.sel, .inp { width:100%; font:inherit; font-size:13px; padding:6px 8px; border-radius:9px; border:1px solid var(--line); background:var(--panel-solid); color:var(--ink); box-sizing: border-box; }
+.b2form { display:grid; gap:6px; margin-top:8px; }
+.b2form label { font-size: 11px; color: var(--muted); }
+.srcpill { display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:700; border-radius:999px; padding:2px 10px; border:1px solid currentColor; }
+.srcpill i { width:7px; height:7px; border-radius:50%; background:currentColor; }
+.srcpill.emu { color: var(--muted); } .srcpill.live { color: var(--ok); } .srcpill.busy { color: var(--buoy); } .srcpill.err { color: #c0392b; }
+.chain .ch { font: inherit; font-size: 12px; font-weight:700; border:1.5px solid currentColor; border-radius:7px; padding:2px 8px; background:transparent; cursor:pointer; }
+.chain .ch.para { color: var(--para); } .chain .ch.edge { color: var(--edge); } .chain .ch.flexus { color: var(--flexus); }
+.chain i { color: var(--muted); font-style: normal; }
+.pipeline { display:grid; grid-template-columns: 1fr; gap:4px; }
+.step { display:grid; grid-template-columns: 22px minmax(0,1fr) auto; gap:8px; align-items:center; font-size:12.5px; border:1px solid var(--line); border-left:3px solid var(--para); border-radius:7px; padding:5px 8px; }
+.step .n { font-family: var(--f-mono); color: var(--muted); }
+.step .v { font-family: var(--f-mono); font-size: 12px; text-align:right; white-space:nowrap; }
+.step.off { opacity:.55; border-left-color: var(--line); }
+.stay { display:grid; grid-template-columns: 1fr 1fr; gap:6px 14px; font-size:12.5px; }
+.stay ul { margin:0; padding-left:16px; }
+.note2 { font-size:12px; color:var(--muted); margin:6px 0 0; }
+.gtbadge, .srcbadge { display:inline-block; font-size:11px; font-weight:700; border-radius:999px; padding:0 7px; border:1px solid currentColor; }
+.gtbadge { color:var(--gt); } .srcbadge.live { color: var(--ok); } .srcbadge.emu { color: var(--muted); } .srcbadge.part { color: var(--buoy); }
+.hz { display:grid; grid-template-columns: repeat(6, minmax(0,1fr)); gap:4px; font-size:11.5px; text-align:center; }
+.hz div { border:1px solid var(--line); border-radius:7px; padding:4px 2px; }
+.hz b { display:block; font-family: var(--f-mono); font-weight:500; font-size:13px; }
+.hz span { color: var(--muted); }
+/* map icons */
+.ew-icon { width: 30px; height: 30px; border-radius: 8px; background: var(--edge); color: #fff; display:grid; place-items:center; font: 700 10px var(--f-body); box-shadow: 0 2px 8px rgba(0,0,0,.25); border: 2px solid #fff; }
+.fx-icon { width: 38px; height: 38px; border-radius: 50%; background: var(--flexus); color: #fff; display:grid; place-items:center; font: 700 10px var(--f-body); box-shadow: 0 2px 10px rgba(0,0,0,.3); border: 2px solid #fff; }
+.wind-icon svg { overflow: visible; }
+.sub-label { font: 700 12px var(--f-body); color: var(--ink); background: var(--panel); border: 1px solid var(--line); border-radius: 999px; padding: 2px 8px; white-space: nowrap; transform: translate(-50%, -50%); display:inline-block; }
+.leaflet-tooltip.cl-tip { font: 700 12px var(--f-body); color: var(--ink); background: var(--panel-solid); border: 1px solid var(--line); border-radius: 999px; padding: 3px 9px; box-shadow: 0 2px 8px rgba(0,0,0,.12); }
+.leaflet-tooltip.cl-tip::before { display: none; }
+.flowline { stroke-dasharray: 6 8; }
+body.moving .flowline { animation: dash 1.4s linear infinite; }
+body.moving .flowline.down { animation-direction: reverse; }
+@keyframes dash { to { stroke-dashoffset: -28; } }
+@media (prefers-reduced-motion: reduce) { body.moving .flowline { animation: none; } }
+</style>
+
+<div id="map" role="application" aria-label="Map of the RD-Fusion twin: 250 buildings in five clusters across Ireland. Click a building to open it."></div>
+<div class="loading" id="loading">Building the RD-Fusion twin&#8230;</div>
+
+<header class="brand glass">
+  <h1>RD<span class="sep">-</span>Fusion twin</h1>
+  <p>HRSD-RD_FUSION v0.1 &#183; 250 buildings &#183; five clusters</p>
+  <p class="note" id="brandNote">Emulated until you connect Backblaze: then building data is read from the v0.1 release.</p>
+</header>
+
+<button class="menu-btn glass" id="menuBtn" aria-expanded="false" aria-controls="panel">Explore</button>
+
+<nav class="panel glass" id="panel" aria-label="Explore the RD-Fusion twin">
+  <section>
+    <h2>Data source</h2>
+    <div id="srcState"><span class="srcpill emu"><i></i>Emulated</span></div>
+    <p class="small" id="srcNote">Values are regenerated in the browser from the v0.1 design. Connect to read the real dataset from Backblaze.</p>
+    <div class="btn-row"><button class="btn primary" id="b2Toggle" type="button" aria-expanded="false">Connect Backblaze</button><button class="btn" id="b2Disconnect" type="button" hidden>Disconnect</button></div>
+    <form class="b2form" id="b2Form" hidden>
+      <label for="b2Endpoint">S3 endpoint</label><input class="inp" id="b2Endpoint" value="s3.eu-central-003.backblazeb2.com" autocomplete="off">
+      <label for="b2Bucket">Bucket</label><input class="inp" id="b2Bucket" value="eig-hrsd-rdfusion" autocomplete="off">
+      <label for="b2Prefix">Twin folder</label><input class="inp" id="b2Prefix" value="hrsd-rd_fusion-v0.1/twin/" autocomplete="off">
+      <label for="b2Key">Key ID (read-only key)</label><input class="inp" id="b2Key" autocomplete="off">
+      <label for="b2Secret">Application key</label><input class="inp" id="b2Secret" type="password" autocomplete="off">
+      <label class="toggle"><input type="checkbox" id="b2Remember"><span class="sw"></span><span class="t">Remember on this browser<small>Stored only in this browser's local storage</small></span></label>
+      <div class="btn-row"><button class="btn primary" type="submit">Connect</button></div>
+    </form>
+  </section>
+  <section>
+    <h2>Clusters</h2>
+    <div class="zone-list" id="zones"></div>
+  </section>
+  <section>
+    <h2>Data flow</h2>
+    <div class="flowkey"><span class="fk para">PARA//EL</span><span class="arr">&#8644;</span><span class="fk edge">EdgeWare</span><span class="arr">&#8594;</span><span class="fk flexus">FLEXUS</span></div>
+    <p class="small">Each building runs RD-Fusion in PARA//EL on its own Jetson. Each cluster runs one EdgeWare node (fleet advection, federated bias tables, NWP). FLEXUS sees only cluster aggregates and pseudonymous forecasts.</p>
+    <div class="btn-row"><button class="btn primary" id="openFx" type="button">Open FLEXUS</button></div>
+  </section>
+  <section>
+    <h2>Map colour</h2>
+    <select id="colorMode" class="sel" aria-label="Colour buildings by">
+      <option value="net">Net import now</option>
+      <option value="k">Clear-sky index now</option>
+      <option value="cfg">Asset configuration</option>
+      <option value="err">RD-Fusion 30-min error</option>
+    </select>
+    <div class="legend" id="legend"></div>
+  </section>
+  <section>
+    <h2>Layers</h2>
+    <div class="toggles">
+      <label class="toggle"><input type="checkbox" id="tLinks" checked><span class="sw"></span><span class="t">Network links<small>Building to EdgeWare, EdgeWare to FLEXUS</small></span></label>
+      <label class="toggle"><input type="checkbox" id="tPk" checked><span class="sw"></span><span class="t">Data moving<small>Clear-sky index up, features and bias tables down</small></span></label>
+      <label class="toggle"><input type="checkbox" id="tWind" checked><span class="sw"></span><span class="t">Cloud motion<small>Steering-wind vector per cluster</small></span></label>
+    </div>
+  </section>
+  <section>
+    <h2>Moment (UTC)</h2>
+    <div class="ctl"><label for="dateR">Date</label><input type="date" id="dateR" min="2024-01-01" max="2025-12-31" value="2025-07-14" class="datein"><span class="clock" id="splitLbl">test</span></div>
+    <div class="ctl"><label for="time">Time</label><input type="range" id="time" min="0" max="1439" step="1" value="780"><span class="clock" id="clock">13:00</span></div>
+    <div class="ctl"><label for="speed">Speed</label><input type="range" id="speed" min="1" max="30" step="1" value="5"><span class="clock" id="speedLbl">5&#215;</span></div>
+    <div class="btn-row"><button class="btn" id="play" type="button" aria-pressed="false">Play</button><button class="btn" id="randomDay" type="button">Random day</button></div>
+    <p class="cond" id="cond" aria-live="polite"></p>
+  </section>
+  <section>
+    <h2>Dataset</h2>
+    <p class="small">HRSD-RD_FUSION v0.1: 1 min, 2024 (train) and 2025 (test). Per cluster 45 residential + 5 commercial. Drivers: CAMS irradiance, Met &#201;ireann weather, IDEAL household load. Data CC BY-NC 4.0, &#169; 2026 UCC &#8211; Tyndall National Institute.</p>
+  </section>
+  <section class="stats-inline" id="statsInline" aria-label="Counts"></section>
+</nav>
+
+<aside class="drawer glass" id="drawer" hidden aria-labelledby="dwTitle">
+  <button class="close" id="dwClose" type="button" aria-label="Close">&#215;</button>
+  <div class="dw-eyebrow" id="dwEyebrow"></div>
+  <h3 id="dwTitle"></h3>
+  <div class="dw-sub" id="dwSub"></div>
+  <div class="chain" id="dwChain"></div>
+  <div class="tabs" role="tablist" id="dwTabs"></div>
+  <div class="dw-body" id="dwBody"></div>
+</aside>
+
+<footer class="stats glass" id="stats" aria-label="Counts and live totals"></footer>
+
+<script type="module">
+
+/* =====================================================================
+   1. Deterministic helpers
+   ===================================================================== */
+function fnv(str, seed = 2166136261) { let h = seed >>> 0; for (let i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 16777619) >>> 0; } return h >>> 0; }
+const hash01 = (...a) => fnv(a.join('|')) / 4294967296;
+function rng(seed) { let s = seed >>> 0; return () => { s = (s + 0x6D2B79F5) >>> 0; let t = s; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+const token = (id, salt) => (fnv(id, fnv(salt)).toString(16).padStart(8, '0') + fnv(salt + id, 977).toString(16).padStart(8, '0'));
+const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
+const smooth = (a, b, x) => { const t = clamp((x - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
+function vnoise3(x, y, z, seed) {
+  const xi = Math.floor(x), yi = Math.floor(y), zi = Math.floor(z), xf = x - xi, yf = y - yi, zf = z - zi;
+  const h = (a, b, c) => { let n = Math.imul(a, 374761393) + Math.imul(b, 668265263) + Math.imul(c, 2147483647) + seed; n = Math.imul(n ^ (n >>> 13), 1274126177); return ((n ^ (n >>> 16)) >>> 0) / 4294967296; };
+  const u = xf * xf * (3 - 2 * xf), v = yf * yf * (3 - 2 * yf), w = zf * zf * (3 - 2 * zf);
+  const l = (a, b, t) => a + (b - a) * t;
+  return l(l(l(h(xi, yi, zi), h(xi + 1, yi, zi), u), l(h(xi, yi + 1, zi), h(xi + 1, yi + 1, zi), u), v),
+           l(l(h(xi, yi, zi + 1), h(xi + 1, yi, zi + 1), u), l(h(xi, yi + 1, zi + 1), h(xi + 1, yi + 1, zi + 1), u), v), w);
+}
+const fmt = m => `${String(Math.floor(m / 60)).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`;
+const f1 = x => (x == null || isNaN(x)) ? '–' : x.toFixed(1), f2 = x => (x == null || isNaN(x)) ? '–' : x.toFixed(2);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+/* =====================================================================
+   2. HRSD-RD_FUSION v0.1 stock (SPECS sections 3.1-3.6)
+   ===================================================================== */
+const LON0 = -8.0, LAT0 = 53.4, KM = 4;                    // 1 scene unit = 250 m
+const proj = (lon, lat) => [(lon - LON0) * 111.32 * Math.cos(LAT0 * Math.PI / 180) * KM, -(lat - LAT0) * 111.2 * KM];
+const CLUSTERS = [
+  { code: 'CRK', name: 'Cork', note: 'South coast; suburban and urban mix', subs: [{ id: 'CRK', name: 'Cork', n: 50, lon: -8.47, lat: 51.90, r: 21 }] },
+  { code: 'ARN', name: 'Aran Islands', note: 'Atlantic edge; first landfall for westerly cloud', subs: [
+      { id: 'ARN-MOR', name: 'Inis Mór', n: 30, lon: -9.72, lat: 53.12, r: 14, island: [44, 13, -0.55] },
+      { id: 'ARN-MEA', name: 'Inis Meáin', n: 10, lon: -9.59, lat: 53.09, r: 7, island: [17, 9, -0.5] },
+      { id: 'ARN-OIR', name: 'Inis Oírr', n: 10, lon: -9.52, lat: 53.06, r: 7, island: [14, 9, -0.4] }] },
+  { code: 'MID', name: 'Midlands', note: 'Inland; rural one-off houses', subs: [{ id: 'MID', name: 'Athlone', n: 50, lon: -7.94, lat: 53.42, r: 24 }] },
+  { code: 'DUB', name: 'Dublin', note: 'East coast; apartments and terraces', subs: [{ id: 'DUB', name: 'Dublin', n: 50, lon: -6.26, lat: 53.35, r: 19 }] },
+  { code: 'NTH', name: 'North', note: 'Sligo and Donegal, about 45 km apart', subs: [
+      { id: 'NTH-SLI', name: 'Sligo', n: 25, lon: -8.47, lat: 54.27, r: 14 },
+      { id: 'NTH-DON', name: 'Donegal', n: 25, lon: -8.11, lat: 54.65, r: 14 }] },
+];
+const CFG_NAMES = ['PV', 'PV+BAT', 'PV+HP', 'PV+EV', 'PV+HP+BAT', 'PV+HP+EV+BAT'];
+const CFG_COUNTS = { CRK: [9, 8, 9, 5, 6, 8], ARN: [10, 10, 12, 2, 9, 2], MID: [9, 8, 9, 5, 6, 8], DUB: [8, 7, 8, 8, 5, 9], NTH: [9, 8, 9, 5, 6, 8] };
+const ARCH = { CRK: [10, 15, 10, 6, 4], ARN: [18, 6, 6, 0, 15], MID: [18, 10, 6, 2, 9], DUB: [4, 12, 14, 13, 2], NTH: [16, 12, 7, 2, 8] };
+const ARCH_NAMES = ['Detached', 'Semi-detached', 'Terraced', 'Apartment', 'Bungalow'];
+const ARCH_AREA = [160, 110, 90, 70, 130];
+const COM_TYPES = [
+  { t: 'School', open: 'Weekdays 08:30–15:00, term time', assets: 'PV, HP' },
+  { t: 'Small office', open: 'Weekdays 08:00–18:00', assets: 'PV, HP, 2 EV chargers' },
+  { t: 'Retail', open: 'Daily 07:00–22:00, refrigeration 24/7', assets: 'PV, battery' },
+  { t: 'Hospitality', open: 'Daily, evening peak, summer high', assets: 'PV, HP, 2 EV chargers' },
+  { t: 'Community / health', open: 'Weekdays, evening events', assets: 'PV, HP, battery' }];
+const BER = ['A', 'B', 'C', 'D', 'E'];
+const TARIFF = ['24-hour flat', 'Day/night', 'Smart time-of-use'];
+
+const B = [];      // buildings
+const CL = {};     // cluster runtime
+for (const c of CLUSTERS) {
+  const R = rng(fnv('stock' + c.code));
+  const cfgList = CFG_COUNTS[c.code].flatMap((n, i) => Array(n).fill(i));
+  const archList = ARCH[c.code].flatMap((n, i) => Array(n).fill(i));
+  for (let i = cfgList.length - 1; i > 0; i--) { const j = Math.floor(R() * (i + 1)); [cfgList[i], cfgList[j]] = [cfgList[j], cfgList[i]]; }
+  for (let i = archList.length - 1; i > 0; i--) { const j = Math.floor(R() * (i + 1)); [archList[i], archList[j]] = [archList[j], archList[i]]; }
+  const cen = c.subs.map(s => proj(s.lon, s.lat)); const ex = cen.reduce((a, p) => a + p[0], 0) / cen.length, ez = cen.reduce((a, p) => a + p[1], 0) / cen.length;
+  CL[c.code] = { ...c, members: [], ex: ex + (c.subs.length > 1 ? 0 : 4), ez: ez + (c.code === 'ARN' ? -14 : 0), feeders: [] };
+  let ri = 0, ci = 0;
+  for (const s of c.subs) {
+    const [cx, cz] = proj(s.lon, s.lat);
+    const nCom = c.subs.length === 1 ? 5 : (s.id === 'ARN-MOR' ? 3 : s.id === 'NTH-SLI' ? 3 : s.id === 'NTH-DON' ? 2 : 1 - (s.id === 'ARN-OIR' ? 0 : 0));
+    const comHere = s.id === 'ARN-MEA' ? 1 : s.id === 'ARN-OIR' ? 1 : nCom;
+    const pts = [];
+    // houses on a jittered spiral, commercial near the centre
+    for (let k = 0; k < s.n; k++) {
+      let x, z, ok = false, tries = 0;
+      while (!ok && tries++ < 200) {
+        const ang = R() * Math.PI * 2, rad = (k < comHere ? 0.25 : Math.sqrt(R()) * 0.95) * s.r;
+        x = cx + Math.cos(ang) * rad * (s.island ? 1.6 : 1); z = cz + Math.sin(ang) * rad * (s.island ? 0.55 : 1);
+        if (s.island) { const a = s.island[2], dx = x - cx, dz = z - cz, u = dx * Math.cos(a) + dz * Math.sin(a), v = -dx * Math.sin(a) + dz * Math.cos(a); if ((u / (s.island[0] * 0.92)) ** 2 + (v / (s.island[1] * 0.8)) ** 2 > 1) continue; }
+        ok = pts.every(p => Math.hypot(p[0] - x, p[1] - z) > (k < comHere || p[2] ? 4.2 : 2.4));
+      }
+      const isC = k < comHere;
+      pts.push([x, z, isC]);
+      const b = { idx: B.length, cluster: c.code, sub: s.id, subName: s.name, x, z, xm: Math.round((x - CL[c.code].ex) * 250), ym: Math.round(-(z - CL[c.code].ez) * 250), feeder: 0 };
+      if (isC) {
+        const ct = COM_TYPES[ci]; ci++;
+        Object.assign(b, { id: `${c.code}-C${String(ci).padStart(3, '0')}`, type: 'C', use: ct.t, open: ct.open, assetsTxt: ct.assets, area: Math.round(250 + R() * 1100),
+          kwp: Math.round(10 + R() * 50), hasHP: ct.t !== 'Retail', hasEV: /EV/.test(ct.assets), hasBAT: /battery/.test(ct.assets), ber: BER[Math.floor(R() * 3)], tariff: 'Day/night + MIC', phase: 3 });
+        b.cfg = (b.hasHP ? (b.hasBAT ? 4 : (b.hasEV ? 5 : 2)) : 1);
+      } else {
+        const cf = cfgList[ri], ar = archList[ri]; ri++;
+        Object.assign(b, { id: `${c.code}-R${String(ri).padStart(3, '0')}`, type: 'R', cfg: cf, use: ARCH_NAMES[ar], arch: ar, area: Math.round(ARCH_AREA[ar] * (0.8 + R() * 0.4)),
+          kwp: +(2.5 + R() * 5.5).toFixed(1), hasHP: [2, 4, 5].includes(cf), hasEV: [3, 5].includes(cf), hasBAT: [1, 4, 5].includes(cf),
+          ber: BER[clamp(Math.floor(R() * 4 + (['ARN', 'NTH'].includes(c.code) ? 0.7 : 0)), 0, 4)], tariff: TARIFF[Math.floor(R() * 3)], phase: 1,
+          occupants: 1 + Math.floor(R() * 4), dhwDiverter: R() < 0.5 });
+        if (b.hasHP && 'DE'.includes(b.ber)) b.ber = 'C';
+      }
+      b.tilt = Math.round(15 + R() * 30); b.az = Math.round(R() < 0.6 ? 135 + R() * 90 : 90 + R() * 180);
+      b.battKwh = b.hasBAT ? (b.type === 'C' ? Math.round(20 + R() * 60) : +(5 + R() * 8.5).toFixed(1)) : 0;
+      b.battKw = b.hasBAT ? (b.type === 'C' ? Math.round(b.battKwh / 2) : +(2.5 + R() * 2.5).toFixed(1)) : 0;
+      b.hpKw = b.hasHP ? (b.type === 'C' ? Math.round(15 + R() * 30) : Math.round(4 + R() * 7)) : 0;
+      b.hlc = (b.area / 100) * (0.12 + 0.05 * BER.indexOf(b.ber));       // kW/K
+      b.evKw = b.hasEV ? (b.type === 'C' ? 22 : 7.4) : 0;
+      b.noncompliant = R() < 0.1;
+      b.tokShared = token(b.id, 'shared'); b.tokAgg = token(b.id, 'aggregator');
+      b.cell = `${c.code}-${Math.floor(b.xm / 500)}-${Math.floor(b.ym / 500)}`;
+      B.push(b); CL[c.code].members.push(b);
+    }
+  }
+  // feeders: 3 per cluster (2 for small islands), each with at least 10 buildings
+  const m = CL[c.code].members.slice().sort((a, b) => Math.atan2(a.z - CL[c.code].ez, a.x - CL[c.code].ex) - Math.atan2(b.z - CL[c.code].ez, b.x - CL[c.code].ex));
+  m.forEach((b, i) => b.feeder = Math.floor(i / Math.ceil(m.length / 3)) + 1);
+  CL[c.code].feeders = [1, 2, 3].map(f => `${c.code}-F${f}`);
+}
+for (const b of B) { b.lon = LON0 + b.x / (111.32 * Math.cos(LAT0 * Math.PI / 180) * KM); b.lat = LAT0 - b.z / (111.2 * KM); }
+// Real building positions from OpenStreetMap (filled in by fetch_osm_sites.py). Values stay synthetic.
+const SITES = null; /*@@SITES@@*/
+function applySites() {
+  if (!SITES) return 0; let n = 0;
+  for (const c of CLUSTERS) for (const s of c.subs) {
+    const pool = SITES.subs[s.id]; if (!pool) continue;
+    for (const t of ['R', 'C']) {
+      const P = pool[t].length ? pool[t] : pool[t === 'R' ? 'C' : 'R'];
+      const mem = CL[c.code].members.filter(b => b.sub === s.id && b.type === t).sort((x, y) => x.id < y.id ? -1 : 1);
+      mem.forEach((b, i) => { const q = P[i % P.length]; if (!q) return; b.lat = q[0]; b.lon = q[1]; b.siteKind = q[2]; n++; });
+    }
+  }
+  return n;
+}
+applySites();
+const BYID = Object.fromEntries(B.map(b => [b.id, b]));
+
+/* =====================================================================
+   3. Weather and cloud field (per cluster per day; real 2024-25 drivers
+      are emulated here with regime statistics)
+   ===================================================================== */
+const STATE = { date: '2025-07-14', minute: 780, playing: false, speed: 5, color: 'net', sel: null, selKind: null };
+const MONTH_T = [6, 6.3, 7.3, 9, 11.6, 14.2, 15.8, 15.6, 13.9, 11.2, 8.3, 6.6];
+function dayInfo(dateStr, code) {
+  const d = new Date(dateStr + 'T00:00:00Z'), mo = d.getUTCMonth(), doy = Math.floor((d - Date.UTC(d.getUTCFullYear(), 0, 0)) / 864e5);
+  const r = rng(fnv(dateStr + code + 'wx'));
+  const synoptic = rng(fnv(dateStr + 'syn'))();                 // shared across clusters, so fronts are consistent
+  const summer = Math.cos((doy - 180) / 365 * 2 * Math.PI);
+  const pClear = 0.12 + 0.1 * summer + (code === 'DUB' ? 0.08 : code === 'NTH' || code === 'ARN' ? -0.05 : 0);
+  const pOver = 0.32 - 0.1 * summer + (code === 'NTH' ? 0.06 : 0);
+  const x = (synoptic * 0.7 + r() * 0.3);
+  const regime = x < pClear ? 'clear' : x < pClear + pOver ? 'overcast' : x < 0.93 ? 'broken' : 'showery';
+  const dir = 200 + r() * 90 + (synoptic - 0.5) * 40;           // from (deg)
+  const spd = 5 + r() * 12 + (regime === 'showery' ? 4 : 0);    // m/s steering
+  const to = (dir + 180) * Math.PI / 180;
+  const ukm = Math.sin(to) * spd * 0.06, vkm = Math.cos(to) * spd * 0.06;   // km/min east, north
+  const tmean = MONTH_T[mo] + (r() - 0.5) * 4 + (code === 'MID' ? -0.6 : code === 'ARN' ? 0.5 : 0);
+  return { regime, dir, spd, ukm, vkm, L: regime === 'broken' ? 4.5 : regime === 'showery' ? 7 : 9, te: regime === 'broken' ? 28 : regime === 'showery' ? 12 : 120,
+    tmean, amp: code === 'MID' ? 4 : 2.8, doy, mo, wd: d.getUTCDay(), seed: fnv(dateStr + code + 'cloud') | 0, cover: regime === 'broken' ? 0.35 + r() * 0.3 : regime === 'showery' ? 0.5 : 0 };
+}
+function kAt(W, xkm, ykm, m) {
+  const xs = xkm - W.ukm * m, ys = ykm - W.vkm * m;
+  let n = vnoise3(xs / W.L, ys / W.L, m / W.te, W.seed) * 0.7 + vnoise3(xs / W.L * 2.3, ys / W.L * 2.3, m / W.te * 1.7, W.seed + 7) * 0.3;
+  if (W.regime === 'clear') return 0.96 + 0.06 * n;
+  if (W.regime === 'overcast') return 0.22 + 0.22 * n;
+  const thr = 1 - W.cover - 0.15, c = smooth(thr - 0.04, thr + 0.04, n), dark = W.regime === 'showery' ? 0.18 : 0.32;
+  const enh = 0.22 * Math.exp(-(((n - (thr - 0.06)) / 0.03) ** 2));
+  return (1 - c) * (1 + enh) + c * dark;
+}
+function sunEl(lat, lon, doy, m) {
+  const g = 2 * Math.PI / 365 * (doy - 1 + (m / 60 - 12) / 24);
+  const eqt = 229.18 * (0.000075 + 0.001868 * Math.cos(g) - 0.032077 * Math.sin(g) - 0.014615 * Math.cos(2 * g) - 0.040849 * Math.sin(2 * g));
+  const decl = 0.006918 - 0.399912 * Math.cos(g) + 0.070257 * Math.sin(g) - 0.006758 * Math.cos(2 * g) + 0.000907 * Math.sin(2 * g);
+  const ha = ((m + eqt + 4 * lon) / 4 - 180) * Math.PI / 180, la = lat * Math.PI / 180;
+  const se = Math.sin(la) * Math.sin(decl) + Math.cos(la) * Math.cos(decl) * Math.cos(ha);
+  const el = Math.asin(clamp(se, -1, 1));
+  const az = Math.atan2(Math.sin(ha), Math.cos(ha) * Math.sin(la) - Math.tan(decl) * Math.cos(la)) + Math.PI;
+  return [el, az];
+}
+
+/* =====================================================================
+   4. Day simulation per building (1-min, cached per date)
+   ===================================================================== */
+const DAY = { date: null, W: {}, sim: [] };
+const LAT_OF = b => { const s = CLUSTERS.find(c => c.code === b.cluster).subs.find(s => s.id === b.sub); return [s.lat, s.lon]; };
+function resProfile(h, occ) { const p = [.30, .25, .22, .22, .22, .25, .40, .75, .70, .45, .40, .42, .48, .42, .40, .45, .60, .95, 1.15, 1.05, .90, .75, .55, .40]; return p[h] * (0.55 + 0.18 * occ); }
+function comProfile(b, h, W) {
+  const wk = W.wd >= 1 && W.wd <= 5, term = !(W.mo === 6 || W.mo === 7);
+  const s = b.area / 600;
+  switch (b.use) {
+    case 'School': return s * ((wk && term && h >= 8 && h < 15) ? 7 : 0.8);
+    case 'Small office': return s * ((wk && h >= 8 && h < 18) ? 6 : 1.0);
+    case 'Retail': return s * (2.5 + ((h >= 7 && h < 22) ? 4 : 0));
+    case 'Hospitality': return s * (1.5 + (h >= 10 && h < 23 ? 3 : 0) + (h >= 18 && h < 21 ? 3 : 0)) * (b.cluster === 'ARN' && (W.mo === 6 || W.mo === 7) ? 1.6 : 1);
+    default: return s * ((wk && h >= 9 && h < 17) ? 4 : 0.8) + ((W.wd === 2 || W.wd === 4) && h >= 19 && h < 21 ? s * 3 : 0);
+  }
+}
+function simulate(b, W) {
+  const N = 1440, A = n => new Float32Array(n);
+  const o = { pv: A(N), pvcs: A(N), k: A(N), kobs: A(N), base: A(N), hp: A(N), planHp: A(N), ev: A(N), planEv: A(N), batt: A(N), planBatt: A(N), soc: A(N), dhw: A(N), load: A(N), net: A(N), tout: A(N), dev: [] };
+  const [lat, lon] = LAT_OF(b), tl = b.tilt * Math.PI / 180, pa = b.az * Math.PI / 180;
+  const R = rng(fnv(b.id + DAY.date));
+  const xkm = b.xm / 1000, ykm = b.ym / 1000;
+  // EV session
+  const ev = b.hasEV ? { plug: 1050 + Math.floor(R() * 150), dep: 400 + Math.floor(R() * 120), need: (b.type === 'C' ? 25 : 6) + R() * 14, mode: R() < 0.12 ? 'immediate' : 'night', delay: Math.floor(R() * 10) } : null;
+  // HP overrides and plan delays
+  const ovr = b.hasHP && R() < 0.18 ? { s: 600 + Math.floor(R() * 600), d: 30 + Math.floor(R() * 90), on: R() < 0.5 } : null;
+  const comms = R() < (b.cluster === 'ARN' ? 0.02 : 0.005);
+  let evDone = 0, evPlanDone = 0, soc = b.battKwh * 0.4, divert = 0;
+  for (let m = 0; m < N; m++) {
+    const h = Math.floor(m / 60);
+    const [el, saz] = sunEl(lat, lon, W.doy, m);
+    const se = Math.sin(el);
+    let pvcs = 0;
+    if (se > 0.02) {
+      const ghi = 1098 * se * Math.exp(-0.057 / se);
+      const ci = Math.sin(el) * Math.cos(tl) + Math.cos(el) * Math.sin(tl) * Math.cos(saz - pa);
+      const poa = ghi * (0.25 + 0.75 * Math.max(0, ci) / Math.max(se, 0.12));
+      pvcs = b.kwp * Math.min(poa, 1150) / 1000 * 0.86;
+    }
+    const k = kAt(W, xkm, ykm, m);
+    const pv = Math.min(pvcs * k, b.kwp / 1.1);
+    o.pvcs[m] = pvcs; o.k[m] = k; o.pv[m] = pv;
+    o.kobs[m] = pvcs > 0.05 ? (pv * (1 + (R() - 0.5) * 0.01)) / pvcs : NaN;
+    const tout = W.tmean + W.amp * Math.sin(2 * Math.PI * (m / 1440 - 0.375)); o.tout[m] = tout;
+    // base load with appliance events
+    let base = b.type === 'R' ? resProfile(h, b.occupants) : comProfile(b, h, W);
+    if (b.type === 'R') {
+      const slot = Math.floor(m / 6), p = hash01(b.id, DAY.date, slot);
+      const act = base / 1.2;
+      if (p < 0.08 * act) base += 1.2 + 2 * hash01(b.id, slot, 'p');
+      if (hash01(b.id, DAY.date, Math.floor(m / 45)) < 0.05 && h > 8 && h < 22) base += 2.0;   // wet appliances
+    } else base *= 0.92 + 0.16 * hash01(b.id, m, 'c');
+    o.base[m] = base;
+    // heat pump: planned cycles from the day-ahead plan; realised with delays and overrides
+    if (b.hasHP) {
+      const setback = (h >= 23 || h < 6) ? 0.6 : 1;
+      const tflow = 35 + 0.6 * Math.max(0, 15 - tout), cop = 0.45 * (273 + tflow) / Math.max(8, tflow - tout);
+      const demand = Math.max(0, 15.5 - tout) * b.hlc * setback, cap = b.hpKw / 3;
+      const duty = clamp(demand / cop / cap, 0, 1);
+      const dhw = b.type === 'R' && m >= 300 && m < 340 ? cap : 0;
+      const ph = m % 60;
+      const plan = (ph < duty * 60 ? cap : 0) + dhw;
+      const delay = Math.floor(hash01(b.id, DAY.date, h, 'd') * 8);
+      const phR = (m - delay + 1440) % 60;
+      let real = (phR < duty * 60 ? cap * (0.92 + 0.08 * hash01(b.id, m)) : 0) + dhw;
+      if (ovr && m >= ovr.s && m < ovr.s + ovr.d) { real = ovr.on ? cap : 0; if (m === ovr.s) o.dev.push({ m, kind: 'occupant override', d: ovr.d, txt: ovr.on ? 'forced on' : 'forced off' }); }
+      if (b.noncompliant && hash01(b.id, DAY.date, h, 'nc') < 0.3) real = (m % 50 < duty * 50 ? cap : 0) + dhw;
+      if (delay > 3 && ph === 0 && plan > 0) o.dev.push({ m, kind: 'start delay', d: delay, txt: `${delay} min late` });
+      o.planHp[m] = plan; o.hp[m] = real;
+    }
+    // EV
+    if (ev) {
+      const plugged = m >= ev.plug || m < ev.dep;
+      const tPlan = ev.mode === 'night' ? 1380 : ev.plug, tReal = tPlan + ev.delay;
+      const after = (t) => (m >= t) || (m < ev.dep && t >= ev.plug);
+      if (plugged && after(tPlan) && evPlanDone < ev.need) { o.planEv[m] = b.evKw; evPlanDone += b.evKw / 60; }
+      if (plugged && after(tReal) && evDone < ev.need) { o.ev[m] = b.evKw; evDone += b.evKw / 60; }
+      if (m === tReal % 1440 && ev.delay > 2) o.dev.push({ m, kind: 'start delay', d: ev.delay, txt: `EV ${ev.delay} min late` });
+    }
+    // PV diverter to hot water (only homes with a diverter)
+    let pre = base + o.hp[m] + o.ev[m] - pv;
+    if (b.dhwDiverter && pre < -0.2 && divert < 6) { const dv = Math.min(3, -pre); o.dhw[m] = dv; divert += dv / 60; pre += dv; }
+    // battery: self-consumption, evening discharge
+    if (b.hasBAT) {
+      let p = 0;
+      if (pre < 0) p = Math.min(b.battKw, -pre, (b.battKwh * 0.95 - soc) * 60 / 0.95);
+      else if (h >= 16 && h < 23) p = -Math.min(b.battKw, pre, (soc - b.battKwh * 0.1) * 60);
+      soc += p > 0 ? p * 0.95 / 60 : p / 60; o.batt[m] = p; o.soc[m] = soc;
+      o.planBatt[m] = (h >= 11 && h < 15 && pvcs > 0.3) ? Math.min(b.battKw, b.battKw * 0.6) : (h >= 17 && h < 21 ? -b.battKw * 0.6 : 0);
+    }
+    o.load[m] = base + o.hp[m] + o.ev[m] + o.dhw[m];
+    o.net[m] = o.load[m] + o.batt[m] - pv;
+  }
+  if (comms) o.dev.push({ m: 600, kind: 'comms loss', d: 45, txt: 'plan not received; local default schedule' });
+  return o;
+}
+function ensureDay() {
+  if (DAY.date === STATE.date) return;
+  DAY.date = STATE.date; DAY.W = {};
+  for (const c of CLUSTERS) DAY.W[c.code] = dayInfo(STATE.date, c.code);
+  DAY.sim = B.map(b => simulate(b, DAY.W[b.cluster]));
+  if (SRC.live) { DAY.sim = DAY.sim.map((S, i) => overlay(B[i], S)); if (!SRC.days.has(STATE.date)) loadDay(STATE.date); if (STATE.selKind === 'b') loadMonth(STATE.sel, STATE.date); }
+  for (const k in RD_CACHE) delete RD_CACHE[k];
+}
+
+/* =====================================================================
+   5. RD-Fusion at the edge (PARA//EL): RD states, damped filter,
+      control input, fleet advection, fusion, conformal calibration
+   ===================================================================== */
+const HZ = [5, 15, 30, 60, 90, 120], PSI = 0.85, PHI = 0.7, WIN = 15;
+const Z = { 10: -1.2816, 50: 0, 90: 1.2816 };
+function sg(y) {          // causal quadratic fit over the last WIN samples: level, slope, curvature at the newest sample
+  const n = y.length; let S = [0, 0, 0, 0, 0], T = [0, 0, 0], cnt = 0;
+  for (let i = 0; i < n; i++) { const v = y[i]; if (isNaN(v)) continue; const t = i - (n - 1); S[0]++; S[1] += t; S[2] += t * t; S[3] += t ** 3; S[4] += t ** 4; T[0] += v; T[1] += v * t; T[2] += v * t * t; cnt++; }
+  if (cnt < 6) return null;
+  const M = [[S[0], S[1], S[2]], [S[1], S[2], S[3]], [S[2], S[3], S[4]]];
+  const det = m => m[0][0] * (m[1][1] * m[2][2] - m[1][2] * m[2][1]) - m[0][1] * (m[1][0] * m[2][2] - m[1][2] * m[2][0]) + m[0][2] * (m[1][0] * m[2][1] - m[1][1] * m[2][0]);
+  const D = det(M); if (Math.abs(D) < 1e-9) return null;
+  const sol = [0, 1, 2].map(j => det(M.map((r, i) => r.map((v, k) => k === j ? T[i] : v))) / D);
+  return { level: sol[0], slope: sol[1], curv: 2 * sol[2] };
+}
+function damped(st, h) { let s = 0, p = 1; for (let i = 0; i < h; i++) { s += p; p *= PSI; } let c = 0; p = 1; for (let i = 0; i < h; i++) { c += p * i; p *= PHI; } return st.level + st.slope * s + 0.5 * st.curv * c * 0.2; }
+function neighbours(b, W) {
+  const v = [W.ukm, W.vkm], vv = v[0] ** 2 + v[1] ** 2;
+  return CL[b.cluster].members.filter(n => n !== b && n.sub === b.sub).map(n => {
+    const d = [(b.xm - n.xm) / 1000, (b.ym - n.ym) / 1000];
+    const tau = (d[0] * v[0] + d[1] * v[1]) / vv;                 // minutes until n's cloud reaches b
+    const cross = Math.abs(d[0] * v[1] - d[1] * v[0]) / Math.sqrt(vv);
+    return { n, tau, cross, dist: Math.hypot(...d) };
+  }).filter(o => o.tau > 0.5 && o.tau < 150);
+}
+const RD_CACHE = {};
+function rdFusion(b, m, target = 'pv') {
+  const key = `${b.id}|${m}|${target}`; if (RD_CACHE[key]) return RD_CACHE[key];
+  const S = DAY.sim[b.idx], W = DAY.W[b.cluster];
+  const hist = (arr, t, w) => { const out = []; for (let i = t - w + 1; i <= t; i++) out.push(i >= 0 ? arr[i] : NaN); return out; };
+  const res = { target, m, hz: [], steps: [] };
+  if (target === 'pv') {
+    if (!(S.pvcs[m] > 0.05)) { res.night = true; return (RD_CACHE[key] = res); }
+    const st = sg(hist(S.kobs, m, WIN)); res.state = st;
+    const innov = []; for (let t = m - 30; t < m; t++) { if (t < WIN || !(S.pvcs[t] > 0.05)) continue; const s2 = sg(hist(S.kobs, t - 1, WIN)); if (s2) innov.push(S.kobs[t] - damped(s2, 1)); }
+    const sig = Math.sqrt(innov.reduce((a, x) => a + x * x, 0) / Math.max(1, innov.length)) || 0.03;
+    const dsig = innov.length > 6 ? Math.abs(innov.slice(-5).reduce((a, x) => a + x, 0) / 5 - innov.slice(0, 5).reduce((a, x) => a + x, 0) / 5) : 0;
+    const qInfl = 1 + 6 * dsig;                                    // innovation-derivative adaptation (Eq. 7)
+    res.sig = sig; res.qInfl = qInfl;
+    const nb = neighbours(b, W); res.nb = nb;
+    for (const h of HZ) {
+      if (m + h >= 1440) { res.hz.push(null); continue; }
+      let kf = st ? clamp(damped(st, h), Math.max(0.05, st.level - 0.35), Math.min(1.35, st.level + 0.35)) : S.kobs[m];
+      const vf = (sig * sig) * h * qInfl + 0.0004;
+      let wsum = 0, ksum = 0;
+      for (const o of nb) { const w = Math.exp(-0.5 * ((o.tau - h) / Math.max(2, h * 0.25)) ** 2) * Math.exp(-0.5 * (o.cross / 0.6) ** 2); if (w > 1e-3 && !isNaN(DAY.sim[o.n.idx].kobs[m])) { wsum += w; ksum += w * DAY.sim[o.n.idx].kobs[m]; } }
+      const ka = wsum > 0.05 ? ksum / wsum : null, va = ka == null ? Infinity : 0.012 / Math.min(1, wsum) + 0.002 * h / 30;
+      const recent = hist(S.kobs, m, 60).filter(v => !isNaN(v)), kc = recent.reduce((a, v) => a + v, 0) / Math.max(1, recent.length);
+      const vc = recent.reduce((a, v) => a + (v - kc) ** 2, 0) / Math.max(1, recent.length) + 0.002;
+      const wf = 1 / vf, wa = ka == null ? 0 : 1 / va, wc = 1 / vc;
+      const kfus = (wf * kf + wa * (ka ?? 0) + wc * kc) / (wf + wa + wc);
+      const sd = Math.sqrt(1 / (wf + wa + wc)) * 1.1 + 0.02;
+      const cs = S.pvcs[m + h];
+      const bias = -0.01 * Math.sin((m + h) / 1440 * 6.28) * (W.regime === 'broken' ? 1 : 0.3);   // federated cohort bias table (emulated)
+      const q = p => clamp((kfus - bias + Z[p] * sd) * cs, 0, b.kwp / 1.1);
+      res.hz.push({ h, kf, ka, kc, wAdv: wa / (wf + wa + wc), wF: wf / (wf + wa + wc), kfus, sd, p10: q(10), p50: q(50), p90: q(90), sp: Math.min(S.kobs[m] * cs, b.kwp / 1.1), truth: S.pv[m + h] });
+    }
+  } else {
+    const resid = hist(S.base, m, WIN).map((v, i) => v);
+    const st = sg(resid); res.state = st;
+    const sig = Math.sqrt(hist(S.base, m, 30).reduce((a, v, i, arr) => a + (i ? (v - arr[i - 1]) ** 2 : 0), 0) / 29) || 0.1;
+    res.sig = sig; res.qInfl = 1;
+    for (const h of HZ) {
+      if (m + h >= 1440) { res.hz.push(null); continue; }
+      const lvl = st ? Math.max(0, st.level * 0.6 + resProfileAt(b, m + h) * 0.4) : S.base[m];
+      const u = (S.planHp[m + h] - S.planHp[m]) + (S.planEv[m + h] - S.planEv[m]);    // control input: planned change
+      const gap = (S.hp[m] + S.ev[m]) - (S.planHp[m] + S.planEv[m]);             // realised minus planned now, decays with horizon
+      const p50 = Math.max(0, lvl + S.dhw[m] + S.planHp[m + h] + S.planEv[m + h] + gap * Math.pow(0.5, h / 10));
+      const sd = sig * Math.sqrt(h) * 0.6 + 0.08 * p50 + 0.05;
+      res.hz.push({ h, u, p10: Math.max(0, p50 - 1.2816 * sd), p50, p90: p50 + 1.2816 * sd, sp: S.load[m], truth: S.load[m + h] });
+    }
+  }
+  return (RD_CACHE[key] = res);
+}
+function resProfileAt(b, m) { const W = DAY.W[b.cluster], h = Math.floor(m / 60) % 24; return b.type === 'R' ? resProfile(h, b.occupants) : comProfile(b, h, W); }
+function headroom(b, m) {
+  const S = DAY.sim[b.idx]; const out = {};
+  for (const T of [15, 30, 60]) {
+    let up = 0, dn = 0;
+    if (b.hasHP) { const cap = b.hpKw / 3; up += Math.max(0, cap - S.hp[m]); dn += S.hp[m]; }
+    if (b.hasEV && S.ev[m] > 0) dn += S.ev[m];
+    if (b.hasBAT) { const e = S.soc[m]; up += Math.min(b.battKw, Math.max(0, (b.battKwh * 0.95 - e) * 60 / T)) + Math.max(0, -S.batt[m]); dn += Math.min(b.battKw, Math.max(0, (e - b.battKwh * 0.1) * 60 / T)) + Math.max(0, S.batt[m]); }
+    out[T] = { up, dn };
+  }
+  return out;
+}
+
+
+/* =====================================================================
+   0. Backblaze B2 (S3-compatible API): SigV4 presigned GET in the browser
+   ===================================================================== */
+const enc = new TextEncoder();
+const hex = buf => [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, '0')).join('');
+async function hmac(key, msg) { const k = await crypto.subtle.importKey('raw', typeof key === 'string' ? enc.encode(key) : key, { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']); return crypto.subtle.sign('HMAC', k, enc.encode(msg)); }
+async function sha256hex(s) { return hex(await crypto.subtle.digest('SHA-256', enc.encode(s))); }
+const uriEnc = s => encodeURIComponent(s).replace(/[!'()*]/g, c => '%' + c.charCodeAt(0).toString(16).toUpperCase());
+async function presign(cfg, key, expires = 900, now = new Date()) {
+  const host = cfg.endpoint.replace(/^https?:\/\//, '').replace(/\/+$/, '');
+  const region = (host.match(/^s3\.([^.]+)\./) || [, 'us-east-1'])[1];
+  const amzDate = now.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+  const date = amzDate.slice(0, 8), scope = `${date}/${region}/s3/aws4_request`;
+  const path = '/' + uriEnc(cfg.bucket) + '/' + key.split('/').map(uriEnc).join('/');
+  const q = { 'X-Amz-Algorithm': 'AWS4-HMAC-SHA256', 'X-Amz-Credential': `${cfg.keyId}/${scope}`, 'X-Amz-Date': amzDate, 'X-Amz-Expires': String(expires), 'X-Amz-SignedHeaders': 'host' };
+  const qs = Object.keys(q).sort().map(k => `${uriEnc(k)}=${uriEnc(q[k])}`).join('&');
+  const canonical = ['GET', path, qs, `host:${host}`, '', 'host', 'UNSIGNED-PAYLOAD'].join('\n');
+  const sts = ['AWS4-HMAC-SHA256', amzDate, scope, await sha256hex(canonical)].join('\n');
+  let k = await hmac('AWS4' + cfg.secret, date); k = await hmac(k, region); k = await hmac(k, 's3'); k = await hmac(k, 'aws4_request');
+  return `https://${host}${path}?${qs}&X-Amz-Signature=${hex(await hmac(k, sts))}`;
+}
+async function signerUrl(cfg, q) {
+  let r; try { r = await fetch(cfg.signer + '?' + new URLSearchParams(q)); } catch (e) { throw new Error(`Could not reach ${cfg.signer}. Open this page from the web server where b2_sign.php is installed.`); }
+  let j = {}; try { j = await r.json(); } catch (e) { throw new Error(`${cfg.signer} did not return JSON (is PHP enabled on the server?)`); }
+  if (!r.ok || !j.url) throw new Error(`${cfg.signer}: ${j.error || 'HTTP ' + r.status}`);
+  return j.url;
+}
+async function b2json(key, gz) {
+  const full = SRC.cfg.prefix.replace(/^\/+/, '').replace(/([^/])$/, '$1/') + key;
+  const url = SRC.cfg.signer ? await signerUrl(SRC.cfg, { op: 'get', key: full }) : await presign(SRC.cfg, full);
+  let res;
+  try { res = await fetch(url); }
+  catch (e) { throw new Error('Network or CORS error: add a CORS rule to the bucket (see the page notes)'); }
+  if (!res.ok) throw new Error(res.status === 403 ? 'Access denied (403): check the key ID, application key and that the key can read this bucket and folder' : res.status === 404 ? `Not found (404): ${key}` : `HTTP ${res.status} for ${key}`);
+  if (!gz) return res.json();
+  return new Response(res.body.pipeThrough(new DecompressionStream('gzip'))).json();
+}
+window.__presign = presign;
+
+/* ---------- data layer: emulated by default, Backblaze when connected ---------- */
+const SRC = { live: false, cfg: null, manifest: null, days: new Map(), months: new Map(), pending: new Map(), err: null };
+function srcState(kind, text, note) {
+  document.getElementById('srcState').innerHTML = `<span class="srcpill ${kind}"><i></i>${text}</span>`;
+  if (note != null) document.getElementById('srcNote').textContent = note;
+  document.getElementById('brandNote').textContent = kind === 'live' ? 'Live: building data is read from the HRSD-RD_FUSION v0.1 release in Backblaze; RD-Fusion runs in the browser on it.' : 'Emulated until you connect Backblaze: then building data is read from the v0.1 release.';
+}
+async function connectB2(cfg) {
+  SRC.cfg = cfg; SRC.err = null; srcState('busy', 'Connecting…', 'Reading manifest and building list…');
+  try {
+    const manifest = await b2json('manifest.json', false), meta = await b2json('meta.json', false);
+    SRC.manifest = manifest; SRC.days.clear(); SRC.months.clear(); SRC.live = true;
+    const r = rebuildStock(meta); applySites();
+    srcState('live', 'Backblaze live', `${manifest.dataset} ${manifest.version} · ${r.matched} buildings from meta.json${r.added ? `, ${r.added} new` : ''} · ${manifest.days.length} days. Map shows 5-min real values; open a building for its 1-min data.`);
+    document.getElementById('b2Disconnect').hidden = false;
+    buildMarkers(); await loadDay(STATE.date);
+  } catch (e) { SRC.live = false; SRC.err = e.message; srcState('err', 'Connection failed', e.message); }
+}
+function disconnectB2() { SRC.live = false; SRC.cfg = null; SRC.days.clear(); SRC.months.clear(); try { localStorage.removeItem('rdfTwinB2'); } catch (e) {} document.getElementById('b2Disconnect').hidden = true; srcState('emu', 'Emulated', 'Values are regenerated in the browser from the v0.1 design. Connect to read the real dataset from Backblaze.'); DAY.date = null; paint(true); refreshDrawer(true); }
+async function loadDay(date) {
+  if (!SRC.live) return;
+  if (!SRC.manifest.days.includes(date)) { srcState('live', 'Backblaze live', `No data for ${date} in the release (${SRC.manifest.days[0]} to ${SRC.manifest.days.at(-1)}). Showing emulated values for this day.`); return; }
+  if (!SRC.days.has(date)) {
+    srcState('busy', 'Loading day…', `Fetching day/${date}.json.gz`);
+    try { SRC.days.set(date, await b2json(`day/${date}.json.gz`, true)); srcState('live', 'Backblaze live', `${date}: 5-min real values for ${SRC.days.get(date).ids.length} buildings. Open a building for 1-min data.`); }
+    catch (e) { srcState('err', 'Day failed', e.message); return; }
+  }
+  if (STATE.date === date) { DAY.date = null; paint(true); refreshDrawer(true); }
+}
+async function loadMonth(b, date) {
+  if (!SRC.live) return;
+  const month = date.slice(0, 7), key = `${b.id}|${month}`;
+  if (!SRC.manifest.months.includes(month) || SRC.months.has(key) || SRC.pending.has(key)) return;
+  const p = b2json(`b/${b.id}/${month}.json.gz`, true).then(rec => { SRC.months.set(key, rec); SRC.pending.delete(key); if (STATE.date.slice(0, 7) === month) { DAY.sim[b.idx] = overlay(b, DAY.sim[b.idx]); clearRD(b); paint(true); refreshDrawer(true); } })
+    .catch(e => { SRC.pending.delete(key); srcState('err', 'Building failed', `${b.id}: ${e.message}`); });
+  SRC.pending.set(key, p);
+}
+function clearRD(b) { for (const k in RD_CACHE) if (k.startsWith(b.id + '|')) delete RD_CACHE[k]; }
+// Replace emulated arrays with real ones: 1-min if the month file is loaded, else 5-min totals from the day file.
+function overlay(b, S) {
+  const date = STATE.date, rec = SRC.months.get(`${b.id}|${date.slice(0, 7)}`), day = SRC.days.get(date);
+  if (rec) {
+    const i0 = Math.round((Date.parse(date + 'T00:00:00Z') - Date.parse(rec.start)) / 60000);
+    const col = (name, sc) => { const a = rec.cols[name]; if (!a) return null; const o = new Float32Array(1440); for (let m = 0; m < 1440; m++) { const v = a[i0 + m]; o[m] = v == null ? NaN : v / sc; } return o; };
+    const T = { pv: col('pv_kw', 1000), pvcs: col('pv_cs_kw', 1000), load: col('load_kw', 1000), net: col('net_kw', 1000), hp: col('hp_kw', 1000), ev: col('ev_kw', 1000), batt: col('batt_kw', 1000),
+      soc: col('soc_kwh', 1000), planHp: col('plan_hp_kw', 1000), planEv: col('plan_ev_kw', 1000), planBatt: col('plan_batt_kw', 1000), tout: col('temp_out_c', 10), tin: col('temp_in_c', 10), planDhw: col('plan_dhw_kw', 1000) };
+    const o = { ...S, src: 'min1', dev: [] };
+    for (const [k, v] of Object.entries(T)) if (v) o[k] = v;
+    o.dhw = new Float32Array(1440); o.base = new Float32Array(1440); o.k = new Float32Array(1440); o.kobs = new Float32Array(1440);
+    for (let m = 0; m < 1440; m++) {
+      o.base[m] = Math.max(0, (o.load[m] || 0) - (o.hp[m] || 0) - (o.ev[m] || 0));
+      o.kobs[m] = o.pvcs[m] > 0.05 ? o.pv[m] / o.pvcs[m] : NaN; o.k[m] = o.kobs[m];
+    }
+    // observed plan deviations (no ground truth in the twin export): starts where realised and planned power differ by > 0.5 kW
+    for (const [a, p, name] of [['hp', 'planHp', 'Heat pump'], ['ev', 'planEv', 'EV']]) {
+      let on = false;
+      for (let m = 0; m < 1440; m++) { const d = Math.abs((o[a][m] || 0) - (o[p][m] || 0)) > 0.5; if (d && !on) { let e = m; while (e < 1440 && Math.abs((o[a][e] || 0) - (o[p][e] || 0)) > 0.5) e++; if (e - m >= 2) o.dev.push({ m, kind: 'plan vs realised', d: e - m, txt: `${name} differs from plan for ${e - m} min` }); } on = d; }
+    }
+    return o;
+  }
+  if (day) {
+    const j = day.ids.indexOf(b.id); if (j < 0) return S;
+    const g = (c) => { const a = day.ch[c] && day.ch[c][j]; if (!a) return null; const o = new Float32Array(1440); for (let m = 0; m < 1440; m++) { const v = a[Math.floor(m / 5)]; o[m] = v == null ? NaN : v / 1000; } return o; };
+    const o = { ...S, src: 'day5' };
+    const pv = g('pv_kw'), pvcs = g('pv_cs_kw'), load = g('load_kw'), net = g('net_kw');
+    if (pv) o.pv = pv; if (pvcs) o.pvcs = pvcs; if (load) o.load = load; if (net) o.net = net;
+    o.k = new Float32Array(1440); o.kobs = new Float32Array(1440);
+    for (let m = 0; m < 1440; m++) { o.kobs[m] = o.pvcs[m] > 0.05 ? o.pv[m] / o.pvcs[m] : NaN; o.k[m] = o.kobs[m]; }
+    return o;
+  }
+  return S;
+}
+// Align the emulated stock with the real meta.json (positions, PV, assets).
+function rebuildStock(meta) {
+  let matched = 0, added = 0;
+  const seen = new Set();
+  for (const r of meta) {
+    const id = String(r.building_id); seen.add(id);
+    let b = BYID[id];
+    const code = CL[r.cluster] ? r.cluster : id.slice(0, 3);
+    if (!CL[code]) continue;
+    if (!b) {
+      const tmpl = CL[code].members[0];
+      b = { ...tmpl, idx: B.length, id, tokShared: token(id, 'shared'), tokAgg: token(id, 'aggregator') }; B.push(b); CL[code].members.push(b); BYID[id] = b; added++;
+    } else matched++;
+    const assets = String(r.assets || '');
+    if (r.kwp != null) b.kwp = +r.kwp; if (r.tilt != null) b.tilt = +r.tilt; if (r.azimuth != null) b.az = +r.azimuth;
+    if (assets) { b.hasHP = /HP/.test(assets); b.hasEV = /EV/.test(assets); b.hasBAT = /BAT/.test(assets); const ci = CFG_NAMES.indexOf(assets); if (ci >= 0) b.cfg = ci; }
+    if (r.batt_kwh != null) b.battKwh = +r.batt_kwh; if (r.hp_kw_max != null && +r.hp_kw_max > 0) b.hpKw = +r.hp_kw_max * 3; if (r.ev_kw_max != null) b.evKw = +r.ev_kw_max;
+    if (r.building_type) { const t = String(r.building_type).toLowerCase(); b.type = /res|dwell|house|apart|detach|terrace|bungalow/.test(t) ? 'R' : (/-C\d/.test(id) ? 'C' : b.type); }
+    if (r.lat != null && r.lon != null) { b.lat = +r.lat; b.lon = +r.lon; }
+    if (r.x_m != null && r.y_m != null) { b.xm = +r.x_m; b.ym = +r.y_m; }
+  }
+  return { matched, added, missing: B.filter(b => !seen.has(b.id)).length };
+}
+
+
+/* =====================================================================
+   6. Leaflet map
+   ===================================================================== */
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const dark = matchMedia('(prefers-color-scheme: dark)').matches;
+const isSmall = Math.min(innerWidth, innerHeight) < 700;
+const map = L.map('map', { zoomControl: false, preferCanvas: true, worldCopyJump: false, minZoom: 6, maxZoom: 16, zoomSnap: 0.25 }).setView([53.45, -8.1], 7);
+L.control.zoom({ position: 'bottomright' }).addTo(map);
+map.createPane('labels').style.zIndex = 350; map.getPane('labels').style.pointerEvents = 'none';
+const ESRI = n => `https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/${n}/MapServer/tile/{z}/{y}/{x}`;
+const ESRI_ATT = 'Tiles &copy; <a href="https://www.esri.com">Esri</a>, HERE, Garmin, &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+L.tileLayer(ESRI(dark ? 'World_Dark_Gray_Base' : 'World_Light_Gray_Base'), { maxZoom: 16, maxNativeZoom: 16, attribution: ESRI_ATT }).addTo(map);
+L.tileLayer(ESRI(dark ? 'World_Dark_Gray_Reference' : 'World_Light_Gray_Reference'), { maxZoom: 16, maxNativeZoom: 16, pane: 'labels', opacity: 0.8 }).addTo(map);
+map.attributionControl.setPrefix('<a href="https://leafletjs.com">Leaflet</a>');
+const svgR = L.svg({ padding: 0.5 });
+const linkLayer = L.layerGroup().addTo(map), bLayer = L.layerGroup().addTo(map), nodeLayer = L.layerGroup().addTo(map), windLayer = L.layerGroup().addTo(map), labelLayer = L.layerGroup();
+const llOf = b => [b.lat, b.lon];
+const FXLL = [51.8932, -8.4885];                       // FLEXUS at Tyndall National Institute, Cork
+let selMark = null;
+
+function buildMarkers() {
+  linkLayer.clearLayers(); bLayer.clearLayers(); nodeLayer.clearLayers(); windLayer.clearLayers(); labelLayer.clearLayers();
+  for (const c of CLUSTERS) {
+    const C = CL[c.code];
+    const M0 = C.members.filter(b => b.sub === c.subs[0].id), lat = M0.reduce((a, b) => a + b.lat, 0) / M0.length, lon = M0.reduce((a, b) => a + b.lon, 0) / M0.length;
+    C.ll = c.code === 'CRK' ? [lat + 0.11, lon + 0.2] : [lat, lon];
+    for (const b of C.members) L.polyline([llOf(b), C.ll], { renderer: svgR, className: 'flowline', color: '#0f8a80', weight: 1, opacity: 0.35, interactive: false }).addTo(linkLayer);
+    L.polyline([C.ll, FXLL], { renderer: svgR, className: 'flowline', color: '#a8700a', weight: 2.5, opacity: 0.8, interactive: false }).addTo(linkLayer);
+    const ew = L.marker(C.ll, { icon: L.divIcon({ className: '', html: '<div class="ew-icon" title="EdgeWare">EW</div>', iconSize: [30, 30], iconAnchor: [15, 15] }), keyboard: true, title: `EdgeWare ${C.name}` })
+      .bindTooltip(`${C.name} · ${C.members.length}`, { permanent: true, direction: 'top', offset: [0, -16], className: 'cl-tip' }).on('click', () => openEdge(c.code));
+    ew.addTo(nodeLayer); C.ewMarker = ew;
+    const arrow = L.marker([C.ll[0] - 0.09, C.ll[1] - 0.16], { icon: L.divIcon({ className: 'wind-icon', html: '', iconSize: [40, 40], iconAnchor: [20, 20] }), interactive: false }).addTo(windLayer); C.wind = arrow;
+    if (c.subs.length > 1) for (const s of c.subs) {
+      const mem = C.members.filter(b => b.sub === s.id); if (!mem.length) continue;
+      const sl = [Math.max(...mem.map(b => b.lat)) + 0.012, mem.reduce((a, b) => a + b.lon, 0) / mem.length];
+      L.marker(sl, { icon: L.divIcon({ className: '', html: `<span class="sub-label">${s.name} · ${mem.length}</span>`, iconSize: [0, 0] }), interactive: false }).addTo(labelLayer);
+    }
+  }
+  L.marker(FXLL, { icon: L.divIcon({ className: '', html: '<div class="fx-icon">FLEXUS</div>', iconSize: [38, 38], iconAnchor: [19, 19] }), title: 'FLEXUS', zIndexOffset: 1000 })
+    .bindTooltip('FLEXUS · Tyndall, Cork', { direction: 'top', offset: [0, -20], className: 'cl-tip' }).on('click', () => openFlexus()).addTo(nodeLayer);
+  for (const b of B) {
+    b.marker = L.circleMarker(llOf(b), { radius: 4, weight: b.type === 'C' ? 2 : 1, color: b.type === 'C' ? '#15242c' : '#ffffff', fillOpacity: 0.95, fillColor: '#ccc' })
+      .bindTooltip('', { direction: 'top', offset: [0, -6] }).on('click', () => openBuilding(b))
+      .on('tooltipopen', e => { const S = DAY.sim[b.idx], m = STATE.minute; e.tooltip.setContent(`<b>${b.id}</b> · ${esc(b.use)}<br>net ${f2(S.net[m])} kW · PV ${f2(S.pv[m])} kW${S.src ? ` · <span class="srcbadge ${S.src === 'min1' ? 'live' : 'part'}">${S.src === 'min1' ? 'real 1-min' : 'real 5-min'}</span>` : ''}`); });
+    b.marker.addTo(bLayer);
+  }
+  sizeMarkers(); paint(true);
+}
+function sizeMarkers() {
+  const z = map.getZoom(), r = clamp((z - 6) * 1.25, 2, 9);
+  for (const b of B) b.marker && b.marker.setRadius(b.type === 'C' ? r * 1.5 : r);
+  if (z >= 9.5) labelLayer.addTo(map); else labelLayer.remove();
+}
+map.on('zoomend', sizeMarkers);
+function select(b) {
+  if (selMark) { selMark.remove(); selMark = null; }
+  if (b) selMark = L.circle(llOf(b), { radius: 160, color: '#d9752b', weight: 3, fill: false, interactive: false }).addTo(map);
+}
+const drawerPad = () => isSmall ? [0, 0] : [500, 0];
+function flyBuilding(b) { map.flyToBounds(L.latLng(...llOf(b)).toBounds(600), { paddingTopLeft: isSmall ? [0, 0] : [330, 0], paddingBottomRight: drawerPad(), maxZoom: 16, duration: reduceMotion ? 0 : 1.2 }); }
+function flyCluster(code) { const C = CL[code]; map.flyToBounds(L.latLngBounds(C.members.map(llOf).concat([C.ll])), { paddingTopLeft: isSmall ? [10, 10] : [340, 90], paddingBottomRight: isSmall ? [10, 10] : [500, 20], duration: reduceMotion ? 0 : 1.2 }); }
+function flyAll() { map.flyToBounds(L.latLngBounds(B.map(llOf).concat([FXLL])), { paddingTopLeft: isSmall ? [10, 10] : [340, 90], paddingBottomRight: [20, 20], duration: reduceMotion ? 0 : 1.2 }); }
+function flyFlexus() { map.flyToBounds(L.latLngBounds(CLUSTERS.map(c => CL[c.code].ll).concat([FXLL])), { paddingTopLeft: isSmall ? [10, 10] : [340, 90], paddingBottomRight: drawerPad(), duration: reduceMotion ? 0 : 1.2 }); }
+
+
+/* =====================================================================
+   7. Colours, legend, totals
+   ===================================================================== */
+const CFG_COL = ['#2f6fd1', '#6a4bc4', '#e0662a', '#1f9d6b', '#b5552a', '#15242c'];
+function mix(a, b, t) { t = clamp(t, 0, 1); const p = s => [1, 3, 5].map(i => parseInt(s.slice(i, i + 2), 16)); const A = p(a), Bc = p(b); return '#' + A.map((v, i) => Math.round(v + (Bc[i] - v) * t).toString(16).padStart(2, '0')).join(''); }
+function colourFor(b, m) {
+  const S = DAY.sim[b.idx];
+  if (STATE.color === 'cfg') return CFG_COL[b.cfg];
+  if (STATE.color === 'k') { const k = S.pvcs[m] > 0.05 ? S.kobs[m] : NaN; return isNaN(k) ? '#5f6a72' : mix('#4a5866', '#f2c14e', (k - 0.2) / 0.9); }
+  if (STATE.color === 'err') { const r = rdFusion(b, m, 'pv'); const z = r.hz && r.hz[2]; if (!z || isNaN(z.truth)) return '#9aa3a8'; return mix('#1f8a4c', '#c0392b', Math.abs(z.p50 - z.truth) / Math.max(0.2, b.kwp * 0.3)); }
+  const v = S.net[m]; if (isNaN(v)) return '#9aa3a8';
+  const n = v / (b.type === 'C' ? 15 : 3);
+  return n >= 0 ? mix('#e8e2d6', '#d9752b', n) : mix('#e8e2d6', '#2f6fd1', -n);
+}
+function legend() {
+  const Lg = { net: [['#2f6fd1', 'Exporting'], ['#e8e2d6', 'Balanced'], ['#d9752b', 'Importing']], k: [['#4a5866', 'Cloud'], ['#f2c14e', 'Clear sky'], ['#5f6a72', 'Night']],
+    cfg: CFG_NAMES.map((n, i) => [CFG_COL[i], n]), err: [['#1f8a4c', 'Small error'], ['#c0392b', 'Large error'], ['#9aa3a8', 'No PV forecast']] }[STATE.color];
+  document.getElementById('legend').innerHTML = Lg.map(([c, t]) => `<span><i style="background:${c}"></i>${t}</span>`).join('') + '<span><i style="background:#fff;border:2px solid #15242c;width:7px;height:7px"></i>Commercial</span>';
+}
+let lastPaint = -1;
+function paint(force) {
+  ensureDay(); const m = STATE.minute;
+  if (!force && m === lastPaint) return; lastPaint = m;
+  for (const b of B) if (b.marker) b.marker.setStyle({ fillColor: colourFor(b, m) });
+  for (const c of CLUSTERS) { const W = DAY.W[c.code], C = CL[c.code]; if (!C.wind) continue; const to = (W.dir + 180) % 360, len = 14 + W.spd * 1.3;
+    C.wind.setIcon(L.divIcon({ className: 'wind-icon', iconSize: [40, 40], iconAnchor: [20, 20], html: `<svg width="40" height="40" viewBox="-20 -20 40 40" style="transform:rotate(${to}deg)"><line x1="0" y1="${len / 2}" x2="0" y2="${-len / 2 + 5}" stroke="#56666e" stroke-width="2.5"/><path d="M0 ${-len / 2 - 2} L5 ${-len / 2 + 7} L-5 ${-len / 2 + 7} Z" fill="#56666e"/></svg>` }));
+    C.wind.options.title = `${c.name}: cloud motion ${W.spd.toFixed(0)} m/s from ${Math.round(W.dir)}°`; }
+  stats(); updateCond(); if (STATE.sel) refreshDrawer();
+}
+function stats() {
+  const m = STATE.minute; let net = 0, pv = 0, up = 0, dn = 0, real = 0;
+  for (const b of B) { const S = DAY.sim[b.idx]; net += S.net[m] || 0; pv += S.pv[m] || 0; const h = headroom(b, m)[30]; up += h.up; dn += h.dn; if (S.src) real++; }
+  const html = [[String(B.length), 'Buildings'], [`${B.filter(b => b.type === 'R').length} / ${B.filter(b => b.type === 'C').length}`, 'Residential / commercial'], ['5', 'EdgeWare nodes'], [`${(net / 1000).toFixed(2)} MW`, 'Net import now'], [`${(pv / 1000).toFixed(2)} MW`, 'Solar now'], [`${(up / 1000).toFixed(2)} / ${(dn / 1000).toFixed(2)} MW`, 'Flex up / down (30 min)'], [real ? `${real} real` : 'emulated', 'Data']]
+    .map(([v, l]) => `<div class="stat"><b>${v}</b><span>${l}</span></div>`).join('');
+  document.getElementById('stats').innerHTML = html; document.getElementById('statsInline').innerHTML = html;
+}
+function updateCond() {
+  const W = DAY.W, d = new Date(STATE.date + 'T00:00:00Z');
+  document.getElementById('splitLbl').textContent = d.getUTCFullYear() === 2024 ? 'train' : 'test';
+  document.getElementById('cond').innerHTML = CLUSTERS.map(c => `<b>${c.code}</b> ${W[c.code].regime}, ${W[c.code].spd.toFixed(0)} m/s from ${Math.round(W[c.code].dir)}°`).join(' · ') + (SRC.live ? '<br><span class="dim">Cloud regime and wind are emulated; building values are real where loaded.</span>' : '');
+}
+
+/* =====================================================================
+   8. Charts (canvas)
+   ===================================================================== */
+const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim() || '#888';
+function chart(id, series, opt = {}) {
+  const cv = document.getElementById(id); if (!cv) return;
+  const r = cv.getBoundingClientRect(), dpr = devicePixelRatio || 1; cv.width = r.width * dpr; cv.height = r.height * dpr;
+  const g = cv.getContext('2d'); g.scale(dpr, dpr); const W = r.width, H = r.height, pl = 34, pr = 6, pt = 6, pb = 16;
+  const x0 = opt.x0 ?? 0, x1 = opt.x1 ?? 1439;
+  let lo = opt.lo ?? Infinity, hi = opt.hi ?? -Infinity;
+  if (opt.lo == null || opt.hi == null) for (const s of series) for (let i = 0; i < s.y.length; i++) { const v = s.y[i]; if (v == null || isNaN(v)) continue; if (opt.lo == null) lo = Math.min(lo, v, s.y2 ? s.y2[i] : v); if (opt.hi == null) hi = Math.max(hi, v, s.y2 ? s.y2[i] : v); }
+  if (!isFinite(lo)) { lo = 0; hi = 1; } if (hi - lo < 1e-6) hi = lo + 1; const pad = (hi - lo) * 0.06; if (opt.lo == null) lo -= pad; if (opt.hi == null) hi += pad;
+  const X = x => pl + (x - x0) / (x1 - x0) * (W - pl - pr), Y = y => pt + (1 - (y - lo) / (hi - lo)) * (H - pt - pb);
+  g.font = '10px ' + css('--f-mono'); g.fillStyle = css('--muted'); g.strokeStyle = css('--line'); g.lineWidth = 1;
+  for (let i = 0; i <= 3; i++) { const v = lo + (hi - lo) * i / 3, y = Y(v); g.beginPath(); g.moveTo(pl, y); g.lineTo(W - pr, y); g.stroke(); g.fillText(v.toFixed(Math.abs(hi - lo) < 3 ? 2 : 1), 2, y + 3); }
+  const ticks = opt.ticks || (() => { const t = []; for (let m = Math.ceil(x0 / 180) * 180; m <= x1; m += 180) t.push(m); return t; })();
+  for (const t of ticks) { g.fillText(opt.tickFmt ? opt.tickFmt(t) : fmt(((t % 1440) + 1440) % 1440), X(t) - 12, H - 3); }
+  if (lo < 0 && hi > 0) { g.strokeStyle = css('--muted'); g.globalAlpha = .5; g.beginPath(); g.moveTo(pl, Y(0)); g.lineTo(W - pr, Y(0)); g.stroke(); g.globalAlpha = 1; }
+  for (const s of series) {
+    const xs = s.x || s.y.map((_, i) => x0 + i * (s.step || 1));
+    if (s.y2) { g.fillStyle = s.fill; g.beginPath(); let st = false; xs.forEach((x, i) => { const v = s.y2[i]; if (v == null || isNaN(v)) return; st ? g.lineTo(X(x), Y(v)) : (g.moveTo(X(x), Y(v)), st = true); }); for (let i = xs.length - 1; i >= 0; i--) { const v = s.y[i]; if (v == null || isNaN(v)) continue; g.lineTo(X(xs[i]), Y(v)); } g.closePath(); g.fill(); continue; }
+    g.strokeStyle = s.c; g.lineWidth = s.w || 1.4; g.setLineDash(s.dash ? [4, 3] : []); g.beginPath(); let st = false;
+    xs.forEach((x, i) => { const v = s.y[i]; if (v == null || isNaN(v)) { st = false; return; } st ? g.lineTo(X(x), Y(v)) : (g.moveTo(X(x), Y(v)), st = true); });
+    g.stroke(); g.setLineDash([]);
+    if (s.dots) { g.fillStyle = s.c; xs.forEach((x, i) => { const v = s.y[i]; if (v != null && !isNaN(v)) { g.beginPath(); g.arc(X(x), Y(v), 2.4, 0, 6.3); g.fill(); } }); }
+  }
+  if (opt.now != null) { g.strokeStyle = css('--buoy'); g.lineWidth = 1.2; g.beginPath(); g.moveTo(X(opt.now), pt); g.lineTo(X(opt.now), H - pb); g.stroke(); }
+}
+const legendHTML = items => `<div class="clegend">${items.map(([c, t, d]) => `<span><i class="${d ? 'dash' : ''}" style="background:${c.startsWith('--') ? `var(${c})` : c};color:${c.startsWith('--') ? `var(${c})` : c}"></i>${t}</span>`).join('')}</div>`;
+
+/* =====================================================================
+   9. Drawers: building (PARA//EL), cluster (EdgeWare), FLEXUS
+   ===================================================================== */
+const dw = { el: document.getElementById('drawer'), eb: document.getElementById('dwEyebrow'), t: document.getElementById('dwTitle'), sub: document.getElementById('dwSub'), chain: document.getElementById('dwChain'), tabs: document.getElementById('dwTabs'), body: document.getElementById('dwBody') };
+let TAB = 'live', LOG = [];
+const sec = (h, inner) => `<section class="sec"><h4>${h}</h4>${inner}</section>`;
+const kv = rows => '<dl class="kv">' + rows.filter(Boolean).map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join('') + '</dl>';
+const tiles = arr => `<div class="tiles">${arr.map(([v, l]) => `<div class="tile"><b>${v}</b><span>${l}</span></div>`).join('')}</div>`;
+function setTabs(list) { if (!list.find(t => t[0] === TAB)) TAB = list[0][0]; dw.tabs.innerHTML = list.map(([k, l]) => `<button class="tab" role="tab" data-tab="${k}" aria-selected="${k === TAB}">${l}</button>`).join(''); }
+dw.tabs.addEventListener('click', e => { const t = e.target.closest('[data-tab]'); if (!t) return; TAB = t.dataset.tab; refreshDrawer(true); });
+document.getElementById('dwClose').addEventListener('click', closeDrawer);
+function closeDrawer() { dw.el.hidden = true; STATE.sel = null; STATE.selKind = null; select(null); }
+dw.chain.addEventListener('click', e => { const c = e.target.closest('[data-go]'); if (!c) return; const [k, v] = c.dataset.go.split(':'); if (k === 'b') openBuilding(BYID[v]); else if (k === 'e') openEdge(v); else openFlexus(); });
+dw.body.addEventListener('click', e => { const r = e.target.closest('[data-b]'); if (r) openBuilding(BYID[r.dataset.b]); const c = e.target.closest('[data-e]'); if (c) openEdge(c.dataset.e); });
+
+function openBuilding(b) {
+  STATE.sel = b; STATE.selKind = 'b'; LOG = []; dw.el.hidden = false;
+  select(b); flyBuilding(b); loadMonth(b, STATE.date);
+  refreshDrawer(true);
+}
+function openEdge(code) {
+  STATE.sel = CL[code]; STATE.selKind = 'e'; LOG = []; dw.el.hidden = false; select(null);
+  flyCluster(code);
+  refreshDrawer(true);
+}
+function openFlexus() { STATE.sel = 'FX'; STATE.selKind = 'f'; LOG = []; dw.el.hidden = false; select(null); flyFlexus(); refreshDrawer(true); }
+
+let lastDrawerMinute = -1;
+function refreshDrawer(force) {
+  if (dw.el.hidden || !STATE.sel) return;
+  if (!force && lastDrawerMinute === STATE.minute) return; lastDrawerMinute = STATE.minute;
+  const keepScroll = dw.body.scrollTop;
+  if (STATE.selKind === 'b') drawBuilding(STATE.sel); else if (STATE.selKind === 'e') drawEdge(STATE.sel); else drawFlexus();
+  if (!force) dw.body.scrollTop = keepScroll;
+}
+
+function drawBuilding(b) {
+  const m = STATE.minute, S = DAY.sim[b.idx], W = DAY.W[b.cluster], C = CL[b.cluster];
+  dw.eb.textContent = `${b.type === 'C' ? 'Commercial' : 'Residential'} · ${C.name}${b.sub !== b.cluster ? ' · ' + b.subName : ''}`;
+  dw.t.textContent = `${b.id} · ${b.use}`;
+  const srcB = S.src === 'min1' ? '<span class="srcbadge live">real 1-min · Backblaze</span>' : S.src === 'day5' ? '<span class="srcbadge part">real 5-min totals · loading 1-min…</span>' : '<span class="srcbadge emu">emulated</span>';
+  dw.sub.innerHTML = `${CFG_NAMES[b.cfg]} · ${b.kwp} kWp · BER ${b.ber} · ${b.area} m² · ${STATE.date} ${fmt(m)} UTC · ${srcB}`;
+  dw.chain.innerHTML = `<button class="ch para here" data-go="b:${b.id}">PARA//EL ${b.id}</button><i>⇄</i><button class="ch edge" data-go="e:${b.cluster}">EdgeWare ${b.cluster}</button><i>→</i><button class="ch flexus" data-go="f:">FLEXUS</button>`;
+  setTabs([['live', 'Live'], ['models', 'RD-Fusion'], ['out', 'To EdgeWare'], ['in', 'From EdgeWare'], ['assets', 'Plans & assets'], ['local', 'Stays here']]);
+  const rp = rdFusion(b, m, 'pv'), rl = rdFusion(b, m, 'load'), hr = headroom(b, m);
+  const H = [];
+  if (TAB === 'live') {
+    H.push(tiles([[`${f2(S.pv[m])} kW`, 'Solar'], [`${f2(S.load[m])} kW`, 'Load'], [`${f2(S.net[m])} kW`, 'Net import'], [S.pvcs[m] > 0.05 ? f2(S.kobs[m]) : 'night', 'Clear-sky index'],
+      [b.hasHP ? `${f2(S.hp[m])} kW` : '–', 'Heat pump'], [b.hasEV ? `${f2(S.ev[m])} kW` : '–', 'EV'], [b.hasBAT ? `${f1(S.soc[m])} kWh` : '–', 'Battery SoC'], [`${f1(S.tout[m])} °C`, 'Outdoor']]));
+    H.push(sec('Today at this building (1-min meter)', `<canvas class="chart tall" id="cvDay"></canvas>${legendHTML([['--muted', 'Load'], ['--pv', 'Solar'], ['--para', 'Net import'], ['--edge', 'Battery (+ charge)']])}`));
+    H.push(sec('Flexibility headroom (truth at the edge)', `<div class="hz">${[15, 30, 60].map(T => `<div><b>${f1(hr[T].up)}</b><span>up ${T} min</span></div><div><b>${f1(hr[T].dn)}</b><span>down ${T} min</span></div>`).join('')}</div><p class="note2">kW that can be added (up) or removed (down) for the whole service window without breaking comfort, EV or battery limits.</p>`));
+    H.push(sec('Building', kv([['Building id', `<span class="mono">${b.id}</span> (edge only)`], ['Position', `${Math.round((b.lon - C.ll[1]) * 111320 * Math.cos(b.lat * Math.PI / 180))} m E, ${Math.round((b.lat - C.ll[0]) * 111200)} m N of the EdgeWare node${b.siteKind ? ` · on a real OSM ${esc(String(b.siteKind).replace(/_/g, ' '))}` : ''}`], ['Feeder', `${b.cluster}-F${b.feeder}`], ['PV', `${b.kwp} kWp, tilt ${b.tilt}°, azimuth ${b.az}°`],
+      b.hasHP && ['Heat pump', `${b.hpKw} kW thermal${b.noncompliant ? ' · firmware ignores external setpoints 30% of the time' : ''}`], b.hasBAT && ['Battery', `${b.battKwh} kWh / ${b.battKw} kW`], b.hasEV && ['EV charger', `${b.evKw} kW`],
+      b.type === 'R' ? ['Household', `${b.occupants} occupant${b.occupants > 1 ? 's' : ''} · ${b.tariff}${b.dhwDiverter ? ' · PV diverter' : ''}`] : ['Use', `${b.open} · ${b.tariff}`]])));
+  }
+  if (TAB === 'models') {
+    const pipe = [
+      ['Ingest and QC', '1-min meter, inverter, HP, EV, battery', 'ok'],
+      ['Clear-sky index', S.pvcs[m] > 0.05 ? `k = ${f2(S.kobs[m])}` : 'night'],
+      ['Response Derivatives', rp.state ? `ℓ ${f2(rp.state.level)} · s ${(rp.state.slope * 60).toFixed(2)}/h · a ${rp.state.curv.toExponential(1)}` : '–'],
+      ['Derivative-state filter', `ψ ${PSI} · φ ${PHI} · σ ${f2(rp.sig ?? rl.sig)}`],
+      ['Drift adaptation', rp.qInfl ? `Q × ${rp.qInfl.toFixed(2)}` : '–'],
+      ['Control input', `planned Δ at +30: ${rl.hz[2] ? f2(rl.hz[2].u) : '–'} kW`],
+      ['Fleet advection', rp.nb ? `${rp.nb.length} upwind neighbours` : 'night'],
+      ['Fusion', rp.hz && rp.hz[2] ? `@30: filter ${(rp.hz[2].wF * 100).toFixed(0)}% · advection ${(rp.hz[2].wAdv * 100).toFixed(0)}%` : '–'],
+      ['Bias correction', 'cohort table from EdgeWare'],
+      ['Conformal calibration', 'ACI, γ = 0.01'],
+      ['Headroom', `up ${f1(hr[30].up)} / down ${f1(hr[30].dn)} kW @30`]];
+    H.push(sec('PARA//EL pipeline, this minute', `<div class="pipeline">${pipe.map((p, i) => `<div class="step${p[1] === 'night' || p[1] === '–' ? ' off' : ''}"><span class="n">${i + 1}</span><span>${p[0]}</span><span class="v">${p[1]}</span></div>`).join('')}</div>`));
+    if (!rp.night) {
+      H.push(sec('PV forecast: past 60 min and next 120 min', `<canvas class="chart tall" id="cvPV"></canvas>${legendHTML([['--pv', 'Observed'], ['--para', 'RD-Fusion P50'], ['rgba(15,138,128,.35)', 'P10–P90'], ['--sp', 'Smart persistence', true], ['--gt', 'Actual outcome', true]])}`));
+      H.push(sec('PV by horizon (kW)', `<div class="tblwrap"><table class="tbl"><tr><th>h</th><th class="n">P10</th><th class="n">P50</th><th class="n">P90</th><th class="n">Smart pers.</th><th class="n">Adv. weight</th><th class="n">Actual</th></tr>${rp.hz.filter(Boolean).map(z => `<tr><td>${z.h} min</td><td class="n">${f2(z.p10)}</td><td class="n">${f2(z.p50)}</td><td class="n">${f2(z.p90)}</td><td class="n">${f2(z.sp)}</td><td class="n">${(z.wAdv * 100).toFixed(0)}%</td><td class="n">${f2(z.truth)}</td></tr>`).join('')}</table></div>`));
+    } else H.push(sec('PV forecast', '<p class="dim">Night: no PV forecast. The load model keeps running.</p>'));
+    H.push(sec('Load forecast: past 60 min and next 120 min', `<canvas class="chart" id="cvLoad"></canvas>${legendHTML([['--muted', 'Observed'], ['--para', 'RD-Fusion P50'], ['rgba(15,138,128,.35)', 'P10–P90'], ['--sp', 'Persistence', true], ['--gt', 'Actual outcome', true]])}`));
+    H.push(sec('Response Derivatives (clear-sky index, last 60 min)', `<canvas class="chart" id="cvRD"></canvas>${legendHTML([['--pv', 'k observed'], ['--edge', 'slope × 10 (per min)'], ['--buoy', 'curvature × 100']])}<p class="note2">Slope and curvature are causal (trailing ${WIN}-min quadratic fit), so a ramp shows in the slope before the level moves far.</p>`));
+    H.push(`<p class="note2"><span class="gtbadge">replay</span> The actual outcome after the forecast time is shown only because this is a replay twin. PARA//EL never sees future values or the gt/ tables.</p>`);
+  }
+  if (TAB === 'out') {
+    const z = rp.hz && rp.hz[2];
+    const rows = [
+      ['shared/csi_stream_1min', 'every minute', 'Shared layer (fleet advection)', `token ${b.tokShared} · cell ${b.cell} · k ${S.pvcs[m] > 0.05 ? (Math.round(S.kobs[m] * 100) / 100).toFixed(2) : 'night'} · qf_ok`],
+      ['shared/forecasts', 'every 5 min', 'Aggregator via EdgeWare', `token ${b.tokAgg} · net P10/P50/P90 @5–120 · headroom up ${f1(hr[30].up)} / down ${f1(hr[30].dn)} kW`],
+      ['fed_updates (clipped, DP noise)', 'daily 02:00', 'Secure aggregation on EdgeWare', 'median residual and quantiles by horizon × 3-h bucket × regime; L2 clip 1.0; σ = 1.0'],
+      ['shared/dr_settlement', 'per event', 'Aggregator', 'baseline and delivered kW for demand-response events (v1.1)'],
+      ['shared/device_health_1d', 'daily', 'Operations', 'uptime, gaps, clock offset (token_ops)']];
+    H.push(sec('What leaves this building', `<div class="tblwrap"><table class="tbl"><tr><th>Stream</th><th>When</th><th>To</th></tr>${rows.map(r => `<tr><td class="mono">${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr><tr><td colspan="3" class="dim mono" style="font-size:11px">${esc(r[3])}</td></tr>`).join('')}</table></div>`));
+    H.push(sec('Last message sent', `<pre class="mono" style="white-space:pre-wrap;margin:0;border:1px solid var(--line);border-radius:8px;padding:8px">${esc(JSON.stringify({ stream: 'csi_stream_1min', ts: `${STATE.date}T${fmt(m)}Z`, token: b.tokShared, cell_id: b.cell, k: S.pvcs[m] > 0.05 ? +S.kobs[m].toFixed(2) : null, qf_ok: true }, null, 1))}\n${esc(JSON.stringify({ stream: 'forecasts', issue: `${STATE.date}T${fmt(m - m % 5)}Z`, token: b.tokAgg, net_p50_kw: Object.fromEntries(HZ.map((h, i) => [h, rl.hz[i] ? +(rl.hz[i].p50 - (rp.hz && rp.hz[i] ? rp.hz[i].p50 : 0)).toFixed(2) : null])), up30: +hr[30].up.toFixed(1), down30: +hr[30].dn.toFixed(1) }, null, 1))}</pre>`));
+    H.push(sec('Pseudonymisation', kv([['Shared layer token', `<span class="mono">${b.tokShared}</span>`], ['Aggregator token', `<span class="mono">${b.tokAgg}</span>`], ['Location', `500 m cell <span class="mono">${b.cell}</span>, not the address`], ['Rule', 'Different key per recipient, so streams cannot be joined; no kWp, no power, no household data in the shared stream']])));
+  }
+  if (TAB === 'in') {
+    const nb = (rp.nb || []).slice().sort((a, c) => Math.abs(a.tau - 30) - Math.abs(c.tau - 30)).slice(0, 8);
+    H.push(tiles([[`${W.spd.toFixed(0)} m/s`, 'Steering wind'], [`${Math.round(W.dir)}°`, 'From'], [W.regime, 'Sky regime'], [`${(rp.nb || []).length}`, 'Upwind neighbours']]));
+    H.push(sec('Fleet advection (from EdgeWare)', nb.length ? `<div class="tblwrap"><table class="tbl"><tr><th>Neighbour token</th><th class="n">Distance</th><th class="n">Lag τ</th><th class="n">k now</th></tr>${nb.map(o => `<tr class="click" data-b="${o.n.id}"><td class="mono">${o.n.tokShared}</td><td class="n">${o.dist.toFixed(1)} km</td><td class="n">${o.tau.toFixed(0)} min</td><td class="n">${isNaN(DAY.sim[o.n.idx].kobs[m]) ? 'night' : f2(DAY.sim[o.n.idx].kobs[m])}</td></tr>`).join('')}</table></div><p class="note2">τ = d·v / |v|²: minutes until the cloud over that neighbour reaches this roof. EdgeWare sends tokens only; the twin lets you click through.</p>` : '<p class="dim">No neighbour upwind within 150 min at this wind.</p>'));
+    const nwp = []; for (let hh = 0; hh < 24; hh++) { const mm = hh * 60 + 30; const S0 = DAY.sim[b.idx]; nwp.push(S0.pvcs[mm] > 0 ? Math.min(1100, (S0.pvcs[mm] / b.kwp / 0.86) * 1000 * (W.regime === 'overcast' ? 0.42 : W.regime === 'clear' ? 0.95 : 0.7) * (1 + (W.regime === 'broken' ? 0.12 : 0))) : 0); }
+    H.push(sec('NWP archive (regional, as issued)', `<canvas class="chart" id="cvNWP"></canvas>${legendHTML([['--buoy', 'Forecast GHI on the plane of the array (W/m²), hourly']])}<p class="note2">Latest issue ${fmt(Math.max(0, Math.floor((m - 90) / 60) * 60))} UTC, available 1.5 h later. Broken-cumulus days carry a known over-forecast bias.</p>`));
+    H.push(sec('Federated bias table (cohort)', kv([['Cohort', `${b.cluster} · ${b.type === 'R' ? 'residential' : 'commercial'} · ${CFG_NAMES[b.cfg]}`], ['Members', `${CL[b.cluster].members.filter(o => o.type === b.type && (b.type === 'C' || o.cfg === b.cfg)).length < 10 ? 'merged with nearest cohort (n < 10)' : CL[b.cluster].members.filter(o => o.type === b.type && o.cfg === b.cfg).length}`], ['Round', `${STATE.date} 02:00 local`], ['Privacy', 'clipped, Gaussian noise, secure aggregation; ε logged per client'], ['PV median residual (k)', [0, 3, 6, 9, 12, 15, 18, 21].map(hh => `${String(hh).padStart(2, '0')}h ${(-0.01 * Math.sin((hh * 60 + 90) / 1440 * 6.28) * (W.regime === 'broken' ? 1 : 0.3)).toFixed(3)}`).join(' · ')]])));
+    H.push(sec('Market (system)', kv([['Imbalance price, 5 min', `€${(85 + 60 * Math.sin(m / 240) + 40 * hash01(STATE.date, Math.floor(m / 5))).toFixed(0)}/MWh`], ['Settlement period', `${fmt(m - m % 30)}–${fmt(m - m % 30 + 30)} UTC`]])));
+  }
+  if (TAB === 'assets') {
+    H.push(sec('Planned vs realised (control input)', `<canvas class="chart tall" id="cvPlan"></canvas>${legendHTML([['--hp', 'Heat pump realised'], ['--hp', 'HP plan', true], ['--ev', 'EV realised'], ['--ev', 'EV plan', true], ['--edge', 'Battery realised']])}`));
+    H.push(sec(S.src === 'min1' ? 'Plan vs realised today (observed)' : 'Deviations today (gt/plan_deviations, emulated)', S.dev.length ? `<div class="tblwrap"><table class="tbl"><tr><th>Time</th><th>Kind</th><th>Detail</th></tr>${S.dev.map(d => `<tr><td>${fmt(d.m)}</td><td>${d.kind}</td><td>${d.txt}</td></tr>`).join('')}</table></div>` : '<p class="dim">None today.</p>'));
+    H.push(sec('Assets', kv([['Configuration', CFG_NAMES[b.cfg]], ['PV', `${b.kwp} kWp`], b.hasHP && ['Heat pump', `${b.hpKw} kW thermal, plan published 16:00 local, revised intraday`], b.hasEV && ['EV', `${b.evKw} kW charger`], b.hasBAT && ['Battery', `${b.battKwh} kWh, ${b.battKw} kW, SoC ${f1(S.soc[m])} kWh`], b.dhwDiverter && ['Hot water', 'PV diverter, up to 3 kW']])));
+  }
+  if (TAB === 'local') {
+    H.push(sec('Stays in the building (PARA//EL)', `<div class="stay"><ul><li>All 1-min meter, sub-meter, inverter and heat pump data</li><li>EV sessions and departure times</li><li>Controller plans and every revision</li><li>Indoor temperatures</li></ul><ul><li>Address, floor area, household, tariff</li><li>RD-Fusion filter state, Response Derivatives, residual history</li><li>Local forecast archive (every forecast with its issue time)</li><li>Building id <span class="mono">${b.id}</span></li><li>In this twin, 1-min data is fetched from the private Backblaze release with your read-only key</li></ul></div>`));
+    H.push(sec('Why', '<p>Minute-level consumption reveals occupancy and routine, so it is personal data under GDPR. RD-Fusion computes everything building-specific at the edge and shares only what a named recipient needs: the clear-sky index (no consumption), pseudonymous forecasts and headroom, and noised, aggregated residual statistics.</p>'));
+    H.push(sec('Local archive (emulated counts)', kv([['Meter rows today', `${m + 1} × 1-min`], ['Forecasts issued today', `${Math.floor(m / 1)} PV + ${Math.floor(m / 1)} load (every minute, 6 horizons, 19 quantiles)`], ['Retention', '2 years on the Jetson SSD, then summarised']])));
+  }
+  dw.body.innerHTML = H.join('');
+  requestAnimationFrame(() => drawBuildingCharts(b));
+}
+function drawBuildingCharts(b) {
+  const m = STATE.minute, S = DAY.sim[b.idx];
+  if (TAB === 'live') chart('cvDay', [{ y: Array.from(S.load), c: css('--muted') }, { y: Array.from(S.pv), c: css('--pv') }, { y: Array.from(S.net), c: css('--para') }, { y: Array.from(S.batt), c: css('--edge'), w: 1 }], { now: m });
+  if (TAB === 'models') {
+    const rp = rdFusion(b, m, 'pv'), rl = rdFusion(b, m, 'load');
+    const x0 = m - 60, x1 = m + 120, past = [], px = [];
+    for (let t = Math.max(0, x0); t <= m; t++) { px.push(t); past.push(S.pv[t]); }
+    const fx = [m, ...HZ.map(h => m + h)];
+    const sel = (r, k) => [k === 'sp' ? null : null, ...r.hz.map(z => z ? z[k] : null)];
+    if (!rp.night) {
+      const p50 = [S.pv[m], ...rp.hz.map(z => z ? z.p50 : null)], p10 = [S.pv[m], ...rp.hz.map(z => z ? z.p10 : null)], p90 = [S.pv[m], ...rp.hz.map(z => z ? z.p90 : null)], sp = [S.pv[m], ...rp.hz.map(z => z ? z.sp : null)];
+      const tx = [], ty = []; for (let t = m; t <= Math.min(1439, x1); t++) { tx.push(t); ty.push(S.pv[t]); }
+      chart('cvPV', [{ x: fx, y: p10, y2: p90, fill: 'rgba(15,138,128,.18)' }, { x: px, y: past, c: css('--pv') }, { x: tx, y: ty, c: css('--gt'), dash: true, w: 1 }, { x: fx, y: sp, c: css('--sp'), dash: true }, { x: fx, y: p50, c: css('--para'), w: 2, dots: true }], { x0, x1, now: m, lo: 0, ticks: [x0, m, m + 60, m + 120] });
+      const kx = [], ky = [], sy = [], cy = [];
+      for (let t = Math.max(WIN, m - 60); t <= m; t++) { kx.push(t); ky.push(S.kobs[t]); const st = sg(Array.from({ length: WIN }, (_, i) => S.kobs[t - WIN + 1 + i])); sy.push(st ? st.slope * 10 + 0.5 : null); cy.push(st ? st.curv * 100 + 0.5 : null); }
+      chart('cvRD', [{ x: kx, y: ky, c: css('--pv'), w: 1.8 }, { x: kx, y: sy, c: css('--edge') }, { x: kx, y: cy, c: css('--buoy'), w: 1 }], { x0: m - 60, x1: m, ticks: [m - 60, m - 30, m] });
+    }
+    const lp = [], lx = []; for (let t = Math.max(0, x0); t <= m; t++) { lx.push(t); lp.push(S.load[t]); }
+    const tx = [], ty = []; for (let t = m; t <= Math.min(1439, x1); t++) { tx.push(t); ty.push(S.load[t]); }
+    chart('cvLoad', [{ x: fx, y: [S.load[m], ...rl.hz.map(z => z ? z.p10 : null)], y2: [S.load[m], ...rl.hz.map(z => z ? z.p90 : null)], fill: 'rgba(15,138,128,.18)' }, { x: lx, y: lp, c: css('--muted') }, { x: tx, y: ty, c: css('--gt'), dash: true, w: 1 }, { x: fx, y: [S.load[m], ...rl.hz.map(z => z ? z.sp : null)], c: css('--sp'), dash: true }, { x: fx, y: [S.load[m], ...rl.hz.map(z => z ? z.p50 : null)], c: css('--para'), w: 2, dots: true }], { x0, x1, now: m, lo: 0, ticks: [x0, m, m + 60, m + 120] });
+  }
+  if (TAB === 'in') { const W = DAY.W[b.cluster]; const y = []; for (let hh = 0; hh < 24; hh++) { const mm = hh * 60 + 30; y.push(S.pvcs[mm] > 0 ? Math.min(1100, (S.pvcs[mm] / b.kwp / 0.86) * 1000 * (W.regime === 'overcast' ? 0.42 : W.regime === 'clear' ? 0.95 : 0.7) * (W.regime === 'broken' ? 1.12 : 1)) : 0); } chart('cvNWP', [{ x: y.map((_, i) => i * 60 + 30), y, c: css('--buoy'), dots: true }], { lo: 0, now: m }); }
+  if (TAB === 'assets') chart('cvPlan', [{ y: Array.from(S.hp), c: css('--hp') }, { y: Array.from(S.planHp), c: css('--hp'), dash: true, w: 1 }, { y: Array.from(S.ev), c: css('--ev') }, { y: Array.from(S.planEv), c: css('--ev'), dash: true, w: 1 }, { y: Array.from(S.batt), c: css('--edge'), w: 1 }], { now: m });
+}
+
+function drawEdge(C) {
+  const m = STATE.minute, W = DAY.W[C.code];
+  dw.eb.textContent = `EdgeWare node · cluster ${C.code}`;
+  dw.t.textContent = `${C.name} EdgeWare`;
+  dw.sub.textContent = `${C.members.length} PARA//EL nodes · ${C.note} · ${STATE.date} ${fmt(m)} UTC`;
+  dw.chain.innerHTML = `<button class="ch para" data-go="b:${C.members[0].id}">PARA//EL ×${C.members.length}</button><i>⇄</i><button class="ch edge here" data-go="e:${C.code}">EdgeWare ${C.code}</button><i>→</i><button class="ch flexus" data-go="f:">FLEXUS</button>`;
+  setTabs([['live', 'Live'], ['adv', 'Fleet advection'], ['fed', 'Federated'], ['feed', 'Feeders'], ['fx', 'To FLEXUS']]);
+  const H = [];
+  let net = 0, pv = 0, up = 0, dn = 0, kk = [], n50 = Array(6).fill(0), n10 = Array(6).fill(0), n90 = Array(6).fill(0);
+  for (const b of C.members) { const S = DAY.sim[b.idx]; net += S.net[m]; pv += S.pv[m]; const h = headroom(b, m)[30]; up += h.up; dn += h.dn; if (S.pvcs[m] > 0.05) kk.push(S.kobs[m]); }
+  if (TAB === 'live') {
+    H.push(tiles([[`${f1(net)} kW`, 'Cluster net import'], [`${f1(pv)} kW`, 'Cluster solar'], [kk.length ? f2(kk.reduce((a, x) => a + x, 0) / kk.length) : 'night', 'Mean k'], [`${f1(up)} / ${f1(dn)}`, 'Flex up / down kW'],
+      [`${C.members.length}/${C.members.length}`, 'Nodes online'], [`${kk.length}/min`, 'k messages in'], [W.regime, 'Sky regime'], [`${W.spd.toFixed(0)} m/s · ${Math.round(W.dir)}°`, 'Cloud motion']]));
+    H.push(sec('Cluster today', `<canvas class="chart tall" id="cvCl"></canvas>${legendHTML([['--para', 'Net import'], ['--pv', 'Solar']])}`));
+    H.push(sec('What this EdgeWare node does', '<ul class="plain"><li>Receives the 1-min clear-sky index from every PARA//EL node (tokens only)</li><li>Estimates the cloud-motion vector and returns upwind lags to each building</li><li>Runs the daily federated round: secure aggregation of clipped, noised residual statistics</li><li>Holds the NWP archive as issued and the market prices</li><li>Sends feeder aggregates (≥ 10 buildings) and pseudonymous forecasts to FLEXUS</li></ul>'));
+    H.push(sec('Clear-sky index stream now (tokens)', `<div class="tblwrap"><table class="tbl"><tr><th>Token</th><th>Cell</th><th class="n">k</th><th class="n">Net P50 +30</th></tr>${C.members.slice(0, 50).map(b => { const S = DAY.sim[b.idx]; return `<tr class="click" data-b="${b.id}"><td class="mono">${b.tokShared}</td><td class="mono">${b.cell}</td><td class="n">${S.pvcs[m] > 0.05 ? f2(S.kobs[m]) : 'night'}</td><td class="n">${f1(S.net[m])}</td></tr>`; }).join('')}</table></div><p class="note2">EdgeWare sees tokens and 500 m cells, never building ids. Click a row to open that building in the twin.</p>`));
+  }
+  if (TAB === 'adv') {
+    H.push(tiles([[`${W.spd.toFixed(1)} m/s`, 'Speed (estimated)'], [`${Math.round(W.dir)}°`, 'From'], [`${(0.6 + 0.35 * (W.regime === 'broken' ? 1 : 0.5)).toFixed(2)}`, 'Vector quality'], [`${W.te} min`, 'Cloud evolution time']]));
+    H.push(sec('Correlation of 1-min Δk with distance (this cluster, today)', `<canvas class="chart" id="cvCorr"></canvas>${legendHTML([['--edge', 'Pairs of buildings']])}<p class="note2">Fine-scale structure comes from the synthetic cloud pattern advected over real CAMS drivers. Evolution while moving makes frozen-cloud advection deliberately imperfect.</p>`));
+    if (C.code === 'NTH') H.push(sec('Sligo → Donegal', '<p>About 45 km apart along the prevailing wind: at 10 m/s that is roughly 75 minutes of cloud travel, the long-horizon advection pair. In v0.1 the real CAMS drivers show no clear lag at this distance, so treat long-horizon advection results with care.</p>'));
+  }
+  if (TAB === 'fed') {
+    const cohorts = {}; for (const b of C.members) { const k = b.type === 'C' ? 'commercial' : CFG_NAMES[b.cfg]; cohorts[k] = (cohorts[k] || 0) + 1; }
+    H.push(sec('Cohorts (cluster × type × configuration)', `<div class="tblwrap"><table class="tbl"><tr><th>Cohort</th><th class="n">Members</th><th>Status</th><th class="n">Participants today</th></tr>${Object.entries(cohorts).map(([k, n]) => `<tr><td>${C.code} · ${k}</td><td class="n">${n}</td><td>${n < 10 ? 'merged with nearest cohort' : 'own table'}</td><td class="n">${Math.round(n * (0.85 + 0.1 * hash01(k, STATE.date)))}</td></tr>`).join('')}</table></div>`));
+    H.push(sec('Protocol', kv([['Round', 'daily 02:00 local, forecasts matured in the previous 24 h'], ['Client update', 'count, median residual, residual quantiles (0.1, 0.5, 0.9), pinball loss per horizon × 3-h bucket × regime'], ['Clipping', 'L2 norm 1.0 after standardisation'], ['Differential privacy', 'Gaussian, noise multiplier 1.0, δ = 10⁻⁶; RDP accountant'], ['Secure aggregation', 'pairwise masking; EdgeWare sees only the sum'], ['Dropouts', `${C.code === 'ARN' ? '10–15%' : '5–10%'} of clients offline per round`]])));
+  }
+  if (TAB === 'feed') {
+    const rows = C.feeders.map((f, i) => { const mem = C.members.filter(b => b.feeder === i + 1); let n = 0, u = 0, d = 0; mem.forEach(b => { n += DAY.sim[b.idx].net[m]; const h = headroom(b, m)[30]; u += h.up; d += h.dn; }); return [f, mem.length, n, u, d]; });
+    H.push(sec('shared/feeder_aggregates_15min (to the DSO)', `<div class="tblwrap"><table class="tbl"><tr><th>Feeder</th><th class="n">Buildings</th><th class="n">Net kW</th><th class="n">Up kW</th><th class="n">Down kW</th></tr>${rows.map(r => `<tr><td>${r[0]}</td><td class="n">${r[1]}</td><td class="n">${f1(r[2])}</td><td class="n">${f1(r[3])}</td><td class="n">${f1(r[4])}</td></tr>`).join('')}</table></div><p class="note2">Sent only when a feeder has at least 10 participating buildings (k-anonymity).</p>`));
+  }
+  if (TAB === 'fx') {
+    for (const b of C.members) { const rl = rdFusion(b, m, 'load'), rp = rdFusion(b, m, 'pv'); HZ.forEach((h, i) => { const l = rl.hz[i], p = rp.hz && rp.hz[i]; if (!l) return; n50[i] += l.p50 - (p ? p.p50 : 0); n10[i] += l.p10 - (p ? p.p90 : 0); n90[i] += l.p90 - (p ? p.p10 : 0); }); }
+    H.push(sec('Cluster net forecast sent to FLEXUS (kW)', `<div class="tblwrap"><table class="tbl"><tr><th>h</th>${HZ.map(h => `<th class="n">${h}</th>`).join('')}</tr><tr><td>P50</td>${n50.map(v => `<td class="n">${f1(v)}</td>`).join('')}</tr><tr><td>Band*</td>${n10.map((v, i) => `<td class="n">${f1(v)}…${f1(n90[i])}</td>`).join('')}</tr></table></div><p class="note2">*Sum of building bands, an upper bound on cluster uncertainty. FLEXUS receives cluster totals and pseudonymous per-token forecasts, never ids or raw data.</p>`));
+  }
+  dw.body.innerHTML = H.join('');
+  requestAnimationFrame(() => {
+    if (TAB === 'live') { const n = new Float32Array(1440), p = new Float32Array(1440); for (const b of C.members) { const S = DAY.sim[b.idx]; for (let t = 0; t < 1440; t++) { n[t] += S.net[t]; p[t] += S.pv[t]; } } chart('cvCl', [{ y: Array.from(n), c: css('--para') }, { y: Array.from(p), c: css('--pv') }], { now: m }); }
+    if (TAB === 'adv') {
+      const mem = C.members.filter(b => b.sub === C.members[0].sub).slice(0, 30), pts = [];
+      const lo = Math.max(1, m - 120), hi = Math.min(1439, m + 120);
+      for (let i = 0; i < mem.length; i++) for (let j = i + 1; j < mem.length; j++) {
+        const a = DAY.sim[mem[i].idx].k, c = DAY.sim[mem[j].idx].k; let sa = 0, sc = 0, sac = 0, saa = 0, scc = 0, n = 0;
+        for (let t = lo; t < hi; t++) { if (!(DAY.sim[mem[i].idx].pvcs[t] > 0.05)) continue; const x = a[t] - a[t - 1], y = c[t] - c[t - 1]; sa += x; sc += y; sac += x * y; saa += x * x; scc += y * y; n++; }
+        if (n < 20) continue; const cov = sac / n - sa * sc / n / n, va = saa / n - (sa / n) ** 2, vc = scc / n - (sc / n) ** 2; if (va <= 1e-9 || vc <= 1e-9) continue;
+        pts.push([Math.hypot(mem[i].xm - mem[j].xm, mem[i].ym - mem[j].ym) / 1000, cov / Math.sqrt(va * vc)]);
+      }
+      pts.sort((a, b) => a[0] - b[0]);
+      chart('cvCorr', [{ x: pts.map(p => p[0]), y: pts.map(p => p[1]), c: css('--edge'), w: 0.001, dots: true }], { x0: 0, x1: Math.max(2, ...pts.map(p => p[0])), lo: -0.2, hi: 1, ticks: [0, 2, 4, 6, 8, 10].filter(v => v <= Math.max(2, ...pts.map(p => p[0]))), tickFmt: v => `${v} km` });
+    }
+  });
+}
+
+function drawFlexus() {
+  const m = STATE.minute;
+  dw.eb.textContent = 'Portfolio level'; dw.t.textContent = 'FLEXUS'; dw.sub.textContent = `Five EdgeWare nodes · 250 pseudonymous buildings · ${STATE.date} ${fmt(m)} UTC`;
+  dw.chain.innerHTML = `<button class="ch edge" data-go="e:CRK">EdgeWare ×5</button><i>→</i><button class="ch flexus here" data-go="f:">FLEXUS</button>`;
+  setTabs([['live', 'Portfolio'], ['fed', 'Federated rounds'], ['priv', 'What FLEXUS sees']]);
+  const H = [];
+  if (TAB === 'live') {
+    const rows = CLUSTERS.map(c => { let n = 0, p = 0, u = 0, d = 0; for (const b of CL[c.code].members) { const S = DAY.sim[b.idx]; n += S.net[m]; p += S.pv[m]; const h = headroom(b, m)[30]; u += h.up; d += h.dn; } return [c, n, p, u, d]; });
+    const T = rows.reduce((a, r) => [a[0] + r[1], a[1] + r[2], a[2] + r[3], a[3] + r[4]], [0, 0, 0, 0]);
+    H.push(tiles([[`${f1(T[0])} kW`, 'Portfolio net'], [`${f1(T[1])} kW`, 'Solar'], [`${f1(T[2])} kW`, 'Flex up 30 min'], [`${f1(T[3])} kW`, 'Flex down 30 min']]));
+    H.push(sec('Portfolio today', `<canvas class="chart tall" id="cvFx"></canvas>${legendHTML(CLUSTERS.map((c, i) => [CFG_COL[i], c.name]))}`));
+    H.push(sec('By cluster', `<div class="tblwrap"><table class="tbl"><tr><th>EdgeWare</th><th class="n">Net kW</th><th class="n">Solar kW</th><th class="n">Up</th><th class="n">Down</th></tr>${rows.map(r => `<tr class="click" data-e="${r[0].code}"><td>${r[0].name}</td><td class="n">${f1(r[1])}</td><td class="n">${f1(r[2])}</td><td class="n">${f1(r[3])}</td><td class="n">${f1(r[4])}</td></tr>`).join('')}</table></div>`));
+  }
+  if (TAB === 'fed') H.push(sec('Last round', kv([['Time', `${STATE.date} 02:00 local`], ['Cohorts', 'per cluster × type × configuration; < 10 members merged'], ['Participants', `${Math.round(250 * 0.91)} of 250`], ['Noise', 'Gaussian, multiplier 1.0'], ['Return path', 'Cohort bias tables pushed back to every PARA//EL node (warm start for new or changed buildings)']])));
+  if (TAB === 'priv') H.push(sec('Visible to FLEXUS', '<ul class="plain"><li>Cluster totals and feeder aggregates (≥ 10 buildings)</li><li>Per-token forecast quantiles and headroom (aggregator tokens)</li><li>Federated aggregates with noise</li></ul>') + sec('Never visible', '<ul class="plain"><li>Building ids, addresses, household data</li><li>Raw 1-min consumption, appliance events, plans, indoor temperatures</li><li>Any single client’s federated update</li></ul>'));
+  dw.body.innerHTML = H.join('');
+  if (TAB === 'live') requestAnimationFrame(() => chart('cvFx', CLUSTERS.map((c, i) => { const n = new Float32Array(1440); for (const b of CL[c.code].members) { const S = DAY.sim[b.idx]; for (let t = 0; t < 1440; t++) n[t] += S.net[t]; } return { y: Array.from(n), c: CFG_COL[i] }; }), { now: m }));
+}
+
+
+/* =====================================================================
+   10. Controls and time loop
+   ===================================================================== */
+document.getElementById('zones').innerHTML = CLUSTERS.map(c => `<button class="zbtn" type="button" data-z="${c.code}">${c.name}</button>`).join('') + '<button class="zbtn" type="button" data-z="ALL">All Ireland</button>';
+document.getElementById('zones').addEventListener('click', e => { const z = e.target.closest('[data-z]'); if (!z) return; if (z.dataset.z === 'ALL') { closeDrawer(); flyAll(); } else openEdge(z.dataset.z); });
+document.getElementById('openFx').addEventListener('click', openFlexus);
+document.getElementById('colorMode').addEventListener('change', e => { STATE.color = e.target.value; legend(); paint(true); });
+const tg = (id, f) => document.getElementById(id).addEventListener('change', e => f(e.target.checked));
+tg('tLinks', v => v ? linkLayer.addTo(map) : linkLayer.remove());
+tg('tPk', v => document.body.classList.toggle('moving', v));
+tg('tWind', v => v ? windLayer.addTo(map) : windLayer.remove());
+document.body.classList.add('moving');
+const timeEl = document.getElementById('time'), dateEl = document.getElementById('dateR');
+timeEl.addEventListener('input', () => { STATE.minute = +timeEl.value; document.getElementById('clock').textContent = fmt(STATE.minute); paint(); });
+function setDate(d) { STATE.date = d; dateEl.value = d; paint(true); refreshDrawer(true); if (STATE.selKind === 'b') loadMonth(STATE.sel, d); }
+dateEl.addEventListener('change', () => { if (dateEl.value) setDate(dateEl.value); });
+document.getElementById('speed').addEventListener('input', e => { STATE.speed = +e.target.value; document.getElementById('speedLbl').textContent = `${STATE.speed}×`; });
+const playBtn = document.getElementById('play');
+playBtn.addEventListener('click', () => { STATE.playing = !STATE.playing; playBtn.setAttribute('aria-pressed', STATE.playing); playBtn.textContent = STATE.playing ? 'Pause' : 'Play'; });
+document.getElementById('randomDay').addEventListener('click', () => { const pool = SRC.live ? SRC.manifest.days : null; const d = pool ? pool[Math.floor(Math.random() * pool.length)] : new Date(Date.UTC(2024, 0, 1) + Math.floor(Math.random() * 731) * 864e5).toISOString().slice(0, 10); setDate(d); });
+document.getElementById('menuBtn').addEventListener('click', e => { const p = document.getElementById('panel'); p.classList.toggle('closed'); e.target.setAttribute('aria-expanded', !p.classList.contains('closed')); });
+if (isSmall) document.getElementById('panel').classList.add('closed');
+addEventListener('keydown', e => { if (e.key === 'Escape') closeDrawer(); });
+
+// Backblaze form
+const form = document.getElementById('b2Form'), b2T = document.getElementById('b2Toggle');
+b2T.addEventListener('click', () => { form.hidden = !form.hidden; b2T.setAttribute('aria-expanded', !form.hidden); });
+document.getElementById('b2Disconnect').addEventListener('click', disconnectB2);
+form.addEventListener('submit', e => {
+  e.preventDefault();
+  const cfg = { endpoint: document.getElementById('b2Endpoint').value.trim(), bucket: document.getElementById('b2Bucket').value.trim(), prefix: document.getElementById('b2Prefix').value.trim(),
+    keyId: document.getElementById('b2Key').value.trim(), secret: document.getElementById('b2Secret').value.trim() };
+  if (!cfg.endpoint || !cfg.bucket || !cfg.keyId || !cfg.secret) { srcState('err', 'Missing details', 'Endpoint, bucket, key ID and application key are all needed.'); return; }
+  try { if (document.getElementById('b2Remember').checked) localStorage.setItem('rdfTwinB2', JSON.stringify(cfg)); else localStorage.removeItem('rdfTwinB2'); } catch (err) {}
+  form.hidden = true; b2T.setAttribute('aria-expanded', 'false'); connectB2(cfg);
+});
+// Connect automatically through the server-side signer (b2_sign.php next to this page)
+const BUILTIN_B2 = { endpoint: 's3.eu-central-003.backblazeb2.com', bucket: 'eig-hrsd-rdfusion', prefix: 'hrsd-rd_fusion-v0.1/twin/', signer: 'b2_sign.php' };  // key stays on the server in b2_sign.php
+try { localStorage.removeItem('rdfTwinB2'); } catch (err) {}
+setTimeout(() => connectB2(BUILTIN_B2), 300);
+
+let acc = 0, last = performance.now();
+function loop(now) {
+  const dt = Math.min(0.1, (now - last) / 1000); last = now;
+  if (STATE.playing) { acc += dt * STATE.speed; if (acc >= 1) { const step = Math.floor(acc); acc -= step; STATE.minute = (STATE.minute + step) % 1440; timeEl.value = STATE.minute; document.getElementById('clock').textContent = fmt(STATE.minute); paint(); } }
+  requestAnimationFrame(loop);
+}
+legend(); buildMarkers();
+if (SITES) document.getElementById('srcNote').insertAdjacentHTML('afterend', '<p class="small" style="margin-top:6px">Map positions are real buildings from OpenStreetMap, picked at random. The energy values are synthetic and do not come from those buildings.</p>');
+map.fitBounds(L.latLngBounds(B.map(llOf).concat([FXLL])), { paddingTopLeft: isSmall ? [10, 10] : [340, 90], paddingBottomRight: [20, 20] });
+document.getElementById('clock').textContent = fmt(STATE.minute);
+document.getElementById('loading').remove();
+requestAnimationFrame(loop);
+window.__twin = { B, CL, DAY, SRC, rdFusion, openBuilding, openEdge, openFlexus, STATE, connectB2, map };
+</script>
+</body></html>

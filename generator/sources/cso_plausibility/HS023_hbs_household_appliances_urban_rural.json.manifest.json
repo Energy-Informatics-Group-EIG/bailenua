@@ -1,0 +1,19 @@
+{
+  "bytes": 2849,
+  "encoding": "utf-8",
+  "http_status": 200,
+  "intended_use": "validation",
+  "key": "cso.appliances.hs023_hbs_appliances_urban_rural",
+  "licence": "CC-BY 4.0 (CSO Open Data; https://www.cso.ie/en/aboutus/termsandconditions/)",
+  "model_development_exposure": "none",
+  "note": "Raw input, read-only after download. Excluded from git; this manifest is committed in its place.",
+  "publisher": "Central Statistics Office (Ireland)",
+  "relpath": "cso_plausibility/HS023_hbs_household_appliances_urban_rural.json",
+  "retrieved_at": "2026-10-09",
+  "retrieved_at_utc": "2026-10-09T10:51:45Z",
+  "sha256": "9e93e4376c5a396faf43ea20d5a68bf70f1afa9da96e1dc9387b7b195783c988",
+  "substitute_flag": null,
+  "title": "Household Budget Survey 2015 HS023: households possessing each of thirteen household appliances, by urban/rural location",
+  "url": "https://ws.cso.ie/public/api.restful/PxStat.Data.Cube_API.ReadDataset/HS023/JSON-stat/2.0/en",
+  "used_for": "PL-APPL-01 extension: the six appliance types HAS02 does not carry, of which `television` is modelled. U30."
+}

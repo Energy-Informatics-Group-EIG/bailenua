@@ -1,0 +1,1016 @@
+# =============================================================================
+# Baile Nua / HRSD_Occupants — dataset schema
+#
+# THIS FILE IS THE SINGLE SOURCE OF TRUTH (design 8.5, decision D-005).
+# It generates, and is never generated from:
+#   * row validators                      -> baile_nua.schema.validate
+#   * the access-class allow-lists        -> baile_nua.schema.access
+#   * the GT/OBS leakage test             -> tests/test_leakage.py
+#   * the data dictionary in the evidence view
+#
+# access_class  GT   ground truth, never given to a model under test
+#               OBS  observable, what a device, respondent, assessor or
+#                    operator would see
+#               META provenance and calibration
+#
+# layer         The four-layer person state model (design 5.1).  Any field whose
+#               layer is persistent / evolving / stochastic is GT by definition;
+#               only `observation` may appear in an OBS dataset.
+#
+# mechanism     REQUIRED on every field of an OBS dataset (design 6.5 rule 1):
+#               the real-world process that would produce the value.  A field
+#               with no such mechanism is rejected at schema level, by
+#               test_schema_obs_fields_declare_a_mechanism.
+#
+# gt_counterpart  For an OBS field that observes a GT field: "D02.floor_area_m2".
+#               Drives the 6.5 "too-good" test — agreement with the counterpart
+#               must not exceed the calibrated error model's upper bound.
+# =============================================================================
+
+schema_version: "1.0.0"
+design_revision: 3
+design_frozen: "2026-10-08"
+label: "UNVALIDATED SIMULATION EVIDENCE: E1 engineering candidate"
+
+units:
+  energy: Wh
+  power: W
+  temperature: degC
+  relative_humidity: percent
+  co2: ppm
+  distance: km
+  time: "UTC timestamptz; Europe/Dublin views are derived"
+
+id_prefixes:
+  person: "P-"
+  household: "H-"
+  building: "B-"
+  asset: "A-"
+  venue: "V-"
+  premises: "MPRN-"   # opaque, observable; keyed to the property, not the household
+
+access_classes:
+  GT:
+    description: Ground truth. Never given to a model under test.
+    released_in: ground_truth
+  OBS:
+    description: Observable. What a device, respondent, assessor or operator would see.
+    released_in: observable
+  META:
+    description: Provenance and calibration.
+    released_in: evidence
+
+# -----------------------------------------------------------------------------
+# Enumerations, declared once and referenced by fields.
+# -----------------------------------------------------------------------------
+enums:
+  sex: [F, M]
+  household_role: [head, partner, child, parent, lodger, other]
+  econ_status:
+    [employed, self-employed, unemployed, student, retired, home duties, unable to work]
+  work_pattern: [fixed day, shift, part-time, irregular, none]
+  health_state: [well, short illness, reduced mobility, home-bound, recovering]
+  caring_load: [none, child, elderly, both]
+  vehicle_access: [none, shared, own]
+  zone: [living, kitchen, bedroom, bathroom, utility, hall, outside, in_transit, out_of_model]
+  activity_trigger: [routine, joint plan, event, signal, disruption, lapse]
+  life_event_type:
+    [birth, death, move in, move out, partnering, separation, job change,
+     retirement, health change, retrofit decision, DER decision, extension]
+  event_class: [predictable, recurring, irregular, exceptional]
+  event_phase: [preparation, main, recovery, rebound]
+  event_footprint: [home, street, estate, town, region]
+  change_class: [safety, equipment, routine deviation, structural]
+  persistence: [transient, persistent, permanent]
+  quality_flag: [ok, estimated, missing, suspect, drift, fault]
+  provenance_code: [metered, estimated, interpolated, operator-recorded, respondent-reported, modelled]
+  sensor_tier: [T1, T2, T3, T4]
+  fidelity_tier: [F1, F2, F3]
+  coupling_mode: [C1, C2, C3]
+  device_mode: [rendered, live]
+  tenure: [owner-occupied with mortgage, owner-occupied no mortgage, rented private, rented social, rent free]
+  dwelling_type: [detached, semi-detached, terraced, apartment, bedsit]
+  heating_fuel: [electricity, natural gas, oil, solid fuel, LPG, heat pump, district]
+  ber_band: [A1, A2, A3, B1, B2, B3, C1, C2, C3, D1, D2, E1, E2, F, G]
+  mimic_signal: [SO, RC, CP, AL]
+  mimic_pool: [BN-panel, HRSD-pool]
+  mcv_position: [pre, post]
+  scale_down_method: [whole_area_stratified, proportional]
+  # BN-1 / D17_aggregate: which of the operator's three LV records a row is.
+  network_record_kind: [connection_register, feeder_head, substation]
+
+# =============================================================================
+# DATASETS D01 - D31  (design 6.1)
+# =============================================================================
+datasets:
+
+  # ---------------------------------------------------------------- D01 ------
+  D01:
+    name: town_geo
+    title: Parcels, streets, venues, network topology
+    access_class: GT
+    grain: feature
+    storage: geoparquet
+    subsystem: S02
+    e1_in_scope: true          # minimal: one estate, its street, its feeder
+    fields:
+      - {name: feature_id, type: string, required: true, notes: "V- for venues, else synthetic key"}
+      - {name: feature_kind, type: string, required: true, notes: "parcel | street | venue | feeder | transformer | farm"}
+      - {name: geometry_wkt, type: string, required: true}
+      - {name: venue_type, type: string, required: false, notes: "school, shop, pub, church, GAA club, workplace"}
+      - {name: capacity, type: int, required: false, notes: "design 5.4: every venue has a capacity"}
+      - {name: feeder_id, type: string, required: false}
+      - {name: estate_id, type: string, required: false}
+      - {name: valid_from, type: timestamp, required: true}
+      - {name: valid_to, type: timestamp, required: false}
+
+  # ---------------------------------------------------------------- D02 ------
+  D02:
+    name: buildings
+    title: "HRSD_Buildings: fabric, archetype, BER, systems, physics parameters"
+    access_class: GT
+    grain: building x version
+    storage: parquet
+    subsystem: S03
+    e1_in_scope: true
+    fields:
+      - {name: building_id, type: string, required: true, id_prefix: "B-"}
+      - {name: version, type: int, required: true, notes: "bumped by a D03 passport event"}
+      - {name: valid_from, type: timestamp, required: true}
+      - {name: valid_to, type: timestamp, required: false}
+      - {name: premises_id, type: string, required: true, notes: "GT side of the opaque observable key"}
+      - {name: estate_id, type: string, required: true}
+      - {name: dwelling_type, type: enum, enum: dwelling_type, required: true}
+      - {name: build_year, type: int, required: true}
+      - {name: floor_area_m2, type: float, required: true}
+      - {name: storeys, type: int, required: true}
+      - {name: archetype_id, type: string, required: true}
+      - {name: ber_band, type: enum, enum: ber_band, required: true, notes: "asset rating; operation may diverge (5.7 performance gap)"}
+      - {name: ber_kwh_m2_yr, type: float, required: true}
+      - {name: heating_fuel, type: enum, enum: heating_fuel, required: true}
+      - {name: heating_system, type: string, required: true}
+      - {name: heating_control, type: string, required: true, notes: "timer | thermostat | TRV | manual"}
+      - {name: tenure, type: enum, enum: tenure, required: true}
+      - {name: sri_class, type: string, required: false, notes: "ISO 52120-1 building automation class"}
+      - {name: sri_score, type: float, required: false}
+      # -- F1 two-zone grey-box RC parameters (design 5.7) --
+      - {name: rc_r_ie, type: float, required: true, unit: K/W, notes: "indoor-envelope resistance"}
+      - {name: rc_r_ea, type: float, required: true, unit: K/W, notes: "envelope-ambient resistance"}
+      - {name: rc_r_zz, type: float, required: true, unit: K/W, notes: "living-sleeping inter-zone resistance"}
+      - {name: rc_r_inf, type: float, required: true, unit: K/W, notes: "infiltration path"}
+      - {name: rc_c_living, type: float, required: true, unit: J/K}
+      - {name: rc_c_sleep, type: float, required: true, unit: J/K}
+      - {name: rc_c_env, type: float, required: true, unit: J/K}
+      - {name: rc_solar_aperture_m2, type: float, required: true}
+      - {name: rc_vol_living_m3, type: float, required: true}
+      - {name: rc_vol_sleep_m3, type: float, required: true}
+      - {name: ach_base, type: float, required: true, unit: "1/h", notes: "background infiltration"}
+      - {name: heat_emitter_w, type: float, required: true, notes: "maximum deliverable heat"}
+      - {name: dhw_tank_litres, type: float, required: false}
+      - {name: fidelity_tier, type: enum, enum: fidelity_tier, required: true}
+      - {name: seed, type: int, required: true}
+
+  # ---------------------------------------------------------------- D03 ------
+  D03:
+    name: building_passport
+    title: Dated building events (extension, retrofit, asset added or removed)
+    access_class: GT
+    obs_view: D03_redacted
+    grain: event
+    storage: parquet
+    subsystem: S03
+    e1_in_scope: true
+    fields:
+      - {name: passport_event_id, type: string, required: true}
+      - {name: building_id, type: string, required: true}
+      - {name: event_type, type: string, required: true}
+      - {name: effective_at, type: timestamp, required: true}
+      - {name: decided_at, type: timestamp, required: false}
+      - {name: from_version, type: int, required: true}
+      - {name: to_version, type: int, required: true}
+      - {name: parameters_changed, type: json, required: true}
+      - {name: driver, type: string, required: true, notes: "the model and reason that fired it"}
+      - {name: life_event_id, type: string, required: false}
+
+  # ---------------------------------------------------------------- D04 ------
+  D04:
+    name: assets
+    title: Appliances, heating, PV, BESS, chargers, vehicles, with owner and lifetime
+    access_class: GT
+    grain: asset x version
+    storage: parquet
+    subsystem: S03
+    e1_in_scope: true
+    fields:
+      - {name: asset_id, type: string, required: true, id_prefix: "A-"}
+      - {name: version, type: int, required: true}
+      - {name: valid_from, type: timestamp, required: true}
+      - {name: valid_to, type: timestamp, required: false}
+      - {name: building_id, type: string, required: false}
+      - {name: owner_person_id, type: string, required: false, notes: "vehicles and personal devices"}
+      - {name: asset_class, type: string, required: true, notes: "appliance | heating | pv | bess | charger | vehicle"}
+      - {name: asset_type, type: string, required: true, notes: "kettle, washer, heat_pump, immersion, ..."}
+      - {name: make_model_synth, type: string, required: true, notes: "synthetic model label, drives signature variation"}
+      - {name: rated_power_w, type: float, required: false}
+      - {name: capacity, type: float, required: false, unit: "Wh for BESS, kWp for PV, litres for tanks"}
+      - {name: efficiency, type: float, required: false}
+      - {name: install_date, type: date, required: true}
+      - {name: age_years_at_t0, type: float, required: true}
+      - {name: failure_hazard_scale, type: float, required: true, notes: "Weibull scale, drives 5.3 appliance failure"}
+      - {name: signature_id, type: string, required: false, notes: "-> D22"}
+      - {name: device_mode, type: enum, enum: device_mode, required: true, notes: "5.6 rendered vs live"}
+      - {name: pv_azimuth_deg, type: float, required: false}
+      - {name: pv_tilt_deg, type: float, required: false}
+      - {name: seed, type: int, required: true}
+
+  # ---------------------------------------------------------------- D05 ------
+  D05:
+    name: persons
+    title: "HRSD_Occupants: persistent characteristics and trait vector"
+    access_class: GT
+    grain: person
+    storage: parquet
+    subsystem: S04
+    e1_in_scope: true
+    fields:
+      - {name: person_id, type: string, required: true, id_prefix: "P-", layer: persistent}
+      - {name: given_name, type: string, required: true, layer: persistent, notes: "synthetic, uniqueness-checked"}
+      - {name: family_name, type: string, required: true, layer: persistent}
+      - {name: birth_date, type: date, required: true, layer: persistent}
+      - {name: death_date, type: date, required: false, layer: evolving, notes: "set by D09"}
+      - {name: sex, type: enum, enum: sex, required: true, layer: persistent}
+      - {name: country_of_birth, type: string, required: true, layer: persistent, notes: "ISO 3166-1 alpha-2"}
+      - {name: nationality, type: string, required: true, layer: persistent, notes: "ISO 3166-1 alpha-2"}
+      - {name: ethnicity_census, type: string, required: true, layer: persistent, notes: "CSO category; synthesis and stereotype-guard only"}
+      - {name: first_language, type: string, required: true, layer: persistent, notes: "ISO 639-1"}
+      - {name: other_languages, type: "list[string]", required: false, layer: persistent}
+      - {name: years_in_ireland, type: float, required: false, layer: evolving, notes: "drives idvZ acculturation shrinkage (5.13)"}
+      - {name: education_level, type: string, required: true, layer: evolving, notes: "ISCED; evolves via D08 while in education"}
+      # -- MIMIC latent traits: same names and scales as mimic_sd_generator.php (5.14 level 1) --
+      - {name: trans, type: float, required: true, unit: z-score, layer: persistent, mimic_trait: true}
+      - {name: community, type: float, required: true, unit: z-score, layer: persistent, mimic_trait: true}
+      - {name: env, type: float, required: true, unit: z-score, layer: persistent, mimic_trait: true}
+      - {name: autonomy, type: float, required: true, unit: z-score, layer: persistent, mimic_trait: true}
+      - {name: comfort, type: float, required: true, unit: z-score, layer: persistent, mimic_trait: true}
+      - {name: conditional, type: float, required: true, unit: z-score, layer: persistent, mimic_trait: true}
+      - {name: privacy, type: float, required: true, unit: z-score, layer: persistent, mimic_trait: true}
+      - {name: instTrust, type: float, required: true, unit: z-score, layer: persistent, mimic_trait: true}
+      - {name: idvZ, type: float, required: true, unit: z-score, layer: persistent, mimic_trait: true, notes: "cultural individualism from origin country, shrunk by acculturation"}
+      - {name: satisficer, type: int, required: true, enum_values: [0, 1], layer: persistent, mimic_trait: true, notes: "careless-responder flag"}
+      - {name: stated_gap, type: float, required: true, unit: "0 to 1", layer: persistent, notes: "stated vs revealed willingness (5.13)"}
+      - {name: lambda_self, type: float, required: true, layer: persistent, notes: "lambda_1; the three sum to 1"}
+      - {name: lambda_coop, type: float, required: true, layer: persistent, notes: "lambda_2"}
+      - {name: lambda_altru, type: float, required: true, layer: persistent, notes: "lambda_3"}
+      - {name: big5_o, type: float, required: true, unit: z-score, layer: persistent}
+      - {name: big5_c, type: float, required: true, unit: z-score, layer: persistent}
+      - {name: big5_e, type: float, required: true, unit: z-score, layer: persistent}
+      - {name: big5_a, type: float, required: true, unit: z-score, layer: persistent}
+      - {name: big5_n, type: float, required: true, unit: z-score, layer: persistent}
+      - {name: chronotype, type: float, required: true, unit: hours, layer: persistent, notes: "shifts the sleep window"}
+      - {name: habit_strength, type: float, required: true, unit: "0 to 1", layer: persistent}
+      - {name: lapse_rate, type: float, required: true, unit: "0 to 1", layer: persistent}
+      - {name: attention, type: float, required: true, unit: "0 to 1", layer: persistent}
+      - {name: response_propensity, type: float, required: true, unit: "0 to 1", layer: persistent, notes: "5.14 MIMIC opt-in propensity"}
+      - {name: mcv_latent, type: "list[float]", required: true, layer: persistent, notes: "10 MCV item latents, MIMIC makeMcv mapping"}
+      - {name: synthetic, type: bool, required: true, notes: "R27/K12: every record carries the synthetic flag"}
+      - {name: seed, type: int, required: true, layer: persistent}
+      - {name: pool, type: enum, enum: mimic_pool, required: false, notes: "BN-panel for simulated townspeople; HRSD-pool for the unlinked extended pool"}
+
+  # ---------------------------------------------------------------- D06 ------
+  D06:
+    name: household_membership
+    title: Who lives where, from when to when
+    access_class: GT
+    grain: interval
+    storage: parquet
+    subsystem: S04
+    e1_in_scope: true
+    fields:
+      - {name: membership_id, type: string, required: true}
+      - {name: person_id, type: string, required: true}
+      - {name: household_id, type: string, required: true, id_prefix: "H-"}
+      - {name: building_id, type: string, required: true}
+      - {name: valid_from, type: timestamp, required: true}
+      - {name: valid_to, type: timestamp, required: false}
+      - {name: role, type: enum, enum: household_role, required: true}
+      - {name: reason_in, type: string, required: false, notes: "t0 | birth | move in | partnering | returning"}
+      - {name: reason_out, type: string, required: false}
+
+  # ---------------------------------------------------------------- D07 ------
+  D07:
+    name: relationships
+    title: Kin, partner, carer, friend, co-worker edges
+    access_class: GT
+    grain: edge x interval
+    storage: parquet
+    subsystem: S04
+    e1_in_scope: true
+    fields:
+      - {name: edge_id, type: string, required: true}
+      - {name: person_a, type: string, required: true}
+      - {name: person_b, type: string, required: true}
+      - {name: edge_type, type: string, required: true, notes: "partner | parent_of | sibling | carer_of | friend | co_worker | neighbour"}
+      - {name: valid_from, type: timestamp, required: true}
+      - {name: valid_to, type: timestamp, required: false}
+      - {name: strength, type: float, required: false, unit: "0 to 1", notes: "drives 5.3 influence"}
+
+  # ---------------------------------------------------------------- D08 ------
+  D08:
+    name: person_states
+    title: Evolving states, slowly changing (SCD-2)
+    access_class: GT
+    grain: interval
+    storage: parquet
+    subsystem: S05
+    e1_in_scope: true
+    fields:
+      - {name: state_id, type: string, required: true}
+      - {name: person_id, type: string, required: true, layer: evolving}
+      - {name: valid_from, type: timestamp, required: true}
+      - {name: valid_to, type: timestamp, required: false}
+      - {name: household_id, type: string, required: true, layer: evolving}
+      - {name: role, type: enum, enum: household_role, required: true, layer: evolving}
+      - {name: econ_status, type: enum, enum: econ_status, required: true, layer: evolving}
+      - {name: occupation_soc, type: string, required: false, layer: evolving, notes: "SOC 2010"}
+      - {name: occupation_isco08, type: string, required: false, layer: evolving, notes: "mapped for MIMIC compatibility (5.13)"}
+      - {name: industry_nace, type: string, required: false, layer: evolving, notes: "NACE rev2"}
+      - {name: workplace_venue_id, type: string, required: false, layer: evolving}
+      - {name: work_pattern, type: enum, enum: work_pattern, required: true, layer: evolving}
+      - {name: remote_share, type: float, required: true, unit: "0 to 1 of working days", layer: evolving}
+      - {name: school_venue_id, type: string, required: false, layer: evolving}
+      - {name: school_year, type: int, required: false, layer: evolving}
+      - {name: health_state, type: enum, enum: health_state, required: true, layer: evolving, notes: "U09: generic functional states only, never diagnoses"}
+      - {name: caring_load, type: enum, enum: caring_load, required: true, layer: evolving}
+      - {name: caring_hours_week, type: float, required: true, layer: evolving}
+      - {name: decision_authority, type: float, required: true, unit: "0 to 1 within household", layer: evolving}
+      - {name: vehicle_access, type: enum, enum: vehicle_access, required: true, layer: evolving}
+      - {name: income_quintile, type: int, required: true, enum_values: [1, 2, 3, 4, 5], layer: evolving}
+
+  # ---------------------------------------------------------------- D09 ------
+  D09:
+    name: life_events
+    title: Births, deaths, moves, jobs, health states, decisions
+    access_class: GT
+    grain: event
+    storage: parquet
+    subsystem: S05
+    e1_in_scope: true
+    fields:
+      - {name: event_id, type: string, required: true}
+      - {name: event_type, type: enum, enum: life_event_type, required: true}
+      - {name: effective_at, type: timestamp, required: true}
+      - {name: decided_at, type: timestamp, required: false, notes: "lead time for decisions with one"}
+      - {name: persons, type: "list[string]", required: true}
+      - {name: household_id, type: string, required: false}
+      - {name: building_id, type: string, required: false}
+      - {name: cause, type: string, required: true, notes: "the model and driver that fired"}
+      - {name: observable_effects, type: json, required: true, notes: "expected signal changes, for D20"}
+
+  # ---------------------------------------------------------------- D10 ------
+  D10:
+    name: activities
+    title: Person activity intervals with location and co-participants
+    access_class: GT
+    grain: interval
+    storage: parquet
+    partition_by: [year, month]
+    subsystem: S07
+    e1_in_scope: true
+    calibration_status: "VERIFIED, NOT CALIBRATED (E0-2 / U04)"
+    fields:
+      - {name: activity_id, type: string, required: true}
+      - {name: person_id, type: string, required: true, layer: stochastic}
+      - {name: start, type: timestamp, required: true, layer: stochastic, notes: "1 s precision"}
+      - {name: end, type: timestamp, required: true, layer: stochastic}
+      - {name: activity_code, type: string, required: true, layer: stochastic, notes: "~30 codes, mapped to HETUS"}
+      - {name: hetus_code, type: string, required: true, notes: "the HETUS aggregate this maps to"}
+      # SCHEMA CORRECTION, flagged for audit (I-090). Was `required: true`,
+      # which no activity interval can satisfy: an `in_transit` interval is
+      # on the road network and has no place id, and 14% of the estate's
+      # intervals are in_transit. D11.location_id is the SAME quantity,
+      # resolved by the same engine code, and is already `required: false`.
+      # The alternatives were to invent a place for a travelling person or
+      # to leave D10 unwritable; neither is acceptable.
+      - {name: location_id, type: string, required: false, layer: stochastic}
+      - {name: zone, type: enum, enum: zone, required: true, layer: stochastic}
+      - {name: joint_with, type: "list[string]", required: false, layer: stochastic}
+      - {name: trigger, type: enum, enum: activity_trigger, required: true, layer: stochastic}
+      - {name: deliberated, type: bool, required: true, layer: stochastic, notes: "true if a decision process ran (5.3 bounded rationality)"}
+
+  # ---------------------------------------------------------------- D11 ------
+  D11:
+    name: presence
+    title: Person location intervals - the no-double-occupancy source
+    access_class: GT
+    grain: interval
+    storage: parquet
+    partition_by: [year, month]
+    subsystem: S07
+    e1_in_scope: true
+    fields:
+      - {name: presence_id, type: string, required: true}
+      - {name: person_id, type: string, required: true, layer: stochastic}
+      - {name: start, type: timestamp, required: true, layer: stochastic}
+      - {name: end, type: timestamp, required: true, layer: stochastic}
+      - {name: location_kind, type: string, required: true, notes: "building | venue | in_transit | out_of_model"}
+      - {name: location_id, type: string, required: false}
+      - {name: zone, type: enum, enum: zone, required: true}
+
+  # ---------------------------------------------------------------- D12 ------
+  D12:
+    name: trips
+    title: Origin, destination, mode, vehicle, distance
+    access_class: GT
+    grain: event
+    storage: parquet
+    subsystem: S08
+    e1_in_scope: true
+    fields:
+      - {name: trip_id, type: string, required: true}
+      - {name: person_id, type: string, required: true}
+      - {name: start, type: timestamp, required: true}
+      - {name: end, type: timestamp, required: true}
+      - {name: origin_id, type: string, required: true}
+      - {name: destination_id, type: string, required: true}
+      - {name: mode, type: string, required: true, notes: "car | ev | walk | cycle | bus | rail | passenger"}
+      - {name: vehicle_asset_id, type: string, required: false}
+      - {name: distance_km, type: float, required: true}
+      - {name: purpose, type: string, required: true}
+
+  # ---------------------------------------------------------------- D13 ------
+  D13:
+    name: appliance_cycles
+    title: Cycle start/end, programme, signature ID, energy
+    access_class: GT
+    grain: event
+    storage: parquet
+    partition_by: [year, month]
+    subsystem: S10
+    e1_in_scope: true
+    fields:
+      - {name: cycle_id, type: string, required: true}
+      - {name: asset_id, type: string, required: true}
+      - {name: building_id, type: string, required: true}
+      - {name: start, type: timestamp, required: true, notes: "1 s precision"}
+      - {name: end, type: timestamp, required: true}
+      - {name: programme, type: string, required: true, notes: "eco 40, kettle 1.5 L, ..."}
+      - {name: signature_id, type: string, required: true}
+      - {name: signature_seed, type: int, required: true, notes: "drives 1 Hz rendering"}
+      - {name: energy_wh, type: float, required: true}
+      - {name: peak_w, type: float, required: true}
+      - {name: caused_by_activity_id, type: string, required: false, notes: "causal link back to D10"}
+      - {name: flexible, type: bool, required: true}
+      - {name: shifted_by_min, type: int, required: true}
+
+  # ---------------------------------------------------------------- D14 ------
+  D14:
+    name: calendar_events
+    title: Event instances, phases, footprint, attendance
+    access_class: GT
+    grain: event
+    storage: parquet
+    subsystem: S06
+    e1_in_scope: true
+    fields:
+      - {name: instance_id, type: string, required: true}
+      - {name: event_kind, type: string, required: true, notes: "holiday | school term | storm | outage | festival | cruise day | market | sport | roadworks | DST"}
+      - {name: event_class, type: enum, enum: event_class, required: true}
+      - {name: phase, type: enum, enum: event_phase, required: true}
+      - {name: start, type: timestamp, required: true}
+      - {name: end, type: timestamp, required: true}
+      - {name: footprint, type: enum, enum: event_footprint, required: true}
+      - {name: footprint_ids, type: "list[string]", required: false}
+      - {name: attendance_prob, type: json, required: false, notes: "by demographic"}
+      - {name: shared_driver, type: string, required: false, notes: "5.10: compound correlation comes from shared drivers, not independent draws"}
+      - {name: source_ref, type: string, required: true, notes: "-> D24 / SOURCES.md"}
+
+  # ---------------------------------------------------------------- D15 ------
+  D15:
+    name: weather
+    title: True site weather and solar geometry driving physics and behaviour
+    access_class: GT
+    grain: 1 min
+    storage: parquet
+    subsystem: S01
+    e1_in_scope: true
+    notes: >
+      Reclassified to GT in design revision 3 (review log 23).  The observable
+      station series is D31.  Both come from ONE realisation, related by the
+      downscaling and offset model in weather/station.py (design 6.5 rule 2).
+    fields:
+      - {name: ts, type: timestamp, required: true}
+      - {name: site_id, type: string, required: true}
+      - {name: temp_air_c, type: float, required: true}
+      - {name: rh_pct, type: float, required: true}
+      - {name: wind_speed_ms, type: float, required: true}
+      - {name: wind_dir_deg, type: float, required: true}
+      - {name: ghi_w_m2, type: float, required: true}
+      - {name: dni_w_m2, type: float, required: true}
+      - {name: dhi_w_m2, type: float, required: true}
+      - {name: solar_zenith_deg, type: float, required: true}
+      - {name: solar_azimuth_deg, type: float, required: true}
+      - {name: sunrise_utc, type: timestamp, required: true}
+      - {name: sunset_utc, type: timestamp, required: true}
+      - {name: is_dst, type: bool, required: true, notes: "3.2: DST is an explicit event shifting routines, not the UTC series"}
+      - {name: precip_mm, type: float, required: true}
+      - {name: realisation_id, type: string, required: true, notes: "ties D15 and D31 to the same realisation"}
+
+  # ---------------------------------------------------------------- D16 ------
+  D16:
+    name: building_state
+    title: Zone temps, RH, CO2, DHW, heat delivered
+    access_class: GT
+    grain: 1 min, checkpointed daily
+    storage: "re-run on demand (U07 option b, decision D-009); hot slices cached"
+    subsystem: S09
+    e1_in_scope: true
+    fields:
+      - {name: ts, type: timestamp, required: true}
+      - {name: building_id, type: string, required: true}
+      - {name: temp_living_c, type: float, required: true}
+      - {name: temp_sleep_c, type: float, required: true}
+      - {name: temp_env_c, type: float, required: true}
+      - {name: rh_living_pct, type: float, required: true}
+      - {name: co2_living_ppm, type: float, required: true}
+      - {name: co2_sleep_ppm, type: float, required: true}
+      - {name: dhw_tank_c, type: float, required: false}
+      - {name: heat_delivered_w, type: float, required: true}
+      - {name: internal_gain_w, type: float, required: true}
+      - {name: solar_gain_w, type: float, required: true}
+      - {name: ach_effective, type: float, required: true, notes: "includes behavioural window opening"}
+      - {name: occupants_living, type: int, required: true}
+      - {name: occupants_sleep, type: int, required: true}
+
+  # ---------------------------------------------------------------- D17 ------
+  D17:
+    name: network_state
+    title: Feeder and transformer loading, voltages, outages
+    access_class: GT
+    obs_view: D17_aggregate
+    grain: 1 min
+    storage: parquet
+    subsystem: S11
+    e1_in_scope: true
+    notes: "E1 runs C1 (15-minute network epochs); the 1-minute grain is the native resolution of the stored series."
+    fields:
+      - {name: ts, type: timestamp, required: true}
+      - {name: element_id, type: string, required: true}
+      - {name: element_kind, type: string, required: true, notes: "feeder | transformer | connection"}
+      - {name: p_kw, type: float, required: true}
+      - {name: q_kvar, type: float, required: false}
+      - {name: voltage_pu, type: float, required: false}
+      - {name: loading_pct, type: float, required: false}
+      - {name: outage, type: bool, required: true}
+      - {name: coupling_mode, type: enum, enum: coupling_mode, required: true}
+      - {name: epoch_staleness_s, type: int, required: true, notes: "8.2 timing contract: the staleness stamp on the published state"}
+
+  # ------------------------------------------------------- D17_aggregate ----
+  # BN-1. D17's declared observable view, and design 6.3's "aggregate D17
+  # view".  What a DSO actually holds about its LV network, and only that:
+  #
+  #   * the CONNECTION REGISTER - which MPRN sits on which feeder and which
+  #     substation;
+  #   * the asset register's RATINGS - transformer nameplate kVA and feeder
+  #     cable thermal rating.  Both are catalogue values of the pandapower
+  #     standard types the network is built from, so neither is declared
+  #     here (network/lv.py: STD_TRAFO, STD_CABLE);
+  #   * the feeder-head and substation MEASUREMENTS - active and reactive
+  #     power at the operator's metering point.
+  #
+  # What it deliberately does NOT carry:
+  #
+  # voltage
+  #     lv.assert_voltage_is_not_a_claim() always raises.  The LV topology is
+  #     [A] (A-49) and voltage drop is a line integral along exactly the
+  #     declared feeder span, so a per-unit voltage is a property of the
+  #     assumption as much as of the town.  Publishing it as a DSO
+  #     measurement would present an assumption as an observation.
+  # loading_pct
+  #     per-element loading is GT and stays GT.  The ratings and the
+  #     measurements are both here because BN-1 names them; their RATIO is
+  #     not published.
+  # per-connection power
+  #     the register names a premises; no per-MPRN power appears, which is
+  #     what keeps an aggregate view aggregate.
+  D17_aggregate:
+    name: network_state_aggregate
+    title: "D17's observable view: connection register, asset ratings, feeder-head and substation measurements"
+    access_class: OBS
+    grain: "one row per premises in the register; one row per (epoch, element) for a measurement"
+    storage: parquet
+    subsystem: S11
+    e1_in_scope: true
+    keyed_by: premises
+    notes: >
+      A measurement here is the solved epoch power at the operator's metering
+      point.  E1 renders no instrument error for network metering - D18 is the
+      only dataset with a device error model - so a value equals the quantity
+      D17 records for the same element and epoch.  That is stated rather than
+      hidden, and it is why no gt_counterpart is declared: there is no
+      calibrated error model for this instrument for the 6.5 too-good test to
+      bound agreement against.
+    fields:
+      - {name: record_kind, type: enum, enum: network_record_kind, required: true, mechanism: "which of the operator's three LV records this row is: a connection-register entry, a feeder-head measurement, or a substation measurement"}
+      - {name: ts, type: timestamp, required: true, mechanism: "the timestamp the operator's system stamps on the record: the metering timestamp of a measurement, or the as-at instant of the connection register"}
+      - {name: premises_id, type: string, required: false, mechanism: "the MPRN as it appears in the operator's connection register; null on a measurement row, which names a network element and not a customer"}
+      - {name: substation_ref, type: string, required: true, mechanism: "the distribution substation's reference in the operator's asset register; every LV connection and every LV circuit is recorded against exactly one"}
+      - {name: feeder_ref, type: string, required: false, mechanism: "the LV circuit's reference in the operator's asset register; null on a substation measurement, which sits upstream of every circuit"}
+      - {name: transformer_rated_kva, type: float, unit: kVA, required: false, mechanism: "the distribution transformer's nameplate rating, read off the operator's asset register; null where the row's subject is not a transformer"}
+      - {name: feeder_rated_a, type: float, unit: A, required: false, mechanism: "the feeder cable's thermal current rating, from the cable type recorded in the operator's asset register; null where the row's subject is not a circuit"}
+      - {name: p_kw_measured, type: float, unit: kW, required: false, mechanism: "the active power the feeder-pillar or substation CT metering reports for the epoch, positive for import; null on a register row, which carries no measurement"}
+      - {name: q_kvar_measured, type: float, unit: kvar, required: false, mechanism: "the reactive power the same CT metering reports for the epoch; null on a register row"}
+
+  # ---------------------------------------------------------------- D18 ------
+  # First OBS dataset: every field must declare `mechanism` (design 6.5 rule 1).
+  D18:
+    name: observations
+    title: Rendered device readings with noise and gaps
+    access_class: OBS
+    grain: device-native
+    storage: "rendered on demand; cached slices"
+    subsystem: S12
+    e1_in_scope: true
+    keyed_by: premises
+    fields:
+      - {name: device_id, type: string, required: true, mechanism: "the device's own identifier as the data-collection platform records it"}
+      - {name: premises_id, type: string, required: true, mechanism: "the meter point the device is registered against (6.4 item 2: keyed by premises, not household)"}
+      - {name: channel, type: string, required: true, mechanism: "the channel label configured on the device at installation", notes: "import_w, export_w, ct_ev, temp_living, co2_living, pir_hall, ..."}
+      - {name: ts, type: timestamp, required: true, mechanism: "the device clock at the moment of sampling, including its drift"}
+      - {name: value, type: float, required: false, mechanism: "the device's quantised reading; null where the reading never arrived", gt_counterpart: "D16/D13/D17 true quantity"}
+      - {name: quality, type: enum, enum: quality_flag, required: true, mechanism: "the collection platform's own quality assessment of the reading"}
+      - {name: tier, type: enum, enum: sensor_tier, required: true, mechanism: "the sensor package consented to and installed at this premises"}
+      - {name: provenance, type: enum, enum: provenance_code, required: true, mechanism: "how the platform obtained the value: metered, estimated, interpolated"}
+      - {name: unit, type: string, required: true, mechanism: "the unit configured for the channel"}
+
+  # ---------------------------------------------------------------- D19 ------
+  D19:
+    name: edge_exports
+    title: "What leaves each home: aggregates, energy profile, flexibility compliance"
+    access_class: OBS
+    grain: 15/30 min
+    storage: parquet
+    subsystem: S13
+    e1_in_scope: true
+    keyed_by: premises
+    forbidden_field_patterns:
+      # R09 / E0-8. The leakage test refuses any field matching these, by name,
+      # whatever its contents.  There is no occupancy field, ever.
+      - "(?i)occupan"
+      - "(?i)presence"
+      - "(?i)person"
+      - "(?i)household"
+      - "(?i)resident"
+      - "(?i)people"
+      - "(?i)n_adults?"
+      - "(?i)n_children"
+      - "(?i)activity"
+      - "(?i)asleep|awake|at_home|away"
+      - "(?i)trait|willing|comfort_band"
+    fields:
+      - {name: premises_id, type: string, required: true, mechanism: "the meter point the edge device is commissioned against"}
+      - {name: interval_start, type: timestamp, required: true, mechanism: "the export interval boundary agreed in the data contract"}
+      - {name: interval_end, type: timestamp, required: true, mechanism: "as above"}
+      # I-067/I-076. required: FALSE, and the reason is a conflict the schema
+      # could not previously express. Design 7.8 offers `compliance_only` as a
+      # MITIGATION in which "only flexibility compliance leaves the home", and
+      # a schema that requires the four energy fields on every row makes that
+      # configuration impossible to represent. That is why `include_profile`
+      # only ever gated the summary string: gating the energy would have
+      # violated the contract, so the mitigation silently carried the full
+      # series instead and had home_30min's inference risk.
+      #
+      # They are required for every OTHER configuration, which is a
+      # CONDITIONAL requirement the flat schema cannot state. The condition
+      # is enforced by test_export_configurations_differ.py, so nothing is
+      # weakened: a profile-carrying export with a null energy field still
+      # fails, and only compliance_only may omit it.
+      - {name: import_wh, type: float, required: false, mechanism: "the edge device's integration of metered import over the interval", notes: "conditionally required: present for every export configuration that carries a profile, absent for compliance_only (I-067). Enforced by test, not by this flag."}
+      - {name: export_wh, type: float, required: false, mechanism: "the edge device's integration of metered export over the interval", notes: "conditionally required; see import_wh"}
+      - {name: interval_peak_w, type: float, required: false, mechanism: "maximum sampled demand within the interval, as the edge device computes it", notes: "named distinctly from D13.peak_w, which is a per-cycle peak: the two must never be joined. Conditionally required; see import_wh"}
+      - {name: interval_min_w, type: float, required: false, mechanism: "minimum sampled demand within the interval", notes: "conditionally required; see import_wh"}
+      - {name: building_energy_profile, type: json, required: false, mechanism: "the building energy profile the edge device publishes under the data contract (R09)"}
+      - {name: flex_event_id, type: string, required: false, mechanism: "the identifier of the flexibility request the home was asked to serve"}
+      - {name: flex_compliance_pct, type: float, required: false, mechanism: "the edge device's own assessment of delivery against the request"}
+      - {name: export_config, type: string, required: true, mechanism: "the export configuration in force (7.8: home 30 min, home 15 min, estate aggregate, compliance only)"}
+      - {name: quality, type: enum, enum: quality_flag, required: true, mechanism: "the edge device's quality assessment of the interval"}
+
+  # ---------------------------------------------------------------- D20 ------
+  D20:
+    name: change_labels
+    title: Ground-truth labels for detector scoring (onset, type, persistence)
+    access_class: GT
+    access_note: "Scoring API only. Never released, not even in the ground-truth package handed to a model."
+    grain: event
+    storage: parquet
+    subsystem: S05
+    e1_in_scope: true
+    fields:
+      - {name: label_id, type: string, required: true}
+      - {name: building_id, type: string, required: true}
+      - {name: change_class, type: enum, enum: change_class, required: true}
+      - {name: true_onset, type: timestamp, required: true}
+      - {name: true_end, type: timestamp, required: false}
+      - {name: persistence, type: enum, enum: persistence, required: true}
+      - {name: source_event_ids, type: "list[string]", required: true, notes: "links to D09, D03, D14"}
+      - {name: detectable_from_tier, type: enum, enum: sensor_tier, required: true, notes: "lowest tier at which it is theoretically observable"}
+      - {name: observable_change_text, type: string, required: true, notes: "R25: what changed in observable behaviour, never a cause"}
+
+  # ---------------------------------------------------------------- D21 ------
+  D21:
+    name: biographies
+    title: Human-readable narratives generated from D05 to D09
+    access_class: GT
+    grain: person x date
+    storage: json
+    subsystem: S04
+    e1_in_scope: true
+    fields:
+      - {name: person_id, type: string, required: true}
+      - {name: as_of, type: date, required: true}
+      - {name: narrative_md, type: string, required: true, notes: "5.2 step 6: generated from structured records only, never free-written"}
+      - {name: source_record_ids, type: "list[string]", required: true, notes: "every sentence traces to a record"}
+      - {name: cluster_label, type: string, required: false, forbidden: true, notes: "5.13: no person is ever labelled by cluster. Present only so the schema test can assert it is always null."}
+
+  # ---------------------------------------------------------------- D22 ------
+  D22:
+    name: signature_library
+    title: Appliance waveform templates and variation parameters
+    access_class: META
+    grain: signature
+    storage: parquet + npz
+    subsystem: S10
+    e1_in_scope: true
+    fields:
+      - {name: signature_id, type: string, required: true}
+      - {name: appliance_type, type: string, required: true}
+      - {name: programme, type: string, required: true}
+      - {name: source_dataset, type: string, required: true, notes: "UK-DALE | REFIT | REDD | IDEAL | synthetic-template"}
+      - {name: source_licence, type: string, required: true}
+      - {name: template_hz, type: float, required: true}
+      - {name: template_w, type: "list[float]", required: true}
+      - {name: duration_s, type: int, required: true}
+      - {name: energy_wh_nominal, type: float, required: true}
+      - {name: var_power_cv, type: float, required: true, notes: "model-to-model variation, so two kettles are never identical"}
+      - {name: var_duration_cv, type: float, required: true}
+      - {name: ageing_power_per_year, type: float, required: true}
+      - {name: irish_specific, type: bool, required: true, notes: "K07: electric shower, immersion, storage heater"}
+      - {name: evidence_status, type: string, required: true, notes: "[C] cited | [A] assumption | synthetic placeholder"}
+
+  # ---------------------------------------------------------------- D23 ------
+  D23:
+    name: run_manifests
+    title: Code and data versions, parameters, seeds, checksums
+    access_class: META
+    grain: run
+    storage: json
+    e1_in_scope: true
+    fields:
+      - {name: run_id, type: string, required: true}
+      - {name: created_at_utc, type: timestamp, required: true}
+      - {name: label, type: string, required: true, notes: "every output is labelled UNVALIDATED SIMULATION EVIDENCE"}
+      - {name: code_version, type: string, required: true}
+      - {name: code_git_sha, type: string, required: true}
+      - {name: code_tree_hash, type: string, required: true, notes: "hash of the source tree, so an uncommitted edit is visible"}
+      - {name: schema_version, type: string, required: true}
+      - {name: design_revision, type: int, required: true}
+      - {name: master_seed, type: int, required: true}
+      - {name: coupling_mode, type: enum, enum: coupling_mode, required: true}
+      - {name: scope, type: json, required: true, notes: "the E1 scope actually run"}
+      - {name: input_sources, type: json, required: true, notes: "every sources/ file used, with its SHA-256"}
+      - {name: parameters, type: json, required: true}
+      - {name: outputs, type: json, required: true, notes: "path -> SHA-256 for every file written"}
+      - {name: checkpoint_chain_head, type: string, required: false}
+      - {name: environment, type: json, required: true, notes: "python, numpy, platform, core count"}
+
+  # ---------------------------------------------------------------- D24 ------
+  D24:
+    name: calibration_targets
+    title: Every empirical target with source, version and tolerance
+    access_class: META
+    grain: statistic
+    storage: parquet + citation file
+    e1_in_scope: true
+    notes: >
+      The rule from the brief: no calibration number is hard-coded from memory.
+      Every row here names a file in sources/ with its SHA-256, so a target can
+      be traced to the bytes it came from.  Also holds the source-use register
+      (7.1) and the frozen G-B willingness specification (5.14 firewall).
+    fields:
+      - {name: target_id, type: string, required: true}
+      - {name: statistic, type: string, required: true}
+      - {name: domain, type: string, required: true, notes: "population | activity | appliance | physics | weather | mimic"}
+      - {name: value, type: float, required: false}
+      - {name: value_json, type: json, required: false, notes: "for vector or table targets"}
+      - {name: unit, type: string, required: true}
+      - {name: tolerance, type: float, required: true}
+      - {name: tolerance_kind, type: string, required: true, notes: "absolute | relative | sampling-error-band"}
+      - {name: source_file, type: string, required: true, notes: "path under sources/"}
+      - {name: source_sha256, type: string, required: true}
+      - {name: source_url, type: string, required: true}
+      - {name: source_licence, type: string, required: true}
+      - {name: retrieved_at, type: date, required: true}
+      - {name: intended_use, type: string, required: true, notes: "7.1 source-use register: calibration | validation | reference"}
+      - {name: model_development_exposure, type: string, required: true, notes: "7.1: did it influence design, model selection or tuning?"}
+      - {name: evidence_tag, type: string, required: true, notes: "[C] | [P] | [A] | [U]"}
+      - {name: provisional, type: bool, required: true, notes: "E0-4 / U11: section 7 margins are provisional"}
+
+  # ---------------------------------------------------------------- D25 ------
+  D25:
+    name: mimic_export
+    title: HRSD participants, profiles, MCV, sessions and responses in MIMIC schema 1.1
+    access_class: OBS
+    access_note: "OBS on the MIMIC side: this is what MIMIC legitimately holds about a participant."
+    grain: participant, session, response
+    storage: "MIMIC MySQL via the public API; Parquet copy"
+    subsystem: S04
+    e1_in_scope: true
+    mimic_schema_version: "1.1"
+    forbidden_field_patterns:
+      # 5.14 level 2: forbidden fields are never exported. A negative-test batch
+      # deliberately sends them and ProfileService must reject them.
+      - "(?i)health"
+      - "(?i)fitness"
+      - "(?i)mobility"
+      - "(?i)medical"
+      - "(?i)country_of_birth"
+      - "(?i)diagnos"
+      - "(?i)disabil"
+    fields:
+      - {name: participant_id, type: string, required: true, mimic_field: "participants.id", mechanism: "the UUID MIMIC issues when consent is granted"}
+      - {name: consent_version, type: string, required: true, mimic_field: "profiles.consent_version", mechanism: "the consent text version the participant agreed to", notes: "SYNTHETIC-HRSD-v1-<pool>; MIMIC's LIKE 'SYNTHETIC%' purge and banner work unchanged (U17)"}
+      - {name: consent_granted_at, type: timestamp, required: true, mimic_field: "profiles.consent_granted_at", mechanism: "the server clock when consent was recorded"}
+      - {name: mcv_position, type: enum, enum: mcv_position, required: true, mimic_field: "profiles.mcv_position", mechanism: "MIMIC's own randomisation of where the MCV block falls"}
+      - {name: age_band, type: string, required: true, mimic_field: "profiles.age_band", mechanism: "the band the participant selected", notes: "MIMIC bands use an en-dash; see I-003"}
+      - {name: reported_sex, type: string, required: true, mimic_field: "profiles.sex", mechanism: "the participant's selection", notes: "self-reported. Named distinctly from D05.sex (GT, persistent layer) so the two cannot be joined; MIMIC's own column name is preserved in mimic_field."}
+      - {name: household_size, type: string, required: true, mimic_field: "profiles.household_size", mechanism: "the participant's own count of people in the home"}
+      - {name: children_present, type: string, required: true, mimic_field: "profiles.children_present", mechanism: "the participant's answer about anyone under 18"}
+      - {name: employment_status, type: string, required: true, mimic_field: "profiles.employment_status", mechanism: "the participant's selection", notes: "U18 gap: MIMIC has no 'Home duties' value"}
+      - {name: reported_work_pattern, type: string, required: true, mimic_field: "profiles.work_pattern", mechanism: "the participant's selection", notes: "self-reported. Named distinctly from D08.work_pattern (GT, evolving layer)."}
+      - {name: reported_dwelling_type, type: string, required: true, mimic_field: "profiles.dwelling_type", mechanism: "the participant's selection", notes: "self-reported, named distinctly from D02.dwelling_type (GT). U18 gap: MIMIC has no 'Terraced' value, a common Cobh house type."}
+      - {name: ownership_status, type: string, required: true, mimic_field: "profiles.ownership_status", mechanism: "the participant's selection"}
+      - {name: region_country, type: string, required: true, mimic_field: "profiles.region_country", mechanism: "the participant's selection"}
+      - {name: region_nuts3, type: string, required: true, mimic_field: "profiles.region_nuts3", mechanism: "the participant's selection"}
+      - {name: urban_rural_island, type: string, required: true, mimic_field: "profiles.urban_rural_island", mechanism: "the participant's selection"}
+      - {name: income_band, type: string, required: true, mimic_field: "profiles.income_band", mechanism: "the participant's selection"}
+      - {name: der_ownership, type: json, required: true, mimic_field: "profiles.der_ownership", mechanism: "the participant's recollection of what is installed"}
+      - {name: environmental_concern, type: int, required: true, mimic_field: "profiles.environmental_concern", mechanism: "the participant's self-report on a 1 to 5 scale", notes: "round(3 + 1.05 * latent), clamped 1 to 5, as MIMIC"}
+      - {name: trust_in_automation, type: int, required: true, mimic_field: "profiles.trust_in_automation", mechanism: "the participant's self-report"}
+      - {name: comfort_sensitivity, type: int, required: true, mimic_field: "profiles.comfort_sensitivity", mechanism: "the participant's self-report"}
+      - {name: mcv_01_to_10, type: "list[int]", required: true, mimic_field: "profile_mcv.mcv_01..10", mechanism: "the participant's Likert answers to the 10 Moral and Community Values items"}
+      - {name: profile_optional, type: json, required: false, mimic_field: "profile_optional.*", mechanism: "the ten optional FlexSense Table 3 items the participant chose to answer", notes: "design 5.14: the 10 permitted fields. e.g. home_automation_level <- sensor tier; energy_bill_responsibility <- decision authority. ADR-004 exclusions already applied by MIMIC."}
+      - {name: session_id, type: string, required: false, mimic_field: "sessions.id", mechanism: "the session MIMIC created"}
+      - {name: chosen_signal, type: enum, enum: mimic_signal, required: false, mimic_field: "responses.chosen_signal", mechanism: "the option the participant chose"}
+      - {name: chosen_display_position, type: int, required: false, mimic_field: "responses.chosen_display_position", mechanism: "where that option happened to appear on screen"}
+      - {name: display_permutation, type: json, required: false, mimic_field: "responses.display_permutation", mechanism: "MIMIC's own option-order randomisation for that item"}
+      - {name: latency_ms, type: int, required: false, mimic_field: "responses.latency_ms", mechanism: "wall time between the item being shown and answered"}
+      - {name: is_probe, type: bool, required: false, mimic_field: "responses.is_probe", mechanism: "MIMIC's own item flag"}
+      - {name: is_probe_repeat, type: bool, required: false, mimic_field: "responses.is_probe_repeat", mechanism: "MIMIC's own item flag"}
+
+  # ---------------------------------------------------------------- D26 ------
+  D26:
+    name: mimic_answer_key
+    title: Crosswalk to person_id, true traits, planted segments, propensity, gap, test settings
+    access_class: GT
+    access_note: "Scoring only. Never written into MIMIC (5.14 level 2)."
+    grain: participant
+    storage: parquet
+    e1_in_scope: true
+    fields:
+      - {name: participant_id, type: string, required: true}
+      - {name: person_id, type: string, required: true}
+      - {name: pool, type: enum, enum: mimic_pool, required: true}
+      - {name: true_traits, type: json, required: true, notes: "the ten MIMIC latents as generated"}
+      - {name: planted_segment, type: string, required: false, notes: "T3: the k segments planted, or null in null mode"}
+      - {name: planted_null_mode, type: bool, required: true, notes: "T3(b): no clusters planted"}
+      - {name: response_propensity, type: float, required: true}
+      - {name: stated_gap, type: float, required: true}
+      - {name: satisficer, type: bool, required: true}
+      - {name: planted_position_bias, type: float, required: true, notes: "T10: 0 in the clean batch, non-zero in the planted batch"}
+      - {name: planted_context_effect, type: json, required: false, notes: "T7 AMCE"}
+      - {name: generator, type: string, required: true, notes: "5.14 independence protocol: G-A | G-B | G-C"}
+      - {name: gc_mode, type: string, required: false, notes: "wrong assumptions | non-identifiable | continuous no clusters | causally unrelated | differential non-response"}
+      - {name: simulated_session_date, type: date, required: false, notes: "U19: the API timestamps are run-time, the simulated date is carried here"}
+      - {name: test_mode_settings, type: json, required: true}
+
+  # ---------------------------------------------------------------- D27 ------
+  D27:
+    name: tariffs_contracts
+    title: Supplier tariff, ToU and export rates, switches, flexibility and P2P terms, connection limits
+    access_class: OBS
+    access_note: "What a utility or aggregator would hold. Market rules live in META."
+    grain: home x interval
+    storage: parquet
+    e1_in_scope: true
+    keyed_by: premises
+    fields:
+      - {name: premises_id, type: string, required: true, mechanism: "the meter point on the supply contract"}
+      - {name: valid_from, type: timestamp, required: true, mechanism: "the contract start the supplier recorded"}
+      - {name: valid_to, type: timestamp, required: false, mechanism: "the contract end the supplier recorded"}
+      - {name: supplier, type: string, required: true, mechanism: "the supplier of record"}
+      - {name: tariff_code, type: string, required: true, mechanism: "the tariff the account is on"}
+      - {name: tariff_kind, type: string, required: true, mechanism: "as published by the supplier", notes: "flat | day-night | ToU | U10: existing retail tariffs only in the base model"}
+      - {name: rate_schedule, type: json, required: true, mechanism: "the published rate card"}
+      - {name: standing_charge_eur_day, type: float, required: true, mechanism: "the published standing charge"}
+      - {name: export_rate_eur_kwh, type: float, required: false, mechanism: "the published clean-export guarantee rate"}
+      - {name: max_import_kw, type: float, required: true, mechanism: "the connection capacity on the network operator's record"}
+      - {name: max_export_kw, type: float, required: true, mechanism: "the export capacity notified to and accepted by the network operator"}
+      - {name: der_notification_ref, type: string, required: false, mechanism: "the DER notification reference the operator issued"}
+      - {name: flex_contract_terms, type: json, required: false, mechanism: "the aggregator contract terms on file"}
+      - {name: trial_arm, type: string, required: false, mechanism: "the arm this premises was randomised to at recruitment (6.4 item 5)"}
+
+  # ---------------------------------------------------------------- D28 ------
+  D28:
+    name: study_protocol
+    title: Recruitment, response rates, consent to sensors, dropouts, trial arms and periods
+    access_class: OBS
+    access_note: "The true selection mechanism stays in GT (6.4 item 1)."
+    grain: premises x event
+    storage: parquet + protocol document
+    e1_in_scope: true
+    keyed_by: premises
+    fields:
+      - {name: premises_id, type: string, required: true, mechanism: "the premises the study recorded against"}
+      - {name: protocol_event, type: string, required: true, mechanism: "the study team's own log entry", notes: "invited | responded | declined | consented | installed | withdrew | dropped_out | randomised"}
+      - {name: recorded_at, type: timestamp, required: true, mechanism: "when the study team entered the record, which may lag the event"}
+      - {name: recruitment_route, type: string, required: true, mechanism: "how the household was approached"}
+      - {name: consent_sensors, type: string, required: false, mechanism: "the consent form the household signed", notes: "6.5 rule 3: consent records are sometimes incomplete"}
+      - {name: tier_consented, type: enum, enum: sensor_tier, required: false, mechanism: "the sensor package the household agreed to"}
+      - {name: install_delay_days, type: int, required: false, mechanism: "the gap between consent and the installer attending"}
+      - {name: trial_arm, type: string, required: false, mechanism: "the arm the randomisation list assigned"}
+      - {name: arm_deviation, type: string, required: false, mechanism: "the study team's note of non-compliance or crossover"}
+      - {name: withdrawal_reason, type: string, required: false, mechanism: "the reason the household gave, where they gave one"}
+
+  # ---------------------------------------------------------------- D29 ------
+  D29:
+    name: household_survey
+    title: Questionnaire answers with calibrated reporting error and non-response
+    access_class: OBS
+    access_note: "True values stay in GT. The too-good test (6.5 rule 1) bounds agreement."
+    grain: premises x wave
+    storage: parquet
+    e1_in_scope: true
+    keyed_by: premises
+    fields:
+      - {name: premises_id, type: string, required: true, mechanism: "the premises the questionnaire was sent to"}
+      - {name: wave, type: int, required: true, mechanism: "the survey wave the study ran"}
+      - {name: responded_at, type: timestamp, required: false, mechanism: "when the respondent submitted; null for unit non-response"}
+      - {name: q_household_size, type: int, required: false, mechanism: "the respondent's own count of people in the home", gt_counterpart: "D06.membership count"}
+      - {name: q_children_under_18, type: int, required: false, mechanism: "the respondent's answer", gt_counterpart: "D06 membership under 18"}
+      - {name: q_occupied_weekday_hours, type: float, required: false, mechanism: "the respondent's estimate of hours someone is usually home", gt_counterpart: "D11 presence hours", notes: "optimistic occupancy is a calibrated bias (6.5 rule 3)"}
+      - {name: q_dwelling_type, type: string, required: false, mechanism: "the respondent's answer", gt_counterpart: "D02.dwelling_type"}
+      - {name: q_heating_system, type: string, required: false, mechanism: "the respondent's answer, which may be out of date", gt_counterpart: "D02.heating_system"}
+      - {name: q_has_pv, type: string, required: false, mechanism: "the respondent's recollection", gt_counterpart: "D04 pv asset present"}
+      - {name: q_has_ev, type: string, required: false, mechanism: "the respondent's recollection", gt_counterpart: "D04 vehicle asset is EV"}
+      - {name: q_appliances, type: json, required: false, mechanism: "the respondent ticking a list, with omissions", gt_counterpart: "D04 appliance stock"}
+      - {name: q_env_behaviour_score, type: int, required: false, mechanism: "the respondent's self-report, subject to social-desirability bias", notes: "over-reported by design (6.5 rule 3)"}
+      - {name: q_comfort_preference_c, type: float, required: false, mechanism: "the respondent's stated preferred temperature"}
+      - {name: straightlined, type: bool, required: true, mechanism: "derived by the survey platform from answer variance, as a real platform would flag it"}
+      - {name: item_nonresponse_count, type: int, required: true, mechanism: "count of items the respondent left blank"}
+
+  # ---------------------------------------------------------------- D30 ------
+  D30:
+    name: recorded_metadata
+    title: Recorded building and asset data, stale or wrong at realistic rates
+    access_class: OBS
+    access_note: "True values are in D02/D04."
+    grain: premises x version
+    storage: parquet
+    e1_in_scope: true
+    keyed_by: premises
+    fields:
+      - {name: premises_id, type: string, required: true, mechanism: "the premises the record is filed against"}
+      - {name: record_version, type: int, required: true, mechanism: "the version of the administrative record"}
+      - {name: recorded_at, type: timestamp, required: true, mechanism: "when the assessor or installer filed it"}
+      - {name: record_source, type: string, required: true, mechanism: "who filed it", notes: "BER assessor | installer | operator | self-declared"}
+      - {name: rec_ber_band, type: string, required: false, mechanism: "the band on the published BER certificate, which predates any later retrofit", gt_counterpart: "D02.ber_band"}
+      - {name: rec_ber_kwh_m2_yr, type: float, required: false, mechanism: "the figure on the certificate", gt_counterpart: "D02.ber_kwh_m2_yr"}
+      - {name: rec_floor_area_m2, type: float, required: false, mechanism: "the area the assessor measured or transcribed", gt_counterpart: "D02.floor_area_m2", notes: "subject to m2/ft2 unit errors (6.5 rule 3)"}
+      - {name: rec_dwelling_type, type: string, required: false, mechanism: "the assessor's classification", gt_counterpart: "D02.dwelling_type"}
+      - {name: rec_build_year, type: int, required: false, mechanism: "the year on the record", gt_counterpart: "D02.build_year"}
+      - {name: rec_heating_system, type: string, required: false, mechanism: "the system recorded at assessment", gt_counterpart: "D02.heating_system"}
+      - {name: rec_pv_kwp, type: float, required: false, mechanism: "the size on the installer's notification", gt_counterpart: "D04.capacity for pv", notes: "subject to kW/kWp confusion"}
+      - {name: rec_pv_install_date, type: date, required: false, mechanism: "the date on the notification", gt_counterpart: "D04.install_date"}
+      - {name: rec_pv_azimuth_deg, type: float, required: false, mechanism: "the orientation the installer recorded, at release-level coarseness", gt_counterpart: "D04.pv_azimuth_deg"}
+      - {name: rec_shading, type: string, required: false, mechanism: "the installer's shading note"}
+      - {name: record_conflict, type: string, required: false, mechanism: "a note where two sources disagree (assessor against installer)"}
+      - {name: asset_since_removed, type: bool, required: true, mechanism: "true where the record still lists an asset that has since gone, because nobody told the register"}
+
+  # ---------------------------------------------------------------- D31 ------
+  D31:
+    name: external_series
+    title: Station weather, wholesale prices, carbon intensity, system demand, flex events
+    access_class: OBS
+    grain: series-native
+    storage: parquet
+    e1_in_scope: true
+    fields:
+      - {name: series_id, type: string, required: true, mechanism: "the publisher's own series identifier"}
+      - {name: ts, type: timestamp, required: true, mechanism: "the publisher's timestamp, on the publisher's interval convention"}
+      - {name: value, type: float, required: false, mechanism: "the published value; null during a station outage or publication gap", gt_counterpart: "D15 for weather series"}
+      - {name: unit, type: string, required: true, mechanism: "as published"}
+      - {name: station_or_zone, type: string, required: true, mechanism: "the measuring station or market zone", notes: "6.4 item 7: the nearest official station, not the true site microclimate"}
+      - {name: quality, type: enum, enum: quality_flag, required: true, mechanism: "the publisher's quality flag, including gap-filled values"}
+      - {name: provenance, type: enum, enum: provenance_code, required: true, mechanism: "measured, estimated or interpolated, as the publisher states"}
+      - {name: revision, type: int, required: true, mechanism: "the publication revision; prices and demand are revised after the fact"}
+      - {name: realisation_id, type: string, required: true, mechanism: "the weather realisation this series is consistent with (6.5 rule 2: one realisation drives everything)"}
+      - {name: segment, type: string, required: true, mechanism: "recorded in the evidence view only, so it does not become a tell", notes: "real historical | generated projection (6.5 rule 2)"}

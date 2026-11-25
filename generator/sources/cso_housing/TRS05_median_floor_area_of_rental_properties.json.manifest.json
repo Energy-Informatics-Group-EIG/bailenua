@@ -1,0 +1,19 @@
+{
+  "bytes": 7065,
+  "encoding": "utf-8",
+  "http_status": 200,
+  "intended_use": "calibration",
+  "key": "cso.housing.trs05_floor_area_by_authority",
+  "licence": "CC-BY 4.0 (CSO Open Data; https://www.cso.ie/en/aboutus/termsandconditions/)",
+  "model_development_exposure": "tuning",
+  "note": "Raw input, read-only after download. Excluded from git; this manifest is committed in its place.",
+  "publisher": "Central Statistics Office (Ireland), from RTB tenancy registrations matched to BER",
+  "relpath": "cso_housing/TRS05_median_floor_area_of_rental_properties.json",
+  "retrieved_at": "2026-10-10",
+  "retrieved_at_utc": "2026-10-10T22:10:05Z",
+  "sha256": "69b76b7a1ecf76e02c8530def4b88ef116110af3f15589f5e877f4b7d2369601",
+  "substitute_flag": null,
+  "title": "Total Floor Area of Rental Properties by local authority and year (TRS05)",
+  "url": "https://ws.cso.ie/public/api.restful/PxStat.Data.Cube_API.ReadDataset/TRS05/JSON-stat/2.0/en",
+  "used_for": "The only public Irish floor-area figure in PxStat, and the anchor for I-031. SAPS publishes room COUNTS and no areas, and neither EBA02 nor EBQ02 carries floor area, so the metres-squared-per-room relationship had to be assumed - and the assumption was wrong in a way that mattered: apartments were given MORE area per room than detached houses, which put the town's apartment median at 120.8 m2 against a detached median of 129.5. TRS05 gives 89.4 m2 as the median for Co. Cork rental properties in 2021. It bounds from BELOW rather than fixing the level, because rentals skew smaller and apartment-heavier than the whole stock, and that direction is stated wherever it is used. Cork County Council is the authority covering Cobh. TUNING-EXPOSED: the floor-area relationship was fixed against it, so it cannot validate floor area. PL-AREA-01 scores against NDA08 instead, which is exposure 'none'."
+}

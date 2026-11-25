@@ -1,0 +1,36 @@
+{
+  "key": "derived.irish_public_holidays_2014_2026",
+  "title": "Irish public holidays 2014-2026, derived from the WRC statutory list and rules",
+  "publisher": "Oireachtas (statute); dates derived in-project. Workplace Relations Commission page retained as a cross-check only.",
+  "fetched_utc": "2026-10-15T00:12:00Z",
+  "bytes": 4061,
+  "sha256": "98b8be930bd6791e62a29e45c6d7f26e2315562fe45ca2ecd7bc1f3a832ea2f5",
+  "licence": "Statute. Reproducing the dates an Act fixes needs no permission, so the earlier 'WRC re-use terms not stated, TO CONFIRM before redistribution' caveat is withdrawn from this derived table (D-146). That caveat still stands on the WRC HTML itself, which nothing now depends on.",
+  "intended_use": "Phase 2: the per-year public-holiday table behind engine/calendar.py's sourced_holidays(), which raises CalendarSourceMissing rather than defaulting if this file is absent.",
+  "model_development_exposure": "design",
+  "columns": "year, date, name",
+  "rows": 122,
+  "coverage": "2014-01-01 to 2026-12-31. 2014 is included for the Dec-2014 warm-up segment; the replay itself ends 2026-09-30, so the 2026 October and December rows are present but never reached.",
+  "counts_per_year": "9 for 2014-2021; 10 for 2022-2026. The step is real, not a parsing artefact - see statutory_changes.",
+  "statutory_changes": {
+    "2022-03-18": "A ONE-OFF public holiday, 2022 only. Named in the file as such so it cannot be mistaken for a recurring date.",
+    "st_brigids_day": "New recurring public holiday from 2023 under the Organisation of Working Time Act as amended. Rule: the first Monday in February, except when 1 February is a Friday, when it falls on 1 February. Realised as 2023-02-06, 2024-02-05, 2025-02-03, 2026-02-02 - and 2026-02-01 is a Sunday, so the first Monday is the 2nd."
+  },
+  "verification": "Three independent anchors, all MATCH (D-127): the sourced in-code 2022 table; the WRC's own 2026 list; and ten published Easter Mondays. Moveable dates re-checked here: October Bank Holiday is the last Monday in October (2021-10-25, 2022-10-31, 2026-10-26); June and August are first Mondays; May Day is the first Monday in May.",
+  "known_limitation": "Good Friday is NOT a public holiday in Ireland and is correctly absent. It is a common error to include it, and anything comparing this table with a UK holiday list will differ for that reason rather than from a defect.",
+  "issue": "Written under I-114. D-127 recorded this table as acquired and verified and stated its derivation was 'recorded in the manifest', but no manifest was ever written, and the file was later extended backwards to 2014 while D-127 still names the 2015-2026 filename. Agent C's provenance pass found it as the only file in sources/ cited by code with no manifest beside it.",
+  "authority": {
+    "instrument": "Organisation of Working Time Act 1997, Schedule 2, as amended",
+    "note": "The statute fixes the public holidays and the rules that place the moveable ones. It is the authority for this table; the WRC page is a cross-check on the derived dates, not their source (D-146).",
+    "amendments_reflected": {
+      "st_brigids_day_from_2023": "added by amendment; first Monday in February unless 1 February is a Friday",
+      "one_off_2022_03_18": "a one-off public holiday for 2022 only, named as such in the data so it cannot be read as recurring"
+    }
+  },
+  "cross_check": {
+    "key": "wrc.public_holidays",
+    "path": "sources/wrc/wrc_public_holidays.html",
+    "sha256": "c77985d614e4ee3e7750c2302332d6ce8a93b70eceac4ef6525a74b9aa4fcc36",
+    "role": "cross-check only, not the authority"
+  }
+}

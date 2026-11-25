@@ -1,0 +1,19 @@
+{
+  "bytes": 2104960,
+  "encoding": "cp1252",
+  "http_status": 200,
+  "intended_use": "calibration",
+  "key": "cso.saps2022.bua",
+  "licence": "CC-BY 4.0 (CSO Open Data; https://www.cso.ie/en/aboutus/termsandconditions/)",
+  "model_development_exposure": "none",
+  "note": "Raw input, read-only after download. Excluded from git; this manifest is committed in its place.",
+  "publisher": "Central Statistics Office (Ireland)",
+  "relpath": "cso/SAPS_2022_BUA_270923.csv",
+  "retrieved_at": "2026-10-08",
+  "retrieved_at_utc": "2026-10-08T19:42:49Z",
+  "sha256": "eae40049856508e3fae0266fd8a5c8b09f4e135674d672d5e38f2d12e158277f",
+  "substitute_flag": null,
+  "title": "Census 2022 SAPS by Built-Up Area",
+  "url": "https://www.cso.ie/en/media/csoie/census/census2022/SAPS_2022_BUA_270923.csv",
+  "used_for": "The Cobh town total against which the sum of the 53 small areas is reconciled, and the denominator for the U03 scale-down factor."
+}

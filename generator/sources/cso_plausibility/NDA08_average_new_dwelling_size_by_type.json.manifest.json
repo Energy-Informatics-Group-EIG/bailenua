@@ -1,0 +1,19 @@
+{
+  "bytes": 2996,
+  "encoding": "utf-8",
+  "http_status": 200,
+  "intended_use": "validation",
+  "key": "cso.housing.nda08_new_dwelling_size_by_type",
+  "licence": "CC-BY 4.0 (CSO Open Data; https://www.cso.ie/en/aboutus/termsandconditions/)",
+  "model_development_exposure": "none",
+  "note": "Raw input, read-only after download. Excluded from git; this manifest is committed in its place.",
+  "publisher": "Central Statistics Office (Ireland)",
+  "relpath": "cso_plausibility/NDA08_average_new_dwelling_size_by_type.json",
+  "retrieved_at": "2026-10-09",
+  "retrieved_at_utc": "2026-10-09T09:45:34Z",
+  "sha256": "7b415941fa6013944f5cd57e0ce97357111d486838d8b130d20faa09a4a26b0e",
+  "substitute_flag": null,
+  "title": "Average New Dwelling Size by dwelling type and year, with weight in mix (NDA08)",
+  "url": "https://ws.cso.ie/public/api.restful/PxStat.Data.Cube_API.ReadDataset/NDA08/JSON-stat/2.0/en",
+  "used_for": "U27 plausibility: floor area BY DWELLING TYPE, which is what I-031 needed and TRS05 could not give - TRS05 is a rental median by local authority with no type split, and was used only as a lower bound. NDA08 gives square metres for single houses, scheme houses and apartments separately, plus each type's weight in the mix. New dwellings only, so it bounds the MODERN end of the stock and is the right comparator for the post-2005 cohort rather than for a pre-1980 terrace. Exposure `none` and it must stay so: the apartment area-per-room value was corrected against TRS05 and physical reasoning, not against this, so this can still score the correction."
+}

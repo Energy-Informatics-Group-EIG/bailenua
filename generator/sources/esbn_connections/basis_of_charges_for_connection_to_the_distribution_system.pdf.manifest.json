@@ -1,0 +1,19 @@
+{
+  "bytes": 182864,
+  "encoding": "utf-8",
+  "http_status": 200,
+  "intended_use": "reference",
+  "key": "esbn.connections.basis_of_charges",
+  "licence": "ESB Networks / Retail Market Design Service published market data; re-use terms not stated on the publication page, to be confirmed in WP1",
+  "model_development_exposure": "none",
+  "note": "Raw input, read-only after download. Excluded from git; this manifest is committed in its place.",
+  "publisher": "ESB Networks Ltd, approved by the CER (now the CRU)",
+  "relpath": "esbn_connections/basis_of_charges_for_connection_to_the_distribution_system.pdf",
+  "retrieved_at": "2026-10-12",
+  "retrieved_at_utc": "2026-10-12T19:53:36Z",
+  "sha256": "e7d1fc8ed3170045e108058601cdebb2a4959dabd2a82d2a7334df00c2d6aa49",
+  "substitute_flag": "[A] PDF, not machine-readable: the figures used are transcribed by hand into export/tariffs.TARIFF_RATES with their page and the exact published wording, per the brief's rule for a reference that is not machine-readable, and a test asserts each quoted figure is on that page of this file",
+  "title": "ESB Networks Ltd, Basis of Charges for Connection to the Distribution System, revision 1, effective 8 February 2010: the standard domestic connection capacities and the definition of Maximum Import Capacity",
+  "url": "https://www.esbnetworks.ie/docs/default-source/publications/basis-of-charges-for-connection-to-the-distribution-system.pdf?sfvrsn=40acdfd9_14",
+  "used_for": "D27's max_import_kw. The document states that 'Domestic connections are only available for the standard capacities of 3kVA, 12kVA, 16kVA, 20kVA and 29kVA' and treats 12kVA as the standard domestic connection, so the connection capacity on the card is a published figure rather than a round guess. It is published in kVA and the schema declares the field in kW; the conversion at unity power factor is stated on the dataset rather than left implicit. Exposure `none`."
+}

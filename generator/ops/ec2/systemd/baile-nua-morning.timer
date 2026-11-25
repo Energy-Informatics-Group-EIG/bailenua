@@ -1,0 +1,9 @@
+[Unit]
+Description=Baile Nua v1 morning report at 08:00 Irish time
+
+[Timer]
+OnCalendar=*-*-* 08:00:00 Europe/Dublin
+Persistent=true
+
+[Install]
+WantedBy=timers.target

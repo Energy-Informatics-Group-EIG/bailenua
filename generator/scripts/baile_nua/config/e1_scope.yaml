@@ -1,0 +1,134 @@
+# =============================================================================
+# E1 scope — the single definition (E0-7, design 9.2 / section 13 row 7).
+#
+# The runner refuses to exceed this.  K11 in the risk register is scope creep
+# from rich requirements; the countermeasure is that scope is data, read from
+# here, rather than a number typed into a call site.
+# =============================================================================
+gate: E1
+label: "UNVALIDATED SIMULATION EVIDENCE: E1 engineering candidate"
+claim: "Engineering verification only. No behavioural calibration is claimed."
+
+slice:
+  name: "one estate"
+  n_homes: 50
+  n_people_target: 140
+  n_people_tolerance: 25        # ~140 people is the design's own wording
+  calendar_year: 2022            # E0-3 / U08: Census 2022 is t0; E1 simulates 2022
+  start_utc: "2022-01-01T00:00:00Z"
+  end_utc: "2023-01-01T00:00:00Z"
+  coupling_mode: C1              # E0-7; C2/C3 are weeks 2-3
+  epoch_minutes: 15              # C1: 15-minute network epochs
+  device_step_minutes: 1         # C1: 1-minute device and physics step
+  min_life_events: 1
+  min_disruptions: 1
+  fidelity_tiers_allowed: [F1, F2]   # F3 EnergyPlus is not in E1
+
+# The week 2 slice (U23, resized by U29). Declared SEPARATELY from the E1
+# slice above rather than by editing it, so that the E1 slice stays exactly
+# what E0-7 approved and every E1 artefact keeps reproducing against it.
+#
+# 60 homes rather than 50 because Cobh's pre-1980 areas hold smaller
+# households - 2.0 to 2.4 people against the town's 2.67 - so fifty of them
+# held 115 people, sitting exactly on the lower bound of the people band with
+# no headroom (D-028). Sixty at the same density lands near the middle.
+week2_slice:
+  name: "mixed-age slice (U23, resized by U29)"
+  n_homes: 60
+  n_people_target: 140
+  n_people_tolerance: 25
+  min_pre_1980_share: 0.40
+  required_ber_letters: [D, E, F, G]
+  required_der: [heat_pump, pv, bess, ev]
+  household_sizes: "as the data give them; never adjusted to hit the people band"
+  calendar_year: 2022
+  coupling_mode: C1
+
+# =============================================================================
+# WP7 town scale-up (week 3, design 9.4). Declared as its own scope rather than
+# by raising `slice`'s ceiling, for exactly the reason the guard says: "scale-up
+# is gated by a decision, not decided at a call site". D-079 is that decision.
+#
+# This is the first scope in the file with coupling_mode C2, because it is the
+# first that solves a power flow. Design 8.2 marks C2 mandatory for
+# network-sensitive research and design 9.3 moves it to weeks 2 and 3; until
+# baile_nua/network/lv.py existed there was nothing to couple to, and
+# NETWORK_CLAIM said so.
+#
+# n_days is 14 and NOT 365, and the reason is measured rather than preferred.
+# The E1 projection (v1/evidence/e1_gate_report.json, from the Day 6 figures)
+# puts a full-town year at 15.07 run hours and 15.74 GB, and a full-town decade
+# at 157.4 GB - 236 GB with U21's margin - against 77.8 GB of free disk
+# recorded in machine.json. The decade does not fit on the disk, which is
+# I-036. A bounded window measures the RATE honestly and lets the projection be
+# checked against a real full-town measurement instead of a scaled slice; the
+# decade is then a statement about what it would need, with its basis named.
+town_scaleup:
+  name: "WP7 full town (all homes, venues, S11 network)"
+  n_homes: 1092                  # every dwelling the synthesis produces
+  n_people_target: 2917
+  n_people_tolerance: 3000       # not a band: the town is what the town is
+  people_band_applies: false
+  calendar_year: 2022
+  coupling_mode: C2              # the first scope that solves a power flow
+  epoch_minutes: 15              # C2 keeps C1's epoch; the flow is solved on it
+  device_step_minutes: 1
+  n_days: 14
+  decision: D-079
+  purpose: >
+    Design 9.4 week 3: "WP7 town scale-up to 3,000 people, venues, S11
+    network", with the acceptance criteria "venue presence consistent with
+    person presence", "feeder loading within physical limits" and "measured
+    scale within the Day 6 projection". The first two need the whole town and
+    a solved flow; the third needs a full-town measurement of the rate.
+  what_is_not_claimed: >
+    Voltage. The LV topology is [A] (A-49) and voltage drop is a line integral
+    along the declared quantities, so network/lv.py's
+    assert_voltage_is_not_a_claim() raises. Transformer and feeder loading are
+    ratios of powers and are insensitive to how connections are arranged on a
+    circuit, so those are the claim.
+
+mimic:
+  unique_participants_target: 10000   # E0-5 / U16: UNIQUE participants
+  pools: [BN-panel, HRSD-pool]
+  tests_required: [T1, T9, T10]       # design 9.2 E1 row
+  tests_started: [T2, T3, T4, T5, T7] # design 9.3 day 3
+  consent_version_template: "SYNTHETIC-HRSD-v1-{pool}"
+  local_only: true                    # brief: never a remote or production MIMIC
+
+out_of_scope:
+  # Recorded so the E1 report can say what was deliberately not built.
+  - "C2 and C3 coupling modes (design 8.2) — weeks 2 and 3"
+  - "Intervention replay by forking (design 8.2) — week 2"
+  - "G-C adversarial generator modes and the T6 null control (5.14) — week 2"
+  - "Privacy threat model and inference-risk tests (7.8) — week 3"
+  # Superseded in week 3 by the `town_scaleup` scope above (D-079). Kept as
+  # a line rather than deleted, because every E1 artefact says the E1 gate
+  # was passed with this out of scope, and that remains true of E1.
+  - "Town scale-up to 3,000 people and S11 network study (week 3) — DONE in
+    week 3 under the town_scaleup scope; out of scope for E1 itself"
+  - "F3 EnergyPlus co-simulation (5.7)"
+  - "V2/V3/V4 statistical, causal and functional validation (section 7) — S-track"
+  - "10-year run (R14) — weeks 2 and 3"
+
+# U31 / I-049. The held-out validation slice, declared as its own scope for the
+# same reason week2_slice was: so that changing it cannot raise the ceiling on
+# a slice whose artefacts were produced under a different one.
+#
+# No people band. E0-7's band sizes the SIMULATED slice; this one's constraint
+# is enough gas dwellings in each construction group to take a mean, which is a
+# different requirement, and forcing the band would fight the stratification.
+heldout_slice:
+  n_homes: 60
+  coupling_mode: "C1"
+  calendar_year: 2022
+  people_band_applies: false
+  min_gas_per_construction_group: 12
+  evaluation_only: true
+  purpose: >
+    Test U22's comfort-taking on the held-out construction-period axis
+    (DBERNG02). Nothing may be fitted on this slice: U22's amplitudes were set
+    against DBERNG01 and design 7.1 requires calibration and validation to
+    stay disjoint.
+  household_sizes: "as the data give them; this slice is not size-constrained"
+

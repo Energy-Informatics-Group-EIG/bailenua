@@ -1,0 +1,19 @@
+{
+  "bytes": 3662598,
+  "encoding": "utf-8",
+  "http_status": 200,
+  "intended_use": "calibration",
+  "key": "eurostat.hetus.tus_00week",
+  "licence": "CC-BY 4.0 (Eurostat re-use policy)",
+  "model_development_exposure": "none",
+  "note": "Raw input, read-only after download. Excluded from git; this manifest is committed in its place.",
+  "publisher": "Eurostat",
+  "relpath": "eurostat/tus_00week.csv",
+  "retrieved_at": "2026-10-08",
+  "retrieved_at_utc": "2026-10-08T19:49:37Z",
+  "sha256": "41a2408f2308403208baa6ef2fe54c1d6e967ca8d3a86f7c74194775e9d0e41f",
+  "substitute_flag": "[A] UK donor; HETUS has no Irish data at all (I-008, U04, K02)",
+  "title": "HETUS 2000/2010: time spent in the main activity by sex and day of the week (tus_00week)",
+  "url": "https://ec.europa.eu/eurostat/api/dissemination/sdmx/2.1/data/tus_00week/?format=SDMX-CSV&compressed=false",
+  "used_for": "The weekday/weekend split of activity durations (design 5.3: durations conditioned on day type)."
+}

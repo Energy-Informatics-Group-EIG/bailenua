@@ -1,0 +1,19 @@
+{
+  "bytes": 5146,
+  "encoding": "utf-8",
+  "http_status": 200,
+  "intended_use": "calibration",
+  "key": "cso.tourism.tba10_cruise_visits_by_port",
+  "licence": "CC-BY 4.0 (CSO Open Data; https://www.cso.ie/en/aboutus/termsandconditions/)",
+  "model_development_exposure": "none",
+  "note": "Raw input, read-only after download. Excluded from git; this manifest is committed in its place.",
+  "publisher": "Central Statistics Office (Ireland)",
+  "relpath": "cso_events/TBA10_cruise_ships_and_passenger_visits_by_port.json",
+  "retrieved_at": "2026-10-10",
+  "retrieved_at_utc": "2026-10-10T13:05:05Z",
+  "sha256": "c5e7be83b473447833dbebb6be714b80a55cdcbc6caee74ebb955cb6648f3dfd",
+  "substitute_flag": null,
+  "title": "TBA10: cruise ships and passenger visits to Irish ports, by year and port",
+  "url": "https://ws.cso.ie/public/api.restful/PxStat.Data.Cube_API.ReadDataset/TBA10/JSON-stat/2.0/en",
+  "used_for": "WP6 'cruise day' event class: how many calls a year the Port of Cork takes and how many passengers they land, which sets the event's frequency and its footprint."
+}

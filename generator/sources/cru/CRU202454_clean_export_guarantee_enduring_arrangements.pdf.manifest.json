@@ -1,0 +1,19 @@
+{
+  "bytes": 709033,
+  "encoding": "utf-8",
+  "http_status": 200,
+  "intended_use": "reference",
+  "key": "cru.ceg.enduring_arrangements_cru202454",
+  "licence": "Commission for Regulation of Utilities published decision and information papers; re-use terms not stated on the publication, to be confirmed in WP1",
+  "model_development_exposure": "none",
+  "note": "Raw input, read-only after download. Excluded from git; this manifest is committed in its place.",
+  "publisher": "Commission for Regulation of Utilities (Ireland)",
+  "relpath": "cru/CRU202454_clean_export_guarantee_enduring_arrangements.pdf",
+  "retrieved_at": "2026-10-12",
+  "retrieved_at_utc": "2026-10-12T19:53:36Z",
+  "sha256": "385df3ff9602d8cb851bac489f91e75b317b0e6aa676ef16f54f00c70ddc383c",
+  "substitute_flag": "[A] PDF, not machine-readable: the figures used are transcribed by hand into export/tariffs.TARIFF_RATES with their page and the exact published wording, per the brief's rule for a reference that is not machine-readable, and a test asserts each quoted figure is on that page of this file",
+  "title": "CRU202454: Clean Export Guarantee - Enduring Arrangements to Remunerate Customers for Microgeneration Exports, decision paper published 18 June 2024",
+  "url": "https://cruie-live-96ca64acab2247eca8a850a7e54b-5b34f62.divio-media.com/documents/Clean_Export_Guarantee-Enduring_Arrangements_to_Remunerate_Customers_for_Microgenerati.pdf",
+  "used_for": "D27's export rate. The CRU records that export tariffs offered by suppliers 'have generally ranged from circa 16c/kWh to 25c/kWh' and that the floor price of zero for flat-rate export tariffs is retained. So the EXISTENCE of an export payment, its published RANGE and its regulated FLOOR are all sourced; the single number on the card is the midpoint of the published range, by a stated rule. This replaces the DEAP manual's 'currently 0c', which predates the guarantee. Exposure `none`."
+}

@@ -1,0 +1,19 @@
+{
+  "bytes": 5419,
+  "encoding": "utf-8",
+  "http_status": 200,
+  "intended_use": "calibration",
+  "key": "cso.tourism.tba11_cruise_visits_by_month",
+  "licence": "CC-BY 4.0 (CSO Open Data; https://www.cso.ie/en/aboutus/termsandconditions/)",
+  "model_development_exposure": "none",
+  "note": "Raw input, read-only after download. Excluded from git; this manifest is committed in its place.",
+  "publisher": "Central Statistics Office (Ireland)",
+  "relpath": "cso_events/TBA11_cruise_ship_visits_by_month_of_arrival.json",
+  "retrieved_at": "2026-10-10",
+  "retrieved_at_utc": "2026-10-10T13:05:05Z",
+  "sha256": "6dc532da2f0e8bf3735c7c90571a83f18ef431bf42924fa5f99815493027cf46",
+  "substitute_flag": null,
+  "title": "TBA11: cruise ship visits to Irish ports, by year and month of arrival",
+  "url": "https://ws.cso.ie/public/api.restful/PxStat.Data.Cube_API.ReadDataset/TBA11/JSON-stat/2.0/en",
+  "used_for": "WP6 'cruise day' SEASONALITY: the month-of-arrival distribution, so cruise days fall in the season they really fall in rather than uniformly across the year."
+}

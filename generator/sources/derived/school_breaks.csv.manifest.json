@@ -1,0 +1,21 @@
+{
+  "key": "derived.school_breaks_2014_2026",
+  "title": "Irish standardised school breaks 2014/15-2025/26, primary and post-primary, extracted from the four DoE standardisation circulars",
+  "publisher": "Department of Education (Ireland); extracted in-project",
+  "fetched_utc": "2026-10-14T14:52:09Z",
+  "bytes": 11765, "sha256": "6b622cd1c3754ade49e9b43333d88065379c99d8e27891ed4d75c39e02b9beff",
+  "licence": "Irish public sector information. Circulars supplied manually by the user because assets.gov.ie, gov.ie and circulars.gov.ie all return HTTP 403 to programmatic fetch and UA spoofing is forbidden.",
+  "intended_use": "Phase 2: per-year school-term tables replacing SCHOOL_TERMS_2022.",
+  "model_development_exposure": "design",
+  "circulars": {
+    "0016/2014": "school years 2014/15, 2015/16, 2016/17 - sha256 2189a95e1fe01a25...",
+    "0009/2017": "2017/18, 2018/19, 2019/20 - sha256 217faf4e9e07550d...",
+    "0005/2020": "2020/21, 2021/22, 2022/23 - sha256 df4dc16ffaa1844e...",
+    "0072/2022": "2023/24, 2024/25, 2025/26 - sha256 3e02b75aa554fbbb... (.docx)"
+  },
+  "coverage": "12 school years, 2014/15 to 2025/26. 2026/27 deliberately NOT extracted - the replay ends 2026-09-30.",
+  "rows": "84 total: 60 circular-dated (October mid-term, Christmas, February mid-term x2 sectors, Easter) + 24 rule-derived summer rows.",
+  "primary_vs_post_primary": "The February mid-term differs by sector and is captured separately: primary closes the Thursday and Friday only (2 statutory days, extendable to 5 using 3 discretionary days), post-primary closes the full week.",
+  "summer_is_a_RULE_not_a_date": "Summer is not standardised by the circulars. Reopen uses the rule stated verbatim in all four: 'the school year will normally commence during the week in which 1st September falls' (0072/2022 adds that it may commence the week prior); the Monday of that week is used. Closing uses the published rule - primary end of June, post-primary end of May. These rows are marked circular='RULE (not a circular date)' and page='n/a'.",
+  "verification": "2014/15 parsed rows were checked line-by-line against the circular's own Appendix A text: October 27-31 Oct 2014; Christmas close 19 Dec 2014 reopen 5 Jan 2015; February primary 19-20 Feb 2015, post-primary 16-20 Feb 2015; Easter close 27 Mar 2015 reopen 13 Apr 2015. All five MATCH. All 60 circular-dated rows passed a month-plausibility check with 0 failures."
+}

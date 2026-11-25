@@ -1,0 +1,19 @@
+{
+  "bytes": 40608,
+  "encoding": "utf-8",
+  "http_status": 200,
+  "intended_use": "calibration",
+  "key": "cso.population.pea01_population_estimates_by_age_sex",
+  "licence": "CC-BY 4.0 (CSO Open Data; https://www.cso.ie/en/aboutus/termsandconditions/)",
+  "model_development_exposure": "none",
+  "note": "Raw input, read-only after download. Excluded from git; this manifest is committed in its place.",
+  "publisher": "Central Statistics Office (Ireland)",
+  "relpath": "cso_vitalstats/PEA01_population_estimates_by_age_group_and_sex.json",
+  "retrieved_at": "2026-10-10",
+  "retrieved_at_utc": "2026-10-10T12:17:17Z",
+  "sha256": "1a45b0d605dc96ea10d4c9a7484ed9018f05610a2e94a923a656f58f48e4224d",
+  "substitute_flag": null,
+  "title": "PEA01: population estimates (persons in April) by year, age group and sex",
+  "url": "https://ws.cso.ie/public/api.restful/PxStat.Data.Cube_API.ReadDataset/PEA01/JSON-stat/2.0/en",
+  "used_for": "WP5 mortality hazard, denominator. Paired with VSA08 on the same year and the same age groups this makes the age- and sex-specific death rate a RATIO OF TWO PUBLISHED NUMBERS, with no population estimate of our own in it."
+}

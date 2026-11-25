@@ -1,0 +1,19 @@
+{
+  "bytes": 42039,
+  "encoding": "utf-8",
+  "http_status": 200,
+  "intended_use": "reference",
+  "key": "electricireland.priceplan.standard_elec_2022_05",
+  "licence": "Electric Ireland published residential price schedule; re-use terms not stated on the document, to be confirmed in WP1 (as U05 for SEAI and RMDS)",
+  "model_development_exposure": "none",
+  "note": "Raw input, read-only after download. Excluded from git; this manifest is committed in its place.",
+  "publisher": "Electric Ireland (ESB)",
+  "relpath": "electric_ireland/0522_pp_standard_elec.pdf",
+  "retrieved_at": "2026-10-12",
+  "retrieved_at_utc": "2026-10-12T19:53:35Z",
+  "sha256": "5a717ae9df27e98d14945e6d48c44b09b8c392e971bc1bed755e0061b353ff22",
+  "substitute_flag": "[A] PDF, not machine-readable: the figures used are transcribed by hand into export/tariffs.TARIFF_RATES with their page and the exact published wording, per the brief's rule for a reference that is not machine-readable, and a test asserts each quoted figure is on that page of this file",
+  "title": "Electric Ireland Standard Electricity Price Plan incl. NightSaver, price schedule valid as of 1 May 2022: 24-hour and NightSaver day/night unit rates and urban and rural annual standing charges",
+  "url": "https://prd-cdn.electricireland.ie/media/docs/default-source/price-plans/residential/2022/0522_pp_standard_elec.pdf",
+  "used_for": "D27's flat and day/night rate magnitudes and their standing charges. The schedule is dated 1 May 2022 and the estate-year run simulates 2022, so the rates are contemporaneous with the simulated year, and Cobh is urban so the URBAN standing charge is the one used. EXPOSURE IS `none` AND CANNOT BECOME ANYTHING ELSE: D27 is a record-only dataset and the frozen engine is forbidden from importing the module that reads this file, so no parameter can be fitted to it even by accident."
+}

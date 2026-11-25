@@ -1,0 +1,29 @@
+[Unit]
+Description=Baile Nua v1 replay (HRSD_Occupants), warm-up Dec 2014 to 30 Sep 2026
+After=network-online.target
+Wants=network-online.target
+# A BLOCKED run is not started by hand or at boot (this condition) and is not
+# restarted automatically (ExecStart exits 78, RestartPreventExitStatus below).
+ConditionPathExists=!/home/ubuntu/hrsd_occupants/hrsd/status/BLOCKED.md
+StartLimitIntervalSec=6h
+StartLimitBurst=4
+
+[Service]
+Type=simple
+User=ubuntu
+Group=ubuntu
+WorkingDirectory=/home/ubuntu/hrsd_occupants/hrsd
+# Runs ops/pre_start.sh (loop guard, post-pass-only recovery) and then the supervisor.
+ExecStart=/home/ubuntu/hrsd_occupants/ops/run_supervisor.sh
+Restart=on-failure
+RestartSec=120
+# 78 = BLOCKED by the loop guard: never restart on it.
+RestartPreventExitStatus=78
+KillMode=control-group
+TimeoutStopSec=60
+TimeoutStartSec=infinity
+StandardOutput=append:/home/ubuntu/hrsd_occupants/ops/logs/supervisor.out
+StandardError=append:/home/ubuntu/hrsd_occupants/ops/logs/supervisor.err
+
+[Install]
+WantedBy=multi-user.target

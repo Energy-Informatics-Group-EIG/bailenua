@@ -1,0 +1,19 @@
+{
+  "bytes": 9879,
+  "encoding": "utf-8",
+  "http_status": 200,
+  "intended_use": "validation",
+  "key": "cso.census2011.cd488_heating_by_accommodation_and_period",
+  "licence": "CC-BY 4.0 (CSO Open Data; https://www.cso.ie/en/aboutus/termsandconditions/)",
+  "model_development_exposure": "none",
+  "note": "Raw input, read-only after download. Excluded from git; this manifest is committed in its place.",
+  "publisher": "Central Statistics Office (Ireland)",
+  "relpath": "cso_housing/CD488_central_heating_by_accommodation_and_period_2011.json",
+  "retrieved_at": "2026-10-09",
+  "retrieved_at_utc": "2026-10-09T10:51:45Z",
+  "sha256": "b544bb57ae8068c3f1cfc8f1e63341f3123319a5361b0ee1d45b67d9f125cc4d",
+  "substitute_flag": "[A] retained: the joint is 2011, eleven years before T0, so it constrains the STRUCTURE (which fuels go with which dwelling type and era) and not the 2022 levels, which come from SAPS 2022",
+  "title": "Census 2011 CD488: private households by type of private accommodation, type of central heating and period built",
+  "url": "https://ws.cso.ie/public/api.restful/PxStat.Data.Cube_API.ReadDataset/CD488/JSON-stat/2.0/en",
+  "used_for": "U30: the public joint behind I-011's assumed dwelling-type x heating-fuel split. To be used in the week 3 fabric and heating work, not before."
+}

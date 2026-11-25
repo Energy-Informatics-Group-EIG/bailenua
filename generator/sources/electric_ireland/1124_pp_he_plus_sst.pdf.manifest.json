@@ -1,0 +1,19 @@
+{
+  "bytes": 239763,
+  "encoding": "utf-8",
+  "http_status": 200,
+  "intended_use": "reference",
+  "key": "electricireland.priceplan.home_electric_plus_sst_2024_11",
+  "licence": "Electric Ireland published residential price schedule; re-use terms not stated on the document, to be confirmed in WP1 (as U05 for SEAI and RMDS)",
+  "model_development_exposure": "none",
+  "note": "Raw input, read-only after download. Excluded from git; this manifest is committed in its place.",
+  "publisher": "Electric Ireland (ESB)",
+  "relpath": "electric_ireland/1124_pp_he_plus_sst.pdf",
+  "retrieved_at": "2026-10-12",
+  "retrieved_at_utc": "2026-10-12T19:53:35Z",
+  "sha256": "4da1616fc3525bdaeadd445b24ebb5e1a938f963cbdb70f432a4cd81515be481",
+  "substitute_flag": "[A] PDF, not machine-readable: the figures used are transcribed by hand into export/tariffs.TARIFF_RATES with their page and the exact published wording, per the brief's rule for a reference that is not machine-readable, and a test asserts each quoted figure is on that page of this file",
+  "title": "Electric Ireland Home Electric+ Standard Smart Tariff Price Plan, price schedule valid as of 1 November 2024: day, night and peak unit rates, the published band hours, and urban and rural annual standing charges",
+  "url": "https://prd-cdn.electricireland.ie/media/docs/default-source/price-plans/residential/2024/1124_pp_he_plus_sst.pdf?sfvrsn=6e0a0879_2",
+  "used_for": "D27's three-band time-of-use plan: the only part of the card that carries PUBLISHED band hours (Day 08:00-23:00 excluding peak, Night 23:00-08:00, Peak 17:00-19:00) and a published peak rate. The 2022 standard price schedule states no band hours at all, so this is also where the day/night plan's night window comes from - a CROSS-PLAN carry, flagged as such in export/tariffs. VINTAGE: this schedule is dated November 2024 and the simulated year is 2022. A three-band domestic smart tariff was not a published plan in May 2022, so there is no contemporaneous sheet to use; the mismatch is recorded on the dataset rather than hidden. Exposure `none`, as above."
+}

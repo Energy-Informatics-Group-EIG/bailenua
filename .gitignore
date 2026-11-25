@@ -1,0 +1,22 @@
+.DS_Store
+web/.DS_Store
+.b2.local.json
+
+# --- secrets: never commit ---
+baile_private/
+# web/b2_sign.php has a hardcoded B2 keyID + applicationKey (lines 20-21).
+# Excluded 21 Oct 2026. Scrub the key into baile_private/config.php, then this
+# line can be removed and the file committed safely.
+web/b2_sign.php
+
+# --- large archives of this repo's own content (13 MB; excluded by owner) ---
+generator/baile-nua-code.zip
+generator/baile-nua-hrsd_occupants-20261019.bundle
+
+# --- superseded duplicates: canonical copies live in flexus_family_reference ---
+web/V1_BUCKET_STRUCTURE.md
+web/datasets.md
+
+# --- junk ---
+__pycache__/
+*.pyc

@@ -1,0 +1,117 @@
+# Given-name pool for NON-Irish origin groups (design 5.2 step 6).
+#
+# PROVENANCE AND LIMITATION (ISSUES.md I-014)
+# Design 5.2 step 6 asks for first names "by birth year and origin from CSO
+# baby-name tables and equivalent national lists". The CSO tables (VSA50/VSA60)
+# are real, year-by-year and used directly for origin IE. No equivalent
+# machine-readable national lists were located for the other origin groups, so
+# this file supplies an UNWEIGHTED, YEAR-INDEPENDENT pool for them, drawn
+# uniformly, with the same two justifications as the surname pool:
+#   1. an unweighted pool is a name space, not a statistic recalled from memory;
+#   2. R27/K12 want synthetic identities not to resemble real residents, so
+#      reproducing real national name frequencies would push the wrong way.
+# Consequence, recorded: for non-Irish-born residents the given name is
+# culturally appropriate but NOT age-appropriate, because no year dimension is
+# available. For Irish-born residents - about 80% of Cobh by the Census
+# place-of-birth marginal - the name IS year-appropriate from the real CSO table.
+origin_group,sex,given_name
+UK,M,Oliver
+UK,M,Harry
+UK,M,George
+UK,M,Jack
+UK,M,Charlie
+UK,M,Thomas
+UK,M,William
+UK,M,Alfie
+UK,M,Henry
+UK,M,Edward
+UK,F,Olivia
+UK,F,Amelia
+UK,F,Isla
+UK,F,Ava
+UK,F,Ivy
+UK,F,Florence
+UK,F,Poppy
+UK,F,Charlotte
+UK,F,Alice
+UK,F,Eleanor
+PL,M,Jakub
+PL,M,Kacper
+PL,M,Szymon
+PL,M,Filip
+PL,M,Michał
+PL,M,Wojciech
+PL,M,Piotr
+PL,M,Tomasz
+PL,M,Marcin
+PL,M,Krzysztof
+PL,F,Zuzanna
+PL,F,Julia
+PL,F,Maja
+PL,F,Zofia
+PL,F,Hanna
+PL,F,Agnieszka
+PL,F,Katarzyna
+PL,F,Magdalena
+PL,F,Anna
+PL,F,Aleksandra
+IN,M,Aarav
+IN,M,Arjun
+IN,M,Rohan
+IN,M,Vikram
+IN,M,Rahul
+IN,M,Sanjay
+IN,M,Anil
+IN,M,Deepak
+IN,M,Nikhil
+IN,M,Pranav
+IN,F,Ananya
+IN,F,Priya
+IN,F,Divya
+IN,F,Meera
+IN,F,Kavya
+IN,F,Shreya
+IN,F,Lakshmi
+IN,F,Anjali
+IN,F,Nisha
+IN,F,Aditi
+EU27_other,M,Lukas
+EU27_other,M,Mateo
+EU27_other,M,Luca
+EU27_other,M,Hugo
+EU27_other,M,Matteo
+EU27_other,M,Andrei
+EU27_other,M,Tomas
+EU27_other,M,Pedro
+EU27_other,M,Nikolas
+EU27_other,M,Janis
+EU27_other,F,Sofia
+EU27_other,F,Elena
+EU27_other,F,Laura
+EU27_other,F,Marta
+EU27_other,F,Lucia
+EU27_other,F,Ioana
+EU27_other,F,Katarina
+EU27_other,F,Ana
+EU27_other,F,Chiara
+EU27_other,F,Leonie
+rest_of_world,M,Mateus
+rest_of_world,M,Gabriel
+rest_of_world,M,Wei
+rest_of_world,M,Minh
+rest_of_world,M,Chukwuemeka
+rest_of_world,M,Kwame
+rest_of_world,M,Omar
+rest_of_world,M,Ibrahim
+rest_of_world,M,Santiago
+rest_of_world,M,Diego
+rest_of_world,F,Beatriz
+rest_of_world,F,Larissa
+rest_of_world,F,Mei
+rest_of_world,F,Linh
+rest_of_world,F,Chiamaka
+rest_of_world,F,Akosua
+rest_of_world,F,Fatima
+rest_of_world,F,Amina
+rest_of_world,F,Valentina
+rest_of_world,F,Camila

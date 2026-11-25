@@ -1,0 +1,19 @@
+{
+  "bytes": 468058,
+  "encoding": "utf-8",
+  "http_status": 200,
+  "intended_use": "calibration",
+  "key": "cso.housing.f2095_housing_stock_vacancy_by_ed",
+  "licence": "CC-BY 4.0 (CSO Open Data; https://www.cso.ie/en/aboutus/termsandconditions/)",
+  "model_development_exposure": "none",
+  "note": "Raw input, read-only after download. Excluded from git; this manifest is committed in its place.",
+  "publisher": "Central Statistics Office (Ireland)",
+  "relpath": "cso_lifecourse/F2095_housing_stock_and_vacancy_rate_by_ed.json",
+  "retrieved_at": "2026-10-10",
+  "retrieved_at_utc": "2026-10-10T12:14:45Z",
+  "sha256": "1ff9b70b7479e535728bc5d3342256e28d1de64d804e3204a5c5f89ceeecadf5",
+  "substitute_flag": null,
+  "title": "F2095: housing stock and vacancy rate by electoral division (Census 2022)",
+  "url": "https://ws.cso.ie/public/api.restful/PxStat.Data.Cube_API.ReadDataset/F2095/JSON-stat/2.0/en",
+  "used_for": "WP5 vacancy chain at the town's own geography: the Cobh electoral divisions, rather than the county or the state."
+}

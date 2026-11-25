@@ -1,0 +1,19 @@
+{
+  "bytes": 10825107,
+  "encoding": "utf-8",
+  "http_status": 200,
+  "intended_use": "calibration",
+  "key": "eurostat.hetus.tus_00selfstat",
+  "licence": "CC-BY 4.0 (Eurostat re-use policy)",
+  "model_development_exposure": "none",
+  "note": "Raw input, read-only after download. Excluded from git; this manifest is committed in its place.",
+  "publisher": "Eurostat",
+  "relpath": "eurostat/tus_00selfstat.csv",
+  "retrieved_at": "2026-10-08",
+  "retrieved_at_utc": "2026-10-08T19:49:46Z",
+  "sha256": "79008d3d038626cf24e927170856cf868fdb32b98ec457efe9e4bb4d427b4ac9",
+  "substitute_flag": "[A] UK donor; HETUS has no Irish data at all (I-008, U04, K02)",
+  "title": "HETUS 2000/2010: time spent in the main activity by sex and self-declared labour status (tus_00selfstat)",
+  "url": "https://ec.europa.eu/eurostat/api/dissemination/sdmx/2.1/data/tus_00selfstat/?format=SDMX-CSV&compressed=false",
+  "used_for": "Employment-conditioned activity shares (design 5.3 'conditioned on person type'), which is what separates a working adult's weekday from a retired person's."
+}

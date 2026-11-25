@@ -1,0 +1,19 @@
+{
+  "bytes": 87331,
+  "encoding": "utf-8",
+  "http_status": 200,
+  "intended_use": "calibration",
+  "key": "cso.vitalstats.vsa36_births_by_age_and_parity",
+  "licence": "CC-BY 4.0 (CSO Open Data; https://www.cso.ie/en/aboutus/termsandconditions/)",
+  "model_development_exposure": "none",
+  "note": "Raw input, read-only after download. Excluded from git; this manifest is committed in its place.",
+  "publisher": "Central Statistics Office (Ireland)",
+  "relpath": "cso_vitalstats/VSA36_births_by_age_of_mother_and_parity.json",
+  "retrieved_at": "2026-10-10",
+  "retrieved_at_utc": "2026-10-10T12:16:14Z",
+  "sha256": "bce58378ddc9ad3dc3384d2feb744a999089beb55ce5e03a490ddb02efb6cded",
+  "substitute_flag": null,
+  "title": "VSA36: births by year, age of mother at maternity and previous liveborn children",
+  "url": "https://ws.cso.ie/public/api.restful/PxStat.Data.Cube_API.ReadDataset/VSA36/JSON-stat/2.0/en",
+  "used_for": "WP5 birth hazard, parity dimension: design 5.9 asks for age- AND parity-specific fertility, and VSA104 carries age only. These are counts, so they give the parity SHARE within an age group, which then splits the VSA104 rate."
+}

@@ -1,0 +1,33 @@
+# bn web stack — dataset persistence
+#
+# Default (this file only): named Docker volumes → data survives `docker compose up --build`
+# but lives in Docker’s volume store, NOT in ~/bn_datasets on the host. Do not run
+# `docker compose down -v` or you delete those volumes.
+#
+# EC2 / “I want files in ~/bn_datasets”: use a bind mount + BN_DATA_ROOT inside the container.
+#   docker compose -f docker-compose.yml -f docker-compose.ec2.yml up -d --build
+# See docker-compose.ec2.yml. Setting BN_DATA_ROOT to a host path *without* mounting that
+# path into the container writes only inside the image (lost on new containers).
+#
+# Container init (docker/init_pm.sh) mkdir/chown uploads, artifacts, and sg1 under BN_DATA_ROOT
+# for www-data (PHP-FPM). Restart the stack after updating; or on the host: sudo chown -R 82:82 …/bn_datasets
+#
+# Run: docker compose up -d --build
+
+services:
+  bn:
+    container_name: bn-prod
+    build: .
+    ports:
+      - "8080:80"
+    environment:
+      - BN_DATA_ROOT=/bn_data
+    volumes:
+      - /home/ec2-user/bn_datasets:/bn_data
+      - /home/ec2-user/docker/php/uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
+    restart: unless-stopped
+
+volumes:
+  bn_home_data_uploads:
+  bn_home_data_artifacts:
+

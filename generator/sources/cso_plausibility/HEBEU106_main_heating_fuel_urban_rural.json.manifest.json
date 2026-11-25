@@ -1,0 +1,19 @@
+{
+  "bytes": 2754,
+  "encoding": "utf-8",
+  "http_status": 200,
+  "intended_use": "calibration",
+  "key": "cso.cooking.hebeu106_heating_fuel_urban_rural",
+  "licence": "CC-BY 4.0 (CSO Open Data; https://www.cso.ie/en/aboutus/termsandconditions/)",
+  "model_development_exposure": "tuning",
+  "note": "Raw input, read-only after download. Excluded from git; this manifest is committed in its place.",
+  "publisher": "Central Statistics Office (Ireland)",
+  "relpath": "cso_plausibility/HEBEU106_main_heating_fuel_urban_rural.json",
+  "retrieved_at": "2026-10-10",
+  "retrieved_at_utc": "2026-10-10T22:10:05Z",
+  "sha256": "d24b840fee503be66c4d9af6b2590c46cb148269741bee70efee14da887a97ec",
+  "substitute_flag": null,
+  "title": "HEBEU106: main fuel or energy source used to heat the home, by urban/rural location and type of fuel (2024)",
+  "url": "https://ws.cso.ie/public/api.restful/PxStat.Data.Cube_API.ReadDataset/HEBEU106/JSON-stat/2.0/en",
+  "used_for": "U25: the denominator that turns HEBEU34's unconditional cooking-fuel share into the conditional share the model needs - the share of GAS-CONNECTED dwellings that cook with gas. TUNING-EXPOSED: it is the denominator of a derived quantity and cannot validate it."
+}

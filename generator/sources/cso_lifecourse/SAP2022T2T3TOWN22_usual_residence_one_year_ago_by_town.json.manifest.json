@@ -1,0 +1,19 @@
+{
+  "bytes": 114460,
+  "encoding": "utf-8",
+  "http_status": 200,
+  "intended_use": "calibration",
+  "key": "cso.census.sap2022_usual_residence_one_year_ago_by_town",
+  "licence": "CC-BY 4.0 (CSO Open Data; https://www.cso.ie/en/aboutus/termsandconditions/)",
+  "model_development_exposure": "none",
+  "note": "Raw input, read-only after download. Excluded from git; this manifest is committed in its place.",
+  "publisher": "Central Statistics Office (Ireland)",
+  "relpath": "cso_lifecourse/SAP2022T2T3TOWN22_usual_residence_one_year_ago_by_town.json",
+  "retrieved_at": "2026-10-11",
+  "retrieved_at_utc": "2026-10-11T08:50:37Z",
+  "sha256": "bb6f439d3e757f5f9bdad344858f104d9cf140dc7ac0d03bf2f265c7be1f0010",
+  "substitute_flag": null,
+  "title": "SAP2022T2T3TOWN22: usually resident population aged 1 year and over by usual residence 1 year before Census Day, by Towns 2022",
+  "url": "https://ws.cso.ie/public/api.restful/PxStat.Data.Cube_API.ReadDataset/SAP2022T2T3TOWN22/JSON-stat/2.0/en",
+  "used_for": "U33. A sourced PROXY for the gross household move rate, replacing the unmet internal-consistency criterion on `move_out` in lifecourse/tenyear.py's vital-statistics check. Cobh's own share of residents who were at a different address one year earlier. The person-to-household conversion stays [A] (A-25b): this bounds the hazard, it does not set it. Exposure stays `none` because nothing is fitted to it - the hazard keeps its declared value and this says whether that value is consistent with what the Census observed."
+}

@@ -1,0 +1,77 @@
+# Elemental U-values and air-tightness by construction era, W/(m2 K).
+#
+# PROVENANCE AND STATUS (ISSUES.md I-019)
+# These follow the successive editions of the Irish Building Regulations Part L
+# (Conservation of Fuel and Energy - Dwellings) and the fabric typical of each
+# era. They are REGULATORY / TYPICAL-CONSTRUCTION values, not empirical
+# statistics, and they have NOT been read back from the Part L documents in this
+# run, so they carry [A] and are listed in ISSUES.md for verification in WP1.
+#
+# WHY A FORWARD CALCULATION, NOT AN INVERSION OF THE BER FIGURE
+# The first implementation derived the heat loss coefficient by inverting the
+# BER asset rating through heating degree days. It produced 4.7 W/(m2 K) for an
+# 85 m2 pre-1919 terrace - roughly 1.5x the published range for Irish solid-wall
+# stock - while simultaneously giving a plausible 0.44 W/(m2 K) for a 2016 A2
+# detached house. No single degree-day base reconciles the two, because DEAP's
+# assumed operating regime (partial heating, reduced hours) itself varies with
+# the fabric. Inverting a figure that embeds an operating assumption cannot
+# recover a pure fabric property.
+#
+# So the heat loss coefficient is computed FORWARD from U-values and envelope
+# areas - which is the DEAP/SAP method itself - and the BER band is used only to
+# place a building within its era's range. The BER figure is still kept in D02
+# as the asset rating, so the performance gap can be reported against it.
+# IMPORTANT: these describe the fabric AS IT STANDS AT t0 (2022), not as-built.
+# Attic insulation is by far the most widely retrofitted measure in Ireland -
+# grant-aided since the 1980s - so an as-built roof U-value of 2.3 W/(m2 K) for a
+# pre-1919 dwelling does not describe the stock in 2022 and, used here, pushed a
+# pre-1919 terrace's derived specific heat loss to 4.46 W/(m2 K), outside the
+# published range. Roof values therefore reflect typical current condition;
+# DEEPER retrofits (wall insulation, glazing) are then captured by the BER band
+# multiplier below, because a dwelling that has had them rates better than its
+# era median. Walls and floors, which are retrofitted far less often, stay close
+# to as-built.
+source: "Irish Building Regulations Part L, successive editions; typical construction by era, with roofs at typical CURRENT (post-retrofit) condition"
+evidence_tag: "[A] not read back from the Part L documents in this run; verify in WP1"
+unit: W/(m2 K) except air_changes_per_hour
+eras:
+  "pre 1919":      {wall: 2.10, roof: 0.6, floor: 0.80, window: 4.80, door: 3.00, thermal_bridge_y: 0.15, ach: 0.90}
+  "1919-1945":     {wall: 2.00, roof: 0.6, floor: 0.80, window: 4.80, door: 3.00, thermal_bridge_y: 0.15, ach: 0.85}
+  "1946-1960":     {wall: 1.60, roof: 0.55, floor: 0.75, window: 4.80, door: 3.00, thermal_bridge_y: 0.15, ach: 0.75}
+  "1961-1970":     {wall: 1.40, roof: 0.5, floor: 0.70, window: 4.30, door: 3.00, thermal_bridge_y: 0.13, ach: 0.70}
+  "1971-1980":     {wall: 1.10, roof: 0.45, floor: 0.65, window: 4.30, door: 3.00, thermal_bridge_y: 0.12, ach: 0.65}
+  "1981-1990":     {wall: 0.60, roof: 0.4, floor: 0.60, window: 3.10, door: 3.00, thermal_bridge_y: 0.11, ach: 0.55}
+  "1991-2000":     {wall: 0.55, roof: 0.35, floor: 0.45, window: 3.10, door: 3.00, thermal_bridge_y: 0.10, ach: 0.48}
+  "2001-2010":     {wall: 0.37, roof: 0.25, floor: 0.37, window: 2.20, door: 2.20, thermal_bridge_y: 0.08, ach: 0.40}
+  "2011-2015":     {wall: 0.21, roof: 0.16, floor: 0.21, window: 1.60, door: 1.60, thermal_bridge_y: 0.08, ach: 0.30}
+  "2016 or later": {wall: 0.18, roof: 0.16, floor: 0.18, window: 1.40, door: 1.40, thermal_bridge_y: 0.06, ach: 0.22}
+  "not stated":    {wall: 1.10, roof: 0.45, floor: 0.65, window: 3.50, door: 3.00, thermal_bridge_y: 0.12, ach: 0.60}
+
+# Multiplier on the era's elemental U-values, by how the building's BER band
+# compares with the median band for its era. A home that has been retrofitted
+# rates better than its era implies, and the fabric should reflect that.
+# [A]: the mapping is a declared assumption; the DIRECTION is not in doubt.
+ber_band_fabric_multiplier:
+  much_better: 0.55   # 3 or more bands better than its era median (deep retrofit)
+  better:      0.75   # 1 to 2 bands better (windows, attic, cavity fill)
+  typical:     1.00
+  worse:       1.20   # 1 to 2 bands worse than its era median
+  much_worse:  1.35
+
+# Plausibility range for the whole-dwelling heat loss coefficient per unit floor
+# area - the quantity Irish retrofit policy calls the Heat Loss Indicator (HLI),
+# W/K per m2. Used as an ASSERTION on the forward calculation: a building
+# outside this range fails the physics check rather than being silently
+# simulated.
+#
+# SPECIFICATION CORRECTION (ISSUES.md I-019). The first version set the ceiling
+# at 4.00, which is a STOCK-AVERAGE figure and was wrong to apply to individual
+# dwellings. Specific heat loss rises as a dwelling gets smaller, because
+# surface-to-volume ratio does, so small old dwellings legitimately exceed it: a
+# 62 m2 pre-1919 semi-detached house derives to 5.19 W/K/m2 on an entirely
+# ordinary set of inputs. Ireland's own retrofit target is HLI <= 2.0 W/K/m2 for
+# upgraded homes, which only makes sense because un-upgraded homes sit well
+# above it; 3 to 6 is the usual pre-retrofit range. The ceiling is therefore
+# 6.50, which still rejects the physically absurd without rejecting the merely
+# poor. The floor of 0.25 is unchanged: no Irish dwelling is better than that.
+plausible_specific_hlc_w_m2k: {lo: 0.25, hi: 6.50}

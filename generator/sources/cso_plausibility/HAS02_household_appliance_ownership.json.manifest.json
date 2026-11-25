@@ -1,0 +1,19 @@
+{
+  "bytes": 7177,
+  "encoding": "utf-8",
+  "http_status": 200,
+  "intended_use": "validation",
+  "key": "cso.appliances.has02_ownership",
+  "licence": "CC-BY 4.0 (CSO Open Data; https://www.cso.ie/en/aboutus/termsandconditions/)",
+  "model_development_exposure": "none",
+  "note": "Raw input, read-only after download. Excluded from git; this manifest is committed in its place.",
+  "publisher": "Central Statistics Office (Ireland), Survey on Income and Living Conditions",
+  "relpath": "cso_plausibility/HAS02_household_appliance_ownership.json",
+  "retrieved_at": "2026-10-09",
+  "retrieved_at_utc": "2026-10-09T09:45:34Z",
+  "sha256": "a879f094559392d1eca59b787a2e1e13eb8e5d81cffc0473b7ff6ee1c1e88bd8",
+  "substitute_flag": null,
+  "title": "Households who possess a household appliance, by appliance type, possession status and year (HAS02)",
+  "url": "https://ws.cso.ie/public/api.restful/PxStat.Data.Cube_API.ReadDataset/HAS02/JSON-stat/2.0/en",
+  "used_for": "U27 plausibility: appliance OWNERSHIP, which `OWNERSHIP_PRIORS` has carried as declared assumptions [A] since Day 5 with the note that 'SAPS publishes no appliance ownership'. SAPS does not, but SILC does: HAS02 gives the share of households possessing a washing machine, clothes dryer, dishwasher, fridge, fridge with separate freezer, deep freeze and microwave. Seven of the nineteen priors stop being assumptions. Declared `validation` and exposure `none`: the priors were set before this table was found, so it can score them rather than merely agree with them. It must stay unexposed - if a prior is ever adjusted against it, its intended_use changes with it."
+}

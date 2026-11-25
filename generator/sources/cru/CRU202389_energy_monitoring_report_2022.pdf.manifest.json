@@ -1,0 +1,19 @@
+{
+  "bytes": 1679795,
+  "encoding": "utf-8",
+  "http_status": 200,
+  "intended_use": "reference",
+  "key": "cru.energy_monitoring_report_2022",
+  "licence": "Commission for Regulation of Utilities published decision and information papers; re-use terms not stated on the publication, to be confirmed in WP1",
+  "model_development_exposure": "none",
+  "note": "Raw input, read-only after download. Excluded from git; this manifest is committed in its place.",
+  "publisher": "Commission for Regulation of Utilities (Ireland)",
+  "relpath": "cru/CRU202389_energy_monitoring_report_2022.pdf",
+  "retrieved_at": "2026-10-12",
+  "retrieved_at_utc": "2026-10-12T19:53:36Z",
+  "sha256": "418b4bc8b3c5318cac2aaf06e396deddf72e98b9d90244d8a5c76ed1470877fa",
+  "substitute_flag": "[A] PDF, not machine-readable: the figures used are transcribed by hand into export/tariffs.TARIFF_RATES with their page and the exact published wording, per the brief's rule for a reference that is not machine-readable, and a test asserts each quoted figure is on that page of this file",
+  "title": "CRU202389: Energy Monitoring Report for 2022, information paper published 13 July 2023, including the worked decomposition of a domestic electricity bill into unit rate, standing charge per day, PSO levy and VAT",
+  "url": "https://cruie-live-96ca64acab2247eca8a850a7e54b-5b34f62.divio-media.com/documents/Energy-Monitoring-Report.pdf",
+  "used_for": "The INDEPENDENT regulator check that D27's card is decomposed the way an Irish domestic bill actually is. The report's own worked example gives a unit rate, an annual consumption of 4,200 kWh, a standing charge of EUR 0.80 per day, the PSO levy and the VAT, and those five reconcile to the estimated annual bill it states - so the transcription can be arithmetically verified rather than trusted. Published by the regulator and not by a supplier, which is why it is the cross-check and not the rate source. Exposure `none`."
+}
