@@ -1,4 +1,4 @@
-name: Build and Push (bn)
+name: Build and Push (baileua)
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
 env:
   AWS_REGION: eu-west-1
   ECR_REGISTRY: 495882075545.dkr.ecr.eu-west-1.amazonaws.com
-  ECR_REPOSITORY: bn
+  ECR_REPOSITORY: baileua
 
 jobs:
   build-and-push:
