@@ -1,23 +1,23 @@
-# EC2 / production: persist datasets on the HOST under a folder you can see (e.g. ~/bn_datasets).
+# EC2 / production: persist datasets on the HOST under a folder you can see (e.g. ~/bailenua_datasets).
 #
 # On container start, docker/init_pm.sh creates uploads/, artifacts/, sg1/… under the mount
 # and chowns them to www-data (PHP-FPM) so SG-1 and uploads can write. If the mount is
 # read-only or chown fails, fix the host folder manually, e.g.:
-#   sudo chown -R 82:82 /path/to/bn_datasets
+#   sudo chown -R 82:82 /path/to/bailenua_datasets
 # (82 = www-data in php:*-fpm-alpine; or chown to your container’s FPM user.)
 #
 # Usage (from repo root):
-#   mkdir -p /home/ec2-user/bn_datasets
+#   mkdir -p /home/ec2-user/bailenua_datasets
 #   docker compose -f docker-compose.yml -f docker-compose.ec2.yml up -d --build
 #
 # Override host path if needed:
-#   EC2_BN_DATA_HOST=/data/bn_datasets docker compose -f docker-compose.yml -f docker-compose.ec2.yml up -d
+#   EC2_BAILENUA_DATA_HOST=/data/bailenua_datasets docker compose -f docker-compose.yml -f docker-compose.ec2.yml up -d
 #
-# BN_DATA_ROOT is a path *inside the container*; it must match the right-hand side of the bind mount below.
+# BAILENUA_DATA_ROOT is a path *inside the container*; it must match the right-hand side of the bind mount below.
 
 services:
   bn:
     environment:
-      - BN_DATA_ROOT=/bn_data
+      - BAILENUA_DATA_ROOT=/bailenua_data
     volumes:
-      - ${EC2_BN_DATA_HOST:-/home/ec2-user/bn_datasets}:/bn_data
+      - ${EC2_BAILENUA_DATA_HOST:-/home/ec2-user/bailenua_datasets}:/bailenua_data
