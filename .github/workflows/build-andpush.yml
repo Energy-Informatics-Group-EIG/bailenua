@@ -1,0 +1,56 @@
+name: Build and Push (bn)
+
+on:
+  push:
+    branches: [ main, test, dev ]
+    tags: [ 'v*' ]
+
+env:
+  AWS_REGION: eu-west-1
+  ECR_REGISTRY: 495882075545.dkr.ecr.eu-west-1.amazonaws.com
+  ECR_REPOSITORY: bn
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::495882075545:role/GitHubOIDC_ECRPush
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Decide image tag
+        run: |
+          ref="${GITHUB_REF_TYPE}:${GITHUB_REF_NAME}"
+          case "$ref" in
+            branch:dev)  TAG=dev ;;
+            branch:test) TAG=test ;;
+            branch:main) TAG=prod ;;
+            tag:v*)      TAG="${GITHUB_REF_NAME}" ;;
+            *) echo "Unsupported ref $ref"; exit 1 ;;
+          esac
+          echo "TAG=$TAG" >> $GITHUB_ENV
+          echo "Using tag: $TAG"
+
+      - name: Build and push
+        run: |
+          IMAGE="${ECR_REGISTRY}/${ECR_REPOSITORY}:${TAG}"
+          echo "Building ${IMAGE} from SHA ${GITHUB_SHA}"
+
+          docker build \
+            --label org.opencontainers.image.revision="${GITHUB_SHA}" \
+            --label org.opencontainers.image.source="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}" \
+            -t "${IMAGE}" .
+
+          docker push "${IMAGE}"
